@@ -19,13 +19,12 @@ export type SiteConfig = {
   phone: string;
   whatsappUrl: string;
   location: { city: string; state: string; country: string };
-  businessHours: string;
   social: Record<SocialKey, string>;
   calendlyUrl: string;
   /** Optional. Only shown once a real GSTIN exists. */
   gstin?: string;
   availability: Availability;
-  brand: { monogram: string; wordmark: string; microTagline: string };
+  brand: { wordmark: string; microTagline: string };
   founder: { name: string; role: string; photo: string; education: string };
   featureFlags: {
     testimonials: boolean;
@@ -43,7 +42,7 @@ export type SiteConfig = {
 };
 
 /**
- * Site-wide announcement popup. Shown once per visitor per `id` — change the id to show an
+ * Site-wide announcement, shown as a corner card. Shown once per visitor per `id` — change the id to show an
  * updated announcement to everyone again. Set `enabled: false` to switch it off. Never shown on /contact, /pay or legal pages, or while
  * the cookie banner is open.
  */
@@ -63,7 +62,7 @@ export type Announcement = {
   endDate: string;
 };
 
-const phone = "[PHONE_WHATSAPP]";
+const phone = "+91 8284031374";
 
 /** wa.me needs digits only, with country code (e.g. 91XXXXXXXXXX). */
 function buildWhatsappUrl(rawPhone: string): string {
@@ -74,17 +73,16 @@ function buildWhatsappUrl(rawPhone: string): string {
 export const siteConfig: SiteConfig = {
   name: "Arshdeep Singh",
   legalName: "[LEGAL_ENTITY]",
-  tagline: "Web, mobile, AI and DevOps — from MVP to scale.",
+  tagline: "I automate businesses, so you can focus on growing them.",
   description:
-    "Full-stack engineer helping founders and growing businesses build fast, scalable web, mobile and AI products. Node.js, Python, AI integration and DevOps.",
+    "Arshdeep Singh, a full-stack, AI and DevOps engineer in India, builds web apps, mobile apps and AI features for founders and small teams — tidy code, steady releases.",
   positioning:
-    "I help founders and growing businesses turn ideas into fast, scalable web, mobile and AI products — from MVP to scale.",
+    "One engineer for the whole build: I plan, design, code and run web, mobile and AI products for founders and growing teams.",
   url: "https://[DOMAIN]",
-  email: "[EMAIL]",
+  email: "arshdeepsinghdev96@gmail.com",
   phone,
   whatsappUrl: buildWhatsappUrl(phone),
-  location: { city: "[CITY]", state: "[STATE]", country: "India" },
-  businessHours: "[BUSINESS_HOURS]",
+  location: { city: "Bengaluru", state: "[STATE]", country: "India" },
   social: {
     linkedin: "[LINKEDIN_URL]",
     github: "[GITHUB_URL]",
@@ -96,36 +94,35 @@ export const siteConfig: SiteConfig = {
   // gstin: "[GSTIN]",
   availability: "available",
   brand: {
-    monogram: "AS",
     wordmark: "Arshdeep Singh",
-    microTagline: "WEB · MOBILE · AI · DEVOPS",
+    microTagline: "ENGINEER · BUILDER · AI & CLOUD",
   },
   founder: {
     name: "Arshdeep Singh",
     role: "Full-Stack, AI & DevOps Engineer",
-    photo: "[PHOTO]",
+    photo: "/images/arshdeep-singh.jpg",
     education: "[EDUCATION]",
   },
   featureFlags: {
     testimonials: false,
-    blog: true,
+    blog: false,
     cookieConsent: true,
   },
   announcement: {
     enabled: true,
-    id: "mvp-scoping-2026-10",
-    badge: "Limited slots",
-    title: "Free 30-minute MVP scoping call",
+    id: "scope-call-2026-10",
+    badge: "A few slots each month",
+    title: "A free 30-minute idea-to-scope call",
     description:
-      "Have a product idea? In 30 minutes we'll turn it into a clear first version — what to build, what to skip and roughly what it will take.",
+      "Bring a rough idea. We'll shape it into a first version together: what to build now, what can wait and what it is likely to take.",
     bullets: [
-      "Pin down the core features your first users actually need",
-      "Get an honest view of the right stack, timeline and budget",
-      "Leave with next steps — whether or not we work together",
+      "Name the handful of features your first users really need",
+      "Hear a straight answer on stack, timeline and budget",
+      "Walk away with next steps, whether we work together or not",
     ],
-    primaryCta: { label: "Book your slot", href: "[CALENDLY_URL]" },
-    secondaryLabel: "Maybe later",
-    footnote: "Slots are limited each month.",
+    primaryCta: { label: "Book a free call", href: "[CALENDLY_URL]" },
+    secondaryLabel: "Not now",
+    footnote: "Only a few of these calls fit into each month.",
     startDate: "",
     endDate: "",
   },

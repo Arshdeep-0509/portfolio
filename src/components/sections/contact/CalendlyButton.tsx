@@ -22,7 +22,7 @@ export function CalendlyButton({
   url,
   label,
   modalTitle,
-  variant = "primary",
+  variant = "flame",
   className,
 }: {
   url: string;
@@ -43,7 +43,7 @@ export function CalendlyButton({
         target="_blank"
         rel="noopener noreferrer"
         variant={variant}
-        leftIcon={<CalendarClock aria-hidden="true" className="size-4" />}
+        leftIcon={<CalendarClock aria-hidden="true" strokeWidth={1.5} className="size-4" />}
         className={className}
         onClick={(event) => {
           if (window.matchMedia(DESKTOP).matches) {

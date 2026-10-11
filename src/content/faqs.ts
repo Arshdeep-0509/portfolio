@@ -1,4 +1,4 @@
-/** General FAQs (service-specific FAQs live on each service in services.ts). */
+/** General FAQs, shown on Home (service-specific FAQs live on each service in services.ts). */
 
 export type FaqCategory = "general" | "pricing" | "process" | "support";
 
@@ -7,32 +7,32 @@ export type Faq = { q: string; a: string; category: FaqCategory };
 export const faqs: Faq[] = [
   {
     category: "general",
-    q: "What is an MVP, and why should I start with one?",
-    a: "An MVP — minimum viable product — is the smallest version of your product that real users can use and pay for. Instead of spending a year building everything you imagine, you launch the core in weeks, see what people actually do with it, and invest in what works. It protects your budget, gives investors something real to look at, and turns guesses about your market into evidence before you commit to the bigger build.",
+    q: "Why start with an MVP at all?",
+    a: "An MVP — minimum viable product — is the smallest version of your product that real people can use and pay for. Instead of a year spent building everything you can imagine, you release the core in weeks, watch what people actually do, and put money into what works. It protects your budget, gives investors something concrete to try, and replaces guesses about your market with evidence before the bigger build.",
   },
   {
     category: "process",
-    q: "How long does it take to build an MVP with you?",
-    a: "Typically 6–12 weeks, depending on scope. A focused web app with a handful of core flows sits at the shorter end; products with payments, mobile apps, AI features or several user roles take longer. Simpler builds, like a landing page with a waitlist or an internal tool, can be faster. After the discovery call I give you a milestone plan with dates, so you know exactly what ships when.",
+    q: "How long would my MVP take with you?",
+    a: "Most land between 6 and 12 weeks. A browser app with a handful of key journeys is at the quicker end; money handling, a phone app, AI or many kinds of user push it out. Lighter jobs — a waitlist page or an in-house tool — can take less. Our first call is followed by a dated milestone plan, so each delivery has a date.",
   },
   {
     category: "general",
-    q: "Can you build the full product after the MVP?",
-    a: "Yes. The MVP is built on the same architecture the full product will use — clean code, tests and a proper deployment pipeline — so growing it is a next step rather than a rewrite. Once you have real usage data, we plan the next releases together, prioritising what users ask for and what moves your numbers. If you later hire an in-house team, I can help onboard them and hand over cleanly.",
+    q: "Can you take it beyond the MVP?",
+    a: "Yes. The first version uses the same architecture the full product will — clean code, tests and a proper release pipeline — so growing it is the next step, not a rewrite. With real usage data in hand we plan the next releases together, putting first what users ask for and what moves your numbers. If you later hire your own team, I can help them settle in and hand over cleanly.",
   },
   {
     category: "general",
-    q: "Will I own the code and intellectual property?",
-    a: "Yes, completely. We sign an NDA and an IP assignment before any work begins, the code lives in a private repository that is transferred to you, and you own the design files, documentation and cloud accounts. There is no lock-in: if you ever want another developer or an internal team to take over, they will have everything they need to continue without me.",
+    q: "Do I own the code and the IP?",
+    a: "Entirely. An NDA and an IP assignment are signed before any work starts, the code sits in a private repository that is transferred to you, and the design files, documentation and cloud accounts are yours. Nothing ties you to me: another developer or an in-house team can pick it up with everything they need.",
   },
   {
     category: "general",
-    q: "I'm not technical — is that a problem?",
-    a: "Not at all — most founders I work with aren't. You bring the knowledge of your customers and your market; I handle the technical decisions and explain them in plain English. You'll see working software every week or two, so you never have to judge progress from jargon. When there's a real trade-off — cost against speed, or one feature against another — I lay out the options and recommend one.",
+    q: "I'm not technical. Does that matter?",
+    a: "Not in the least — few of the founders I work with are. Your expertise is customers and market; mine is the technology, explained without jargon. A working build reaches you every week or two, so progress is something you click, not something you decode. Where a genuine choice exists — spend versus speed, this feature versus that — I lay out the paths and say which I'd take.",
   },
   {
     category: "pricing",
-    q: "How do we start, and how is pricing decided?",
-    a: "It starts with a free discovery call about your idea, users and goals. Within a few days you receive a written scope, a timeline and a quote — either a fixed price for a clearly defined build or milestone-based pricing for work that will evolve. Once you're happy, we sign an NDA and agreement, and kickoff follows. You only pay for scoped work, and you always know what the next milestone costs.",
+    q: "How do we begin, and how is the price set?",
+    a: "It opens with a free conversation about the idea, the users and what you want to achieve. A few days later you have a written scope, a schedule and a price: fixed for a well-defined build, or staged by milestone when the work will change shape. Once you're comfortable, an NDA and contract are signed and we begin. Payment is only ever for agreed work, and the cost of the next milestone is always known.",
   },
 ];

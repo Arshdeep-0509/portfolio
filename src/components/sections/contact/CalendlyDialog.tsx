@@ -20,7 +20,7 @@ export function CalendlyDialog({
         <iframe
           src={embedUrl}
           title="Calendly scheduler"
-          className="mt-4 h-[70vh] min-h-[560px] w-full rounded-lg border border-border"
+          className="mt-4 h-[70vh] min-h-[560px] w-full rounded-card border border-line"
         />
       ) : null}
     </Modal>

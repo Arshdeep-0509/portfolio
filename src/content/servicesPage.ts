@@ -1,178 +1,147 @@
+import { bookingHref } from "@/lib/booking";
+
 /**
  * Copy for /services and the shared parts of every /services/[slug] page.
  * Per-service content (intro, benefits, FAQs…) lives in services.ts.
  */
 
-type Action = { label: string; href: string };
-
-export type PickerOption = {
-  id: string;
-  label: string;
-  /** Service slugs this answer points towards. */
-  services: string[];
-};
-
-export type PickerQuestion = {
-  id: "building" | "stage" | "timeline";
-  question: string;
-  /** How strongly this answer counts when ranking services. */
-  weight: number;
-  options: PickerOption[];
-};
-
 export const servicesPage = {
   seo: {
-    title: "MVP, Web, Mobile, AI & DevOps Services",
+    title: "Services: MVP, Web & Mobile Apps, AI, DevOps — India",
     description:
-      "MVP development, web and mobile apps, UI/UX design, AI integration, DevOps and growth marketing — one engineer from idea to scale.",
+      "Thirteen services from one engineer in India: MVP development, web and mobile apps, UI/UX, AI integration for startups, DevOps and growth marketing.",
   },
 
   hero: {
-    eyebrow: "Services",
-    title: "Everything you need to build, launch and grow your product",
-    highlight: "build, launch and grow",
-    subtitle:
-      "From MVP development and UI/UX to AI features, cloud and growth marketing — one partner from idea to scale.",
-    primaryCta: { label: "Explore all services", href: "#service-list" } satisfies Action,
-    secondaryCta: { label: "Start your project", href: "/contact" } satisfies Action,
-    illustration: {
-      name: "services-hero.svg",
-      width: 480,
-      height: 400,
-      alt: "",
-    },
+    title: "Thirteen ways I can help, one person doing the work",
+    emphasis: "one person",
+    text: "Product engineering, design, AI, cloud and growth — pick what you need today and add more as the product grows.",
+    cta: { label: "Book a free call", href: bookingHref },
   },
 
-  navigator: {
-    id: "service-list",
-    title: "Core services",
-    highlight: "services",
-    subtitle: "Pick what you need now — add more as you grow.",
-    allLabel: "All",
+  index: {
+    id: "service-index",
+    label: "Index",
+    title: "Every service, like a table of contents",
+    emphasis: "table of contents",
+    intro: "Point at a service to see its summary, three deliverables and the usual timeline.",
+    previewLabel: "Preview",
+    deliverablesLabel: "You receive",
+    timelineLabel: "Usual timeline",
+    readMore: "Read more",
+    hint: "Point at, or tab to, a service to preview it here.",
   },
 
-  groupBands: {
-    learnMore: "Learn more",
-  },
-
-  picker: {
-    id: "start",
-    title: "Not sure where to start?",
-    highlight: "where to start",
-    paragraphs: [
-      "Most founders don't arrive with a neat list of services — they arrive with an idea and a deadline. That's fine.",
-      "Answer three quick questions and I'll suggest where to begin. Or book the free 30-minute scoping call: we'll cut the idea down to a first version you can launch, and you'll leave with a feature shortlist, a suggested stack and a rough timeline — whether or not we work together.",
+  models: {
+    id: "ways-to-work",
+    label: "Ways to work together",
+    title: "Three ways to engage, no prices hidden in fine print",
+    emphasis: "three ways",
+    intro: "Quotes follow the actual work, so nothing you don't need ends up on the bill.",
+    includedLabel: "What's included",
+    suitsLabel: "Who it suits",
+    billingLabel: "How billing works",
+    items: [
+      {
+        name: "Fixed-scope project",
+        included:
+          "A clearly defined build — scope, milestones and deliverables written down before work starts.",
+        suits: "First versions, redesigns and well-understood features.",
+        billing: "One agreed price, paid in milestones as each part is delivered.",
+      },
+      {
+        name: "Monthly retainer",
+        included: "A set amount of my time each month for new features, fixes, upkeep and advice.",
+        suits: "Live products that keep changing, or teams needing steady AI or DevOps help.",
+        billing: "A fixed monthly fee, reviewed together as priorities shift.",
+      },
+      {
+        name: "Hourly advisory",
+        included: "Focused sessions: architecture reviews, scoping, audits or a second opinion.",
+        suits: "Founders and teams who need judgement more than hands on the keyboard.",
+        billing: "Billed by the hour, agreed in advance, with a short written summary after.",
+      },
     ],
-    scopingCta: { label: "Book a free scoping call", href: "/contact?topic=mvp-scoping" },
-    resultsTitle: "Where I'd start",
-    resultsIntro: "Based on your answers, these are the best places to begin:",
-    discussCta: "Discuss this with me",
-    resetLabel: "Start over",
-    questions: [
+  },
+
+  bundles: {
+    id: "combinations",
+    label: "Popular combinations",
+    title: "Services that are often booked together",
+    emphasis: "booked together",
+    intro:
+      "Each bundle pre-fills the contact form, so you can start the conversation in one click.",
+    ask: "Ask about this bundle",
+    items: [
       {
-        id: "building",
-        question: "What are you building?",
-        weight: 3,
-        options: [
-          {
-            id: "web",
-            label: "Web app",
-            services: ["web-applications", "full-stack-development", "mvp-development"],
-          },
-          {
-            id: "mobile",
-            label: "Mobile app",
-            services: ["mobile-applications", "mvp-development", "ui-design"],
-          },
-          {
-            id: "ai",
-            label: "AI feature",
-            services: ["ai-integration", "backend-development"],
-          },
-          {
-            id: "marketing",
-            label: "Marketing",
-            services: ["digital-marketing", "growth-marketing"],
-          },
-        ],
+        id: "launch-kit",
+        name: "Launch kit",
+        text: "From research to a live first version, with the release pipeline already in place.",
+        services: ["ux-design", "ui-design", "mvp-development", "devops-cloud"],
       },
       {
-        id: "stage",
-        question: "What stage are you at?",
-        weight: 2,
-        options: [
-          { id: "idea", label: "Idea", services: ["mvp-development", "ux-design"] },
-          {
-            id: "prototype",
-            label: "Prototype",
-            services: ["full-stack-development", "ui-design", "frontend-development"],
-          },
-          {
-            id: "live",
-            label: "Live product",
-            services: ["devops-cloud", "growth-marketing", "backend-development"],
-          },
-        ],
+        id: "ai-upgrade",
+        name: "AI upgrade",
+        text: "Add a dependable AI feature to a product that already exists, and run it properly.",
+        services: ["ai-integration", "backend-development", "devops-cloud"],
       },
       {
-        id: "timeline",
-        question: "When do you need it?",
-        weight: 1,
-        options: [
-          { id: "asap", label: "ASAP", services: ["mvp-development"] },
-          {
-            id: "1-3-months",
-            label: "1–3 months",
-            services: ["full-stack-development", "ux-design"],
-          },
-          { id: "later", label: "Later", services: ["ux-design", "digital-marketing"] },
-        ],
+        id: "growth-engine",
+        name: "Growth engine",
+        text: "Get found, test what converts and keep fresh creative flowing into your campaigns.",
+        services: ["digital-marketing", "growth-marketing", "ai-creative"],
       },
-    ] satisfies PickerQuestion[],
+    ],
+  },
+
+  faq: {
+    id: "faq",
+    label: "Questions",
+    title: "Before you choose a service",
+    emphasis: "choose a service",
+    items: [
+      {
+        q: "Can I combine several services?",
+        a: "Yes, and most projects do. Because one person covers design, code, AI, cloud and growth, combining them means fewer hand-offs rather than more coordination. The bundles above are common starting points, but any mix works.",
+      },
+      {
+        q: "Do you publish fixed packages?",
+        a: "Not for now. Each job is priced from its real scope; ready-made packages for common builds might appear later. Telling me a rough budget lets me propose the right size of engagement.",
+      },
+      {
+        q: "What if I don't know which service I need?",
+        a: "That's normal. Use the three-question picker on the home page, or book the free call — we'll work out the simplest place to begin, and you'll leave with next steps whether or not we work together.",
+      },
+      {
+        q: "Do you work with teams outside India?",
+        a: "Yes, entirely online. We pick a few shared hours each working day for calls and handle everything else in writing on a project board. Overseas clients sign the same contracts and NDAs and are invoiced the same way.",
+      },
+    ],
   },
 };
 
 /** Shared by every /services/[slug] page. */
 export const serviceDetailCopy = {
-  heroCtas: {
-    quote: "Get a free quote",
-    process: "See the process",
+  chapters: {
+    overview: "Overview",
+    useCases: "Example uses",
+    benefits: "What you gain",
+    whyMe: "Why me",
+    process: "How it runs",
+    deliverables: "What you receive",
+    tech: "Tools",
+    faq: "Questions",
   },
-  atAGlance: {
-    title: "At a glance",
-    timelineLabel: "Typical timeline",
-    modelsLabel: "Engagement models",
-    idealForLabel: "Ideal for",
-    engagementModels: ["Fixed scope", "Monthly retainer", "Hourly"],
-  },
-  subNavLabel: "On this page",
-  sections: {
-    overview: { id: "overview", nav: "Overview", title: "Overview" },
-    useCases: { id: "use-cases", nav: "Use cases", title: "Example use cases" },
-    benefits: { id: "benefits", nav: "Benefits", title: "What you get" },
-    whyMe: { id: "why-me", nav: "Why me", title: "Why work with me" },
-    tech: { id: "tech", nav: "Tech", title: "Technologies I use" },
-    process: { id: "process", nav: "Process", title: "How the work runs" },
-    deliverables: { id: "deliverables", nav: "Deliverables", title: "What you walk away with" },
-    faq: { id: "faq", nav: "FAQ", title: "Frequently asked questions" },
-  },
+  contents: "Contents",
   quickFacts: {
     title: "Quick facts",
-    /** Shown when the service has no typicalTimeline yet. */
+    timeline: "Typical timeline",
+    models: "Engagement options",
+    modelsValue: "Fixed project, monthly retainer or hourly advice",
+    idealFor: "Ideal for",
     timelineFallback: "[TYPICAL_TIMELINE]",
-    items: [
-      { label: "Communication", value: "Weekly demo plus async updates" },
-      { label: "Code ownership", value: "100% yours, from day one" },
-      { label: "Support window", value: "[SUPPORT_WINDOW] after launch" },
-    ],
-    cta: { label: "Book a free call", href: "/contact" },
   },
-  relatedTitle: "Related services",
-  caseStudy: {
-    /** When a case study lists this service in its frontmatter. */
-    title: "From my work",
-    /** Otherwise the most recent case study is shown, labelled honestly. */
-    fallbackTitle: "Recent work",
-    allWork: "See all work",
-  },
+  discuss: "Discuss this service",
+  whatsapp: "WhatsApp me",
+  pairsWith: "Pairs well with",
 };

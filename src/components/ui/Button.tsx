@@ -5,30 +5,31 @@ import { cn } from "@/lib/utils";
 
 export const buttonVariants = cva(
   [
-    "group/button inline-flex shrink-0 items-center justify-center gap-2 rounded-pill font-semibold whitespace-nowrap",
-    "transition-[background-color,color,border-color,box-shadow,transform] duration-200 ease-out",
-    "disabled:pointer-events-none disabled:opacity-60 aria-disabled:pointer-events-none aria-disabled:opacity-60",
+    "group/button inline-flex shrink-0 items-center justify-center gap-2 font-semibold whitespace-nowrap",
+    "transition-[background-color,color,border-color,box-shadow,filter] duration-200 ease-out",
+    "disabled:pointer-events-none disabled:opacity-55 aria-disabled:pointer-events-none aria-disabled:opacity-55",
   ],
   {
     variants: {
       variant: {
-        primary: "bg-primary text-white shadow-card hover:bg-primary-hover",
-        secondary: "bg-navy-900 text-white shadow-card hover:bg-navy-950",
-        outline: "border border-primary bg-surface text-primary hover:bg-soft",
-        white: "bg-surface text-navy-900 shadow-card hover:bg-soft",
-        "ghost-light": "border border-white/60 text-white hover:border-white hover:bg-white/10",
-        // accent-text, not highlight: sky-200 on the gradient is only AA for large text.
-        link: "rounded-sm text-tone-accent-text underline-offset-4 hover:underline",
+        /** Primary: the flame gradient with ink text (8.9:1 on --lamp-500, 5.9:1 on --ember-500). */
+        flame: "rounded-button bg-grad-flame text-ink-900 hover:shadow-glow hover:brightness-105",
+        "solid-ink": "rounded-button bg-ink-900 text-ivory-50 hover:bg-night-800",
+        /** Ink on light sections, ivory on night: the colour follows the section tone. */
+        outline:
+          "rounded-button border border-fg/70 bg-transparent text-fg hover:border-accent hover:text-accent",
+        /** Inline text action with an animated underline and a trailing arrow. */
+        "text-link": "link-underline rounded-[2px] text-fg hover:text-accent",
       },
       size: {
-        sm: "min-h-9 px-4 text-small",
-        md: "min-h-11 px-6 text-small",
-        lg: "min-h-13 px-8 text-body",
+        sm: "min-h-10 px-4 text-small",
+        md: "min-h-12 px-6 text-small",
+        lg: "min-h-13 px-7 text-body",
       },
     },
-    // Text-style links keep a 44px tap height without horizontal padding.
-    compoundVariants: [{ variant: "link", className: "min-h-11 px-0" }],
-    defaultVariants: { variant: "primary", size: "md" },
+    // Text links keep a 44px tap height without horizontal padding.
+    compoundVariants: [{ variant: "text-link", className: "min-h-11 gap-1.5 px-0" }],
+    defaultVariants: { variant: "flame", size: "md" },
   },
 );
 
@@ -49,7 +50,7 @@ type ButtonAsLink = ButtonOwnProps &
 
 export type ButtonProps = ButtonAsButton | ButtonAsLink;
 
-/** Pill button. Renders a Next.js <Link> when `href` is given, otherwise a <button>. */
+/** Renders a Next.js <Link> when `href` is given, otherwise a <button>. 8px radius, never a pill. */
 export function Button({
   variant,
   size,
@@ -60,13 +61,14 @@ export function Button({
   children,
   ...rest
 }: ButtonProps) {
-  // The link variant always gets a trailing arrow that slides 4px on hover.
+  // Text links always get a trailing arrow that eases 3px to the right on hover.
   const trailing =
     rightIcon ??
-    (variant === "link" ? (
+    (variant === "text-link" ? (
       <ArrowRight
         aria-hidden="true"
-        className="size-4 transition-transform duration-200 ease-out group-hover/button:translate-x-1"
+        strokeWidth={1.5}
+        className="size-4 transition-transform duration-200 ease-out group-hover/button:translate-x-[3px]"
       />
     ) : null);
 

@@ -1,0 +1,65 @@
+---
+title: Trader's Platform — Stock Analysis with an RSI-HA Strategy
+summary: A platform for traders that analyses stocks and applies an RSI-HA strategy — the Relative Strength Index read alongside Heikin-Ashi candles — for both intraday and swing trading.
+cover: /images/work/trading-platform-intraday.jpg
+coverAlt: The platform's intraday F&O dashboard, with market, index, sector-strength and smart-money panels above a sector bar chart
+# Confirm: live, in-development or concept.
+status: in-development
+# Confirm: "Personal product", or the client's name if you have permission to show it.
+client: Personal product
+role: Product design and full-stack engineering
+stack: [React, FastAPI, Python]
+categories: [web]
+# Service pages for these slugs link to this case study.
+services: [web-applications, full-stack-development, backend-development]
+links: {}
+# Results stay empty unless there are real, verifiable numbers. Never publish returns you can't back up.
+results: []
+publishedAt: 2026-10-11
+problem: >-
+  Reading a chart by hand, stock by stock, is slow, and it's easy to apply a strategy one way on
+  Monday and another on Friday. Traders need the same rules applied the same way to every stock,
+  on the timeframe they actually trade.
+goals:
+  - Analyse stocks against one consistent set of rules instead of by eye
+  - Apply the RSI-HA strategy on intraday and swing timeframes
+  - Show clearly which stocks meet the strategy's conditions, and why
+features:
+  - icon: ChartCandlestick
+    title: Heikin-Ashi candles
+    text: Prices are redrawn as Heikin-Ashi candles, which smooth out noise so the direction of a trend is easier to read.
+  - icon: Activity
+    title: RSI alongside every chart
+    text: The Relative Strength Index measures momentum next to the candles, so the strategy only acts when trend and momentum agree.
+  - icon: Timer
+    title: Intraday mode
+    text: The strategy run on short timeframes for trades opened and closed in the same session.
+  - icon: CalendarRange
+    title: Swing mode
+    text: The same rules on daily charts, for positions held over days or weeks.
+  - icon: Crosshair
+    title: Stock analysis
+    text: "On the Heikin-Ashi chart it picks out stocks that print a second consecutive candle of the same colour — green for an uptrend, red for a downtrend. RSI then confirms the move: 60 to 65 for a buy, 35 to 40 for a sell. For option stocks it reads the at-the-money strike and says whether to buy a call (uptrend) or buy a put (downtrend), and it marks the breakout points."
+  - icon: ScanSearch
+    title: Intraday F&O dashboard
+    text: A live read on F&O stocks — how many are up or down past a chosen threshold, index and sector strength, breakouts and breakdowns, and the sectors where unusual volume lines up with an unusual move. Market data comes from Master Trust.
+screens:
+  - src: /images/work/trading-platform-intraday.jpg
+    alt: The intraday F&O dashboard after market close, showing 44 of 59 names up more than 0.5%, index and sector strength bars, smart-money sectors and an equal-weight sector index chart
+    caption: Intraday dashboard — market meter, index meter, sector strength and smart money
+nextSteps:
+  - "[ADD — what you would build or change next, and why]"
+draft: false
+---
+
+The platform takes one strategy — RSI-HA — and applies it the same way every time, so a decision
+rests on rules rather than on how a chart looks that morning.
+
+## Two timeframes, one set of rules
+
+Intraday and swing trading need different chart intervals, but the logic stays the same: Heikin-Ashi
+candles for the trend, RSI for momentum.
+
+## A note on risk
+
+The platform is an analysis tool, not financial advice.

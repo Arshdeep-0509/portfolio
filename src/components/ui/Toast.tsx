@@ -72,28 +72,29 @@ function ToastView({ toast, onDismiss }: { toast: ToastEntry; onDismiss: () => v
     <m.div
       layout
       role={success ? "status" : "alert"}
-      initial={{ opacity: 0, y: 16, scale: 0.98 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.98 }}
-      transition={{ duration: 0.2, ease: "easeOut" }}
+      initial={{ opacity: 0, y: 12, filter: "blur(6px)" }}
+      animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
       className={cn(
-        "tone-light pointer-events-auto flex w-full max-w-sm gap-3 rounded-lg border border-l-4 border-border bg-surface p-4 shadow-card-hover",
+        "tone-ivory pointer-events-auto flex w-full max-w-sm gap-3 rounded-card border border-l-2 border-line bg-ivory-50 p-4 shadow-[0_18px_40px_-24px_rgb(10_10_18_/_0.45)]",
         success ? "border-l-success" : "border-l-danger",
       )}
     >
       <IconComponent
         aria-hidden="true"
-        className={cn("mt-0.5 size-5 shrink-0", success ? "text-success" : "text-danger")}
+        strokeWidth={1.5}
+        className={cn("mt-0.5 size-5 shrink-0", success ? "text-success-fg" : "text-danger-fg")}
       />
       <div className="min-w-0 flex-1">
-        <p className="text-small font-semibold text-ink">{toast.title}</p>
+        <p className="text-small font-semibold text-fg">{toast.title}</p>
         {toast.description ? (
-          <p className="mt-0.5 text-small text-muted">{toast.description}</p>
+          <p className="mt-0.5 text-small text-fg-muted">{toast.description}</p>
         ) : null}
         {toast.action ? (
           <a
             href={toast.action.href}
-            className="mt-2 inline-flex min-h-9 items-center text-small font-semibold text-primary underline"
+            className="mt-2 inline-flex min-h-9 items-center text-small font-semibold text-accent underline underline-offset-4"
           >
             {toast.action.label}
           </a>
@@ -103,9 +104,9 @@ function ToastView({ toast, onDismiss }: { toast: ToastEntry; onDismiss: () => v
         type="button"
         onClick={onDismiss}
         aria-label="Dismiss notification"
-        className="-m-1.5 inline-flex size-8 shrink-0 items-center justify-center rounded-pill text-muted hover:bg-soft hover:text-ink"
+        className="-m-1.5 inline-flex size-8 shrink-0 items-center justify-center rounded-card text-fg-muted hover:text-fg"
       >
-        <X aria-hidden="true" className="size-4" />
+        <X aria-hidden="true" strokeWidth={1.5} className="size-4" />
       </button>
     </m.div>
   );

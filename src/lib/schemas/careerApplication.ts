@@ -22,7 +22,7 @@ export const experienceOptions = [
 ] as const;
 
 export const availabilityOptions = [
-  "Immediately",
+  "Right away",
   "In 2 weeks",
   "In 1 month",
   "Part-time only",
@@ -39,51 +39,51 @@ export const careerApplicationSchema = z.object({
   name: z
     .string()
     .trim()
-    .min(2, "Please enter your full name.")
-    .max(100, "Please keep your name under 100 characters."),
+    .min(2, "Add your full name.")
+    .max(100, "Names need to stay under 100 characters."),
   email: z
     .string()
     .trim()
-    .min(1, "Please enter your email address.")
-    .max(254, "That email address is too long.")
-    .email("Please enter a valid email address."),
+    .min(1, "An email address is needed for my reply.")
+    .max(254, "That address is longer than email allows.")
+    .email("That email address doesn't look right."),
   phone: z
     .string()
     .trim()
-    .min(1, "Please enter your phone number.")
-    .regex(/^\+?[\d\s()-]{7,20}$/, "Please enter a valid phone number, e.g. +91 98765 43210."),
-  role: z.string().trim().min(1, "Please choose a role.").max(100),
+    .min(1, "Add a phone number.")
+    .regex(/^\+?[\d\s()-]{7,20}$/, "Use a format like +91 98765 43210."),
+  role: z.string().trim().min(1, "Pick the role you're applying for.").max(100),
   experience: z.union([z.enum(experienceOptions), z.literal("")]).optional(),
   portfolio: z
     .string()
     .trim()
-    .min(1, "Please add a portfolio or GitHub link.")
-    .max(300, "That link is too long.")
-    .regex(URL_PATTERN, "Please enter a valid link, e.g. https://github.com/you."),
+    .min(1, "Add a link to your portfolio or GitHub.")
+    .max(300, "Links need to stay under 300 characters.")
+    .regex(URL_PATTERN, "Use a full link, like https://github.com/you."),
   linkedin: z
     .string()
     .trim()
-    .max(300, "That link is too long.")
-    .regex(URL_PATTERN, "Please enter a valid link, e.g. https://linkedin.com/in/you.")
+    .max(300, "Links need to stay under 300 characters.")
+    .regex(URL_PATTERN, "Use a full link, like https://linkedin.com/in/you.")
     .or(z.literal(""))
     .optional(),
   resume: z
     .custom<File>(
       (value) => typeof File !== "undefined" && value instanceof File && value.size > 0,
-      "Please attach your resume as a PDF.",
+      "Attach your resume as a PDF.",
     )
-    .refine(isPdf, "Your resume must be a PDF file.")
+    .refine(isPdf, "The resume needs to be a PDF file.")
     .refine(
       (file) => file.size <= RESUME_MAX_BYTES,
-      `Your resume must be ${RESUME_MAX_MB} MB or smaller.`,
+      `The resume needs to be ${RESUME_MAX_MB} MB or less.`,
     ),
   availability: z.union([z.enum(availabilityOptions), z.literal("")]).optional(),
   message: z
     .string()
     .trim()
-    .min(MESSAGE_MIN, `Please write at least ${MESSAGE_MIN} characters.`)
-    .max(MESSAGE_MAX, `Please keep this under ${MESSAGE_MAX} characters.`),
-  consent: z.literal(true, "Please agree to the Privacy Policy to continue."),
+    .min(MESSAGE_MIN, `Write at least ${MESSAGE_MIN} characters, please.`)
+    .max(MESSAGE_MAX, `Keep this under ${MESSAGE_MAX} characters.`),
+  consent: z.literal(true, "Tick the box to accept the Privacy Policy."),
   /** Honeypot — see newsletterSchema. */
   website: z.string().max(500).optional(),
 });

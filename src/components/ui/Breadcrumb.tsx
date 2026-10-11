@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { ChevronRight } from "lucide-react";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { absoluteUrl, cn } from "@/lib/utils";
 
@@ -8,12 +7,16 @@ export type BreadcrumbItem = { label: string; href?: string };
 type BreadcrumbProps = {
   /** Ordered from Home to the current page. The last item is the current page. */
   items: BreadcrumbItem[];
-  /** Also output schema.org BreadcrumbList JSON-LD. */
+  /** Also output schema.org BreadcrumbList JSON-LD. Default true. */
   jsonLd?: boolean;
   className?: string;
 };
 
-export function Breadcrumb({ items, jsonLd = false, className }: BreadcrumbProps) {
+/**
+ * The breadcrumb as a mono label line: "(Home / Services / MVP Development)". Links keep a
+ * 24px minimum target height.
+ */
+export function Breadcrumb({ items, jsonLd = true, className }: BreadcrumbProps) {
   const schema = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -27,33 +30,36 @@ export function Breadcrumb({ items, jsonLd = false, className }: BreadcrumbProps
 
   return (
     <nav aria-label="Breadcrumb" className={className}>
-      <ol className="flex flex-wrap items-center gap-1.5 text-small text-tone-muted">
+      <ol className="flex flex-wrap items-center label-mono text-fg-muted">
+        <li aria-hidden="true">(</li>
         {items.map((item, index) => {
           const current = index === items.length - 1;
           return (
-            <li key={`${item.label}-${index}`} className="flex items-center gap-1.5">
+            <li key={`${item.label}-${index}`} className="flex items-center">
               {current || !item.href ? (
                 <span
                   aria-current={current ? "page" : undefined}
-                  className={cn(current && "font-semibold text-tone-fg")}
+                  className={cn(current && "text-accent")}
                 >
                   {item.label}
                 </span>
               ) : (
-                // 44px tap target; the negative margin keeps the row visually compact.
                 <Link
                   href={item.href}
-                  className="-my-3 inline-flex min-h-11 items-center rounded-sm hover:text-tone-fg hover:underline"
+                  className="inline-flex min-h-6 items-center link-underline hover:text-fg"
                 >
                   {item.label}
                 </Link>
               )}
               {!current ? (
-                <ChevronRight aria-hidden="true" className="size-3.5 opacity-70" />
+                <span aria-hidden="true" className="px-1.5">
+                  /
+                </span>
               ) : null}
             </li>
           );
         })}
+        <li aria-hidden="true">)</li>
       </ol>
       {jsonLd ? <JsonLd data={schema} /> : null}
     </nav>

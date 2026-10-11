@@ -3,106 +3,105 @@
 import { useId, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ArrowRight, ChevronDown, Mail, MessageCircle, X } from "lucide-react";
-import { isActivePath, type HeaderNav, type MegaGroupView } from "@/components/layout/navTypes";
+import { ArrowRight, Mail, MessageCircle, X } from "lucide-react";
 import { Logo } from "@/components/layout/Logo";
+import { isActivePath, type HeaderNav } from "@/components/layout/navTypes";
 import { Button } from "@/components/ui/Button";
+import { PlaceholderText } from "@/components/ui/PlaceholderText";
 import { SocialIcon } from "@/components/ui/SocialIcon";
+import { StatusDot } from "@/components/ui/StatusDot";
 import { useModalDialog } from "@/components/ui/useModalDialog";
 import { cn } from "@/lib/utils";
 
-type MobileMenuProps = {
+/**
+ * Below 1024px: a full-screen night overlay on a native <dialog> (focus trap, Esc and scroll lock
+ * come from useModalDialog). Large serif links, a services accordion, contact actions and the
+ * availability dot. Every link closes it; route changes close it via the parent.
+ */
+export function MobileMenu({
+  open,
+  onClose,
+  nav,
+}: {
   open: boolean;
   onClose: () => void;
-  groups: MegaGroupView[];
   nav: HeaderNav;
-};
-
-/**
- * Right-hand sheet below 1024px, on a native <dialog>: focus trap, Esc, backdrop click and scroll
- * lock come from useModalDialog. Every link closes it; route changes close it via the parent.
- */
-export function MobileMenu({ open, onClose, groups, nav }: MobileMenuProps) {
+}) {
   const pathname = usePathname();
   const dialogProps = useModalDialog(open, onClose);
   const servicesPanelId = useId();
   const [servicesOpen, setServicesOpen] = useState(() => pathname.startsWith("/services"));
+  const { copy, contact } = nav;
+
+  const linkClass = "flex min-h-14 items-center font-display-soft text-[2rem] leading-none";
 
   return (
     <dialog
       {...dialogProps}
       id="mobile-menu"
-      aria-label="Site menu"
-      className={cn(
-        "tone-light fixed inset-y-0 right-0 left-auto m-0 h-dvh max-h-none w-[88%] max-w-[380px] bg-surface p-0 text-ink shadow-card-hover",
-        "backdrop:bg-navy-950/60 backdrop:backdrop-blur-sm open:animate-sheet-in open:backdrop:animate-backdrop-in",
-      )}
+      aria-label={copy.menu.dialogLabel}
+      className="tone-night fixed inset-0 m-0 h-dvh max-h-none w-full max-w-none bg-night-950 bg-stars p-0 text-fg backdrop:bg-transparent open:animate-overlay-in"
     >
-      {/* Contents mount only while open, keeping ~90 elements out of every page's DOM. */}
+      {/* Contents mount only while open, keeping them out of every page's DOM. */}
       {open ? (
         <div className="flex h-full flex-col">
-          <div className="flex h-16 shrink-0 items-center justify-between border-b border-border px-5">
-            <Logo onClick={onClose} />
+          <div className="container-site flex h-(--bar-h) shrink-0 items-center justify-between">
+            <Logo tone="dark" onClick={onClose} />
             <button
               type="button"
               onClick={onClose}
-              aria-label="Close menu"
-              className="inline-flex size-11 items-center justify-center rounded-pill text-ink transition-colors duration-200 hover:bg-soft"
+              className="inline-flex min-h-11 items-center gap-2 rounded-button px-1 label-mono text-ivory-50"
             >
-              <X aria-hidden="true" className="size-6" />
+              <X aria-hidden="true" strokeWidth={1.5} className="size-5" />
+              {copy.menu.close}
             </button>
           </div>
 
-          <div className="flex-1 overflow-y-auto px-5 py-4">
-            <nav aria-label="Mobile">
-              <ul className="divide-y divide-border">
+          <div className="container-site flex-1 overflow-y-auto pt-6 pb-10">
+            <StatusDot status={nav.availability} label={copy.availability[nav.availability]} />
+
+            <nav aria-label="Mobile" className="mt-8">
+              <ul className="border-t border-line-dark">
                 {nav.main.map((item) => {
                   const active = isActivePath(pathname, item.href);
-
-                  if (item.hasMega) {
+                  if (item.hasMenu) {
                     return (
-                      <li key={item.href}>
+                      <li key={item.href} className="border-b border-line-dark">
                         <button
                           type="button"
                           aria-expanded={servicesOpen}
                           aria-controls={servicesPanelId}
                           onClick={() => setServicesOpen((value) => !value)}
                           className={cn(
-                            "flex min-h-13 w-full items-center justify-between rounded-md text-left text-lg font-semibold",
-                            active ? "text-primary" : "text-ink",
+                            linkClass,
+                            "w-full justify-between text-left",
+                            active ? "text-lamp-400" : "text-ivory-50",
                           )}
                         >
                           {item.label}
-                          <ChevronDown
-                            aria-hidden="true"
-                            className={cn(
-                              "size-5 transition-transform duration-200",
-                              servicesOpen && "rotate-180",
-                            )}
-                          />
+                          <span aria-hidden="true" className="font-mono text-2xl text-lamp-400">
+                            {servicesOpen ? "−" : "+"}
+                          </span>
                         </button>
                         <div
                           id={servicesPanelId}
                           inert={!servicesOpen}
                           className={cn(
-                            "grid transition-[grid-template-rows] duration-200 ease-out",
+                            "grid transition-[grid-template-rows] duration-300 ease-out",
                             servicesOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]",
                           )}
                         >
                           <div className="overflow-hidden">
-                            <div className="space-y-5 pt-1 pb-5">
-                              {groups.map((group) => (
+                            <div className="space-y-6 pt-2 pb-6">
+                              {nav.services.map((group) => (
                                 <div key={group.id}>
                                   <p
                                     id={`mobile-group-${group.id}`}
-                                    className="text-eyebrow font-semibold text-primary uppercase"
+                                    className="label-mono text-lamp-400"
                                   >
                                     {group.label}
                                   </p>
-                                  <ul
-                                    aria-labelledby={`mobile-group-${group.id}`}
-                                    className="mt-1.5"
-                                  >
+                                  <ul aria-labelledby={`mobile-group-${group.id}`} className="mt-1">
                                     {group.items.map((service) => (
                                       <li key={service.href}>
                                         <Link
@@ -111,7 +110,7 @@ export function MobileMenu({ open, onClose, groups, nav }: MobileMenuProps) {
                                           aria-current={
                                             pathname === service.href ? "page" : undefined
                                           }
-                                          className="flex min-h-11 items-center rounded-md text-body text-muted hover:text-primary aria-[current=page]:font-semibold aria-[current=page]:text-primary"
+                                          className="flex min-h-11 items-center text-body text-mist-300 hover:text-ivory-50 aria-[current=page]:text-lamp-400"
                                         >
                                           {service.label}
                                         </Link>
@@ -121,11 +120,16 @@ export function MobileMenu({ open, onClose, groups, nav }: MobileMenuProps) {
                                 </div>
                               ))}
                               <Link
-                                href={item.href}
+                                href={copy.menu.servicesOverview.href}
                                 onClick={onClose}
-                                className="inline-flex min-h-11 items-center gap-1.5 rounded-md text-small font-semibold text-primary"
+                                className="inline-flex min-h-11 items-center gap-2 text-small font-semibold text-lamp-400"
                               >
-                                All services <ArrowRight aria-hidden="true" className="size-4" />
+                                {copy.menu.servicesOverview.label}
+                                <ArrowRight
+                                  aria-hidden="true"
+                                  strokeWidth={1.5}
+                                  className="size-4"
+                                />
                               </Link>
                             </div>
                           </div>
@@ -133,17 +137,13 @@ export function MobileMenu({ open, onClose, groups, nav }: MobileMenuProps) {
                       </li>
                     );
                   }
-
                   return (
-                    <li key={item.href}>
+                    <li key={item.href} className="border-b border-line-dark">
                       <Link
                         href={item.href}
                         onClick={onClose}
                         aria-current={active ? "page" : undefined}
-                        className={cn(
-                          "flex min-h-13 items-center rounded-md text-lg font-semibold",
-                          active ? "text-primary" : "text-ink hover:text-primary",
-                        )}
+                        className={cn(linkClass, active ? "text-lamp-400" : "text-ivory-50")}
                       >
                         {item.label}
                       </Link>
@@ -153,32 +153,53 @@ export function MobileMenu({ open, onClose, groups, nav }: MobileMenuProps) {
               </ul>
             </nav>
 
-            <Button
-              href={nav.cta.href}
-              data-cta="mobile-menu"
-              onClick={onClose}
-              size="lg"
-              className="mt-6 w-full"
-              rightIcon={<ArrowRight aria-hidden="true" className="size-5" />}
-            >
-              {nav.cta.label}
-            </Button>
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+              <Button href={copy.book.href} size="lg" data-cta="mobile-menu" onClick={onClose}>
+                {copy.book.label}
+              </Button>
+              <Button href={copy.cta.href} variant="outline" size="lg" onClick={onClose}>
+                {copy.cta.label}
+              </Button>
+            </div>
 
-            <ul className="mt-6 space-y-1 text-small">
-              <ContactRow
-                icon={<Mail aria-hidden="true" className="size-4" />}
-                {...nav.contact.email}
-              />
-              <ContactRow
-                icon={<MessageCircle aria-hidden="true" className="size-4" />}
-                {...nav.contact.whatsapp}
-                prefix="WhatsApp: "
-                external
-              />
+            <ul className="mt-8 space-y-1 text-small text-mist-300">
+              <li className="flex min-h-11 items-center gap-3">
+                <Mail aria-hidden="true" strokeWidth={1.5} className="size-5 text-lamp-400" />
+                {contact.email.href ? (
+                  <a href={contact.email.href} className="link-underline hover:text-ivory-50">
+                    {contact.email.label}
+                  </a>
+                ) : (
+                  <PlaceholderText text={contact.email.label} />
+                )}
+              </li>
+              <li className="flex min-h-11 items-center gap-3">
+                <MessageCircle
+                  aria-hidden="true"
+                  strokeWidth={1.5}
+                  className="size-5 text-lamp-400"
+                />
+                {contact.whatsapp.href ? (
+                  <a
+                    href={contact.whatsapp.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    data-cta="mobile-menu"
+                    className="link-underline hover:text-ivory-50"
+                  >
+                    WhatsApp {contact.whatsapp.label}
+                    <span className="sr-only"> (opens in a new tab)</span>
+                  </a>
+                ) : (
+                  <span>
+                    WhatsApp <PlaceholderText text={contact.whatsapp.label} />
+                  </span>
+                )}
+              </li>
             </ul>
 
             {nav.social.length > 0 ? (
-              <ul className="mt-5 flex flex-wrap gap-2">
+              <ul className="mt-6 flex flex-wrap gap-2">
                 {nav.social.map((social) => (
                   <li key={social.key}>
                     <a
@@ -186,7 +207,7 @@ export function MobileMenu({ open, onClose, groups, nav }: MobileMenuProps) {
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label={`${social.label} (opens in a new tab)`}
-                      className="inline-flex size-11 items-center justify-center rounded-pill border border-border text-ink transition-colors duration-200 hover:border-primary hover:text-primary"
+                      className="inline-flex size-11 items-center justify-center rounded-button border border-line-dark text-ivory-50 hover:border-lamp-500"
                     >
                       <SocialIcon name={social.key} className="size-5" />
                     </a>
@@ -198,49 +219,5 @@ export function MobileMenu({ open, onClose, groups, nav }: MobileMenuProps) {
         </div>
       ) : null}
     </dialog>
-  );
-}
-
-function ContactRow({
-  icon,
-  label,
-  href,
-  prefix = "",
-  external = false,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  href?: string;
-  prefix?: string;
-  external?: boolean;
-}) {
-  const content = (
-    <>
-      <span className="flex size-8 shrink-0 items-center justify-center rounded-pill bg-soft text-primary">
-        {icon}
-      </span>
-      <span>
-        {prefix}
-        {label}
-      </span>
-    </>
-  );
-  const rowClass = "flex min-h-11 items-center gap-3 rounded-md text-muted";
-
-  // Until the real value replaces the [PLACEHOLDER], show it as plain text, not a broken link.
-  return (
-    <li>
-      {href ? (
-        <a
-          href={href}
-          className={cn(rowClass, "hover:text-primary")}
-          {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-        >
-          {content}
-        </a>
-      ) : (
-        <span className={rowClass}>{content}</span>
-      )}
-    </li>
   );
 }

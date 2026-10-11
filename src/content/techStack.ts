@@ -1,118 +1,59 @@
+import type { StackBand } from "@/components/ui/StackMap";
+
 /**
- * Technology categories, shown on the home page and reused by About, Why Me and Services.
- * Keep only tools that are genuinely used in real work — remove anything that isn't.
+ * The stack map: one band per layer of a product, with the tools used there. Shown on Home and
+ * reused by /about and /collaborate. Keep only tools that are genuinely used in real work.
  */
-
-export type TechFilter = "web" | "mobile" | "ai-data" | "cloud";
-
-export type TechCategory = {
-  id: string;
-  title: string;
-  subtitle: string;
-  /** Small pill in the card's top-right corner. */
-  tag: string;
-  /** Which filter tabs show this card ("All" always does). */
-  filters: TechFilter[];
-  points: string[];
-  tech: string[];
-};
-
-export const techFilters: { id: "all" | TechFilter; label: string }[] = [
-  { id: "all", label: "All" },
-  { id: "web", label: "Web" },
-  { id: "mobile", label: "Mobile" },
-  { id: "ai-data", label: "AI & Data" },
-  { id: "cloud", label: "Cloud" },
-];
-
-export const techCategories: TechCategory[] = [
+export const stackBands: StackBand[] = [
   {
-    id: "frontend",
-    title: "Frontend",
-    subtitle: "Fast, responsive interfaces",
-    tag: "Web UI",
-    filters: ["web"],
-    points: [
-      "Responsive layouts and design systems",
-      "Accessible components",
-      "Animation and micro-interactions",
+    id: "interface",
+    label: "Interface",
+    note: "What people see and tap: responsive, accessible screens and the designs behind them.",
+    chips: [
+      "HTML5",
+      "CSS3",
+      "JavaScript",
+      "TypeScript",
+      "React",
+      "Next.js",
+      "Tailwind CSS",
+      "Figma",
+      "FigJam",
     ],
-    tech: ["HTML5", "CSS3", "JavaScript", "TypeScript", "React", "Next.js", "Tailwind CSS"],
   },
   {
-    id: "backend",
-    title: "Backend",
-    subtitle: "Robust APIs and business logic",
-    tag: "APIs",
-    filters: ["web", "cloud"],
-    points: [
-      "REST and GraphQL APIs",
-      "Auth, roles and permissions",
-      "Queues, scheduled jobs and integrations",
-    ],
-    tech: ["Node.js", "Express", "NestJS", "Python", "FastAPI", "Django"],
+    id: "logic",
+    label: "Logic & APIs",
+    note: "Business rules, sign-in and roles, queues, scheduled jobs and integrations.",
+    chips: ["Node.js", "Express", "NestJS", "Python", "FastAPI", "Django", "REST", "GraphQL"],
+  },
+  {
+    id: "data",
+    label: "Data",
+    note: "Relational and document stores, migrations, backups and quick indexed queries.",
+    chips: ["PostgreSQL", "MySQL", "MongoDB", "Redis"],
+  },
+  {
+    id: "infrastructure",
+    label: "Infrastructure",
+    note: "Pipelines, containers, hosting, monitoring, logs and alerts.",
+    chips: ["AWS", "GCP", "Docker", "Kubernetes", "GitHub Actions", "Nginx"],
+  },
+  {
+    id: "intelligence",
+    label: "Intelligence (AI)",
+    note: "LLM features, answers drawn from your own data, and automated workflows.",
+    chips: ["OpenAI / Claude / Gemini APIs", "LangChain", "Vector databases", "RAG", "Python"],
   },
   {
     id: "mobile",
-    title: "Mobile",
-    subtitle: "Android and iOS from one codebase",
-    tag: "Apps",
-    filters: ["mobile"],
-    points: [
-      "Cross-platform MVPs",
-      "Push notifications and offline mode",
-      "Play Store and App Store ready",
-    ],
-    tech: ["React Native", "Expo", "Flutter", "Firebase"],
-  },
-  {
-    id: "design",
-    title: "UI/UX Design",
-    subtitle: "From flows to pixel-perfect screens",
-    tag: "Product UX",
-    filters: ["web", "mobile"],
-    points: [
-      "User flows and wireframes",
-      "Clickable prototypes",
-      "Design systems and style guides",
-    ],
-    tech: ["Figma", "FigJam"],
-  },
-  {
-    id: "databases",
-    title: "Databases",
-    subtitle: "Reliable data layers",
-    tag: "Data",
-    filters: ["web", "ai-data"],
-    points: ["Relational and document models", "Migrations and backups", "Fast, indexed queries"],
-    tech: ["PostgreSQL", "MySQL", "MongoDB", "Redis"],
-  },
-  {
-    id: "cloud",
-    title: "Cloud & DevOps",
-    subtitle: "Deploy, scale, monitor",
-    tag: "Infra",
-    filters: ["cloud"],
-    points: ["CI/CD pipelines", "Containerised deployments", "Monitoring, logs and alerts"],
-    tech: ["AWS", "GCP", "Docker", "Kubernetes", "GitHub Actions", "Nginx"],
-  },
-  {
-    id: "ai",
-    title: "AI & Data",
-    subtitle: "Practical AI features",
-    tag: "AI",
-    filters: ["ai-data"],
-    points: [
-      "LLM features and chatbots",
-      "Search and answers over your own data (RAG)",
-      "Workflow automation and agents",
-    ],
-    tech: ["OpenAI / Claude / Gemini APIs", "LangChain", "Vector databases", "Python"],
+    label: "Mobile",
+    note: "Android and iOS from one codebase, with offline mode and push notifications.",
+    chips: ["React Native", "Expo", "Flutter", "Firebase"],
   },
 ];
 
-export function getTechByFilter(filter: "all" | TechFilter): TechCategory[] {
-  return filter === "all"
-    ? techCategories
-    : techCategories.filter((category) => category.filters.includes(filter));
+/** Bands by id, for pages that show a subset. */
+export function getStackBands(ids: string[]): StackBand[] {
+  return ids.flatMap((id) => stackBands.filter((band) => band.id === id));
 }

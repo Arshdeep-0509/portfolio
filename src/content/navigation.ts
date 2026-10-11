@@ -1,60 +1,78 @@
-import { getService, getServicesByGroup, serviceGroups, type IconName } from "@/content/services";
+import { getService, getServicesByGroup, serviceGroups } from "@/content/services";
 import { siteConfig, type SocialKey } from "@/content/site";
+import { bookingHref } from "@/lib/booking";
 import { isPlaceholder } from "@/lib/constants";
 
 export type NavLink = { label: string; href: string };
 
-export type MegaMenuItem = NavLink & { description: string; icon: IconName };
+/** One service in the header menu, with what the preview panel shows. */
+export type ServicesMenuItem = NavLink & {
+  slug: string;
+  tagline: string;
+  /** The first three deliverables. */
+  deliverables: string[];
+};
 
-export type MegaMenuGroup = {
+export type ServicesMenuGroup = {
   id: string;
   label: string;
   description: string;
-  items: MegaMenuItem[];
+  items: ServicesMenuItem[];
 };
 
-export type MainNavItem = NavLink & { megaMenu?: MegaMenuGroup[] };
+export type MainNavItem = NavLink & { hasMenu?: boolean };
 
-/** A footer entry is a link, or an action handled in the browser (e.g. reopening cookie settings). */
+/** A footer entry is a link, or an action handled in the browser (reopening cookie settings). */
 export type FooterItem = NavLink | { label: string; action: "cookie-settings" };
 
 export type FooterColumn = { title: string; links: FooterItem[] };
 
 export type SocialLink = NavLink & { key: SocialKey };
 
-const blogLinks: NavLink[] = siteConfig.featureFlags.blog
-  ? [{ label: "Insights", href: "/insights" }]
+const journalLinks: NavLink[] = siteConfig.featureFlags.blog
+  ? [{ label: "Journal", href: "/journal" }]
   : [];
 
-export const servicesMegaMenu: MegaMenuGroup[] = serviceGroups.map((group) => ({
+export const servicesMenu: ServicesMenuGroup[] = serviceGroups.map((group) => ({
   id: group.id,
   label: group.label,
   description: group.description,
   items: getServicesByGroup(group.id).map((service) => ({
-    label: service.shortTitle,
+    slug: service.slug,
+    label: service.title,
     href: `/services/${service.slug}`,
-    description: service.tagline,
-    icon: service.icon,
+    tagline: service.tagline,
+    deliverables: service.deliverables.slice(0, 3),
   })),
 }));
 
 export const mainNav: MainNavItem[] = [
-  { label: "Home", href: "/" },
-  { label: "Services", href: "/services", megaMenu: servicesMegaMenu },
+  { label: "Services", href: "/services", hasMenu: true },
   { label: "Work", href: "/work" },
-  { label: "Why Me", href: "/why-me" },
+  { label: "Approach", href: "/approach" },
   { label: "About", href: "/about" },
-  { label: "Careers", href: "/careers" },
+  ...journalLinks,
+  { label: "Collaborate", href: "/collaborate" },
 ];
 
-export const ctaNav: NavLink = { label: "Let's Talk", href: "/contact" };
-
-/** Highlighted card on the right of the Services mega menu. */
-export const megaMenuPromo = {
-  title: "Not sure what you need?",
-  text: "Book a free 30-minute call. We'll work out the right next step together.",
-  cta: { label: "Book a free call", href: "/contact" },
-  allServices: { label: "View all services", href: "/services" },
+export const headerCopy = {
+  cta: { label: "Start a conversation", href: "/contact" },
+  availability: {
+    available: "Available for new projects",
+    limited: "Limited availability",
+    booked: "Booked for now",
+  },
+  timezone: "IST",
+  menu: {
+    open: "Menu",
+    close: "Close",
+    dialogLabel: "Site menu",
+    servicesOverview: { label: "All services, at a glance", href: "/services" },
+    previewHint: "Point at a service to preview it.",
+    previewCta: "Read more",
+    deliverablesLabel: "You receive",
+  },
+  book: { label: "Book a free call", href: bookingHref },
 };
 
 /** Footer link to a service, taking its label from services.ts so titles never drift. */
@@ -66,13 +84,13 @@ function serviceLink(slug: string, label?: string): NavLink {
 
 export const footerNav: FooterColumn[] = [
   {
-    title: "Company",
+    title: "Explore",
     links: [
+      { label: "Approach", href: "/approach" },
+      { label: "Selected work", href: "/work" },
       { label: "About", href: "/about" },
-      { label: "Why Me", href: "/why-me" },
-      { label: "Work", href: "/work" },
-      ...blogLinks,
-      { label: "Careers", href: "/careers" },
+      ...journalLinks,
+      { label: "Collaborate", href: "/collaborate" },
       { label: "Contact", href: "/contact" },
     ],
   },
@@ -82,11 +100,11 @@ export const footerNav: FooterColumn[] = [
       serviceLink("mvp-development"),
       serviceLink("web-applications"),
       serviceLink("mobile-applications", "Mobile Apps"),
-      // A real anchor (the Design group band), so it works without JavaScript too.
-      { label: "UI/UX Design", href: "/services#group-design" },
+      serviceLink("ui-design", "UI Design"),
       serviceLink("ai-integration", "AI Integration"),
       serviceLink("devops-cloud"),
-      { label: "All services →", href: "/services" },
+      serviceLink("digital-marketing", "Digital Marketing & SEO"),
+      { label: "Every service", href: "/services" },
     ],
   },
   {
@@ -117,7 +135,7 @@ export const socialLinks: SocialLink[] = (Object.keys(socialLabels) as SocialKey
   .filter((key) => !isPlaceholder(siteConfig.social[key]))
   .map((key) => ({ key, label: socialLabels[key], href: siteConfig.social[key] }));
 
-/** Email / WhatsApp / location rows for the footer and mobile menu. Placeholders render as text. */
+/** Email / WhatsApp / location for the header, footer and menus. Placeholders render as text. */
 export const contactDetails = {
   email: {
     label: siteConfig.email,
@@ -127,6 +145,24 @@ export const contactDetails = {
     label: siteConfig.phone,
     href: isPlaceholder(siteConfig.whatsappUrl) ? undefined : siteConfig.whatsappUrl,
   },
+  city: siteConfig.location.city,
   location: `${siteConfig.location.city}, ${siteConfig.location.country}`,
-  hours: siteConfig.businessHours,
+};
+
+/** Copy for the global footer and the closing QuickStart section. */
+export const footerCopy = {
+  newsletter: {
+    title: "Occasional notes, by email",
+    text: "Short, practical write-ups on first versions, AI and infrastructure. No spam; leave any time.",
+    emailLabel: "Your email",
+    submit: "Subscribe",
+    success: "You're on the list. Thank you.",
+    error: "That didn't go through. Please try again shortly.",
+    privacy: { label: "Privacy Policy", href: "/privacy-policy" },
+  },
+  contact: {
+    title: "Say hello",
+    localTime: "Local time in",
+  },
+  rights: "All rights reserved.",
 };

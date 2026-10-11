@@ -1,0 +1,77 @@
+---
+title: Putting AI in your product while keeping the bill sane
+description: Picking AI features that earn their cost, prototyping them cheaply, measuring accuracy, and holding monthly model spend steady.
+date: 2026-10-02
+category: AI
+tags: [ai, llm, rag, costs]
+services: [ai-integration]
+cover: /images/journal/cover-placeholder.svg
+coverAlt: Stand-in cover art
+featured: false
+draft: true
+---
+
+Nearly every founder I talk with feels some pull to "do something with AI". The push may come from
+investors, from rivals, or from a genuinely good idea. Whatever the source, the danger is the same:
+weeks of effort and a surprisingly large bill for a feature that demos nicely, sounds certain, and is
+wrong just often enough that nobody relies on it.
+
+The AI features that earn their keep tend to have three things in common. They aim at a narrow,
+repetitive job with a clear correct answer — common support questions, fields on an invoice, the
+right paragraph in a stack of documents. They draw on your own data rather than the model's general
+knowledge. And they're measured before release against real cases from your business, so you know
+how often they're right instead of hoping.
+
+Spending is the other half. Models charge per token, which is easy to overlook during testing and
+easy to be startled by in production. Fortunately most of that cost is in your hands: use a smaller
+model where it's good enough, send less text, cache repeated work, and set firm limits before real
+users show up.
+
+This post covers how I approach it: finding a task worth automating, building a cheap prototype in
+a week or two, scoring it with a test set, and the few engineering habits that keep a monthly AI
+invoice dull. You don't need a research team — only the discipline you'd give any other feature.
+
+## Start from a task, not a technology
+
+[TO WRITE]
+
+## Prototype cheaply, on real data
+
+[TO WRITE]
+
+## Measure it before release
+
+### Build a test set from real cases
+
+[TO WRITE]
+
+### Agree what "good enough" means
+
+[TO WRITE]
+
+## Hold costs steady
+
+<Callout type="warning">
+  Put spending caps and alerts in place with your model provider before launch, not after the first
+  invoice arrives.
+</Callout>
+
+A small check in code helps as well:
+
+```ts
+// Turn away requests that would take today's spend past the daily budget.
+export async function withinBudget(estimatedCost: number) {
+  const spentToday = await getSpendForToday(); // from your usage log
+  return spentToday + estimatedCost <= DAILY_AI_BUDGET;
+}
+```
+
+[TO WRITE] Smaller models, caching, shorter context, batching.
+
+## Your data and privacy
+
+[TO WRITE]
+
+## A pre-launch checklist for AI features
+
+[TO WRITE]

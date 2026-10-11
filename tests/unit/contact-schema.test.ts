@@ -4,6 +4,7 @@ import {
   contactFormSchema,
   contactRequestSchema,
   serviceFromQuery,
+  servicesFromQuery,
 } from "@/lib/schemas/contact";
 
 const valid = {
@@ -38,10 +39,22 @@ describe("contactFormSchema", () => {
     expect(contactFormSchema.safeParse({ ...valid, email: "not-an-email" }).success).toBe(false);
   });
 
-  it("requires a message of at least 30 characters", () => {
-    const result = contactFormSchema.safeParse({ ...valid, message: "Too short" });
+  it("requires a message of at least 30 characters for project enquiries", () => {
+    const result = contactFormSchema.safeParse({ ...valid, message: "Twenty-odd characters" });
     expect(result.success).toBe(false);
-    expect(result.error?.issues[0]?.message).toMatch(/at least 30/);
+    expect(result.error?.issues.map((issue) => issue.message).join(" ")).toMatch(/at least 30/);
+  });
+
+  it("requires a phone number for project enquiries", () => {
+    const result = contactFormSchema.safeParse({ ...valid, phone: "" });
+    expect(result.success).toBe(false);
+    expect(result.error?.issues[0]?.path).toEqual(["phone"]);
+  });
+
+  it("accepts a quick enquiry with no phone and a one-line message", () => {
+    const quick = { ...valid, service: "quick", phone: "", message: "A booking app idea" };
+    expect(contactFormSchema.safeParse(quick).success).toBe(true);
+    expect(contactFormSchema.safeParse({ ...quick, message: "Hi" }).success).toBe(false);
   });
 
   it("requires consent to be ticked", () => {
@@ -82,8 +95,19 @@ describe("serviceFromQuery", () => {
     expect(serviceFromQuery(null, "maintenance")).toBe("maintenance");
   });
 
-  it("ignores unknown values", () => {
+  it("ignores unknown values and never prefills the quick option", () => {
     expect(serviceFromQuery("nope", "also-nope")).toBeUndefined();
+    expect(serviceFromQuery("quick", null)).toBeUndefined();
+  });
+});
+
+describe("servicesFromQuery", () => {
+  it("collects bundles, picker slugs and single services without duplicates", () => {
+    const params = new URLSearchParams(
+      "bundle=launch-kit&services=ai-integration,mvp-development&service=devops-cloud",
+    );
+    expect(servicesFromQuery(params)).toEqual(["mvp", "ui-ux", "devops", "ai"]);
+    expect(servicesFromQuery(new URLSearchParams("bundle=unknown"))).toEqual([]);
   });
 });
 

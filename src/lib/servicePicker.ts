@@ -1,9 +1,9 @@
-import type { PickerQuestion } from "@/content/servicesPage";
+import type { PickerQuestion } from "@/content/home";
 
 export type PickerAnswers = Partial<Record<PickerQuestion["id"], string>>;
 
 /**
- * Ranks services for the "Not sure where to start?" picker. Each answer adds its question's weight
+ * Ranks services for the "Not sure where you fit?" picker on Home. Each answer adds its question's weight
  * to the services it points at; ties keep the order in which services were first suggested,
  * which favours the more specific answers (building → stage → timeline).
  */

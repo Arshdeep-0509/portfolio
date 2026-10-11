@@ -1,50 +1,43 @@
-import type { IconName } from "@/content/services";
-
 /**
  * Copy for /pay (noindex, not linked from navigation). The Razorpay button id and payment link
  * live in siteConfig.payments.
  */
 export const payContent = {
   seo: {
-    title: "Pay an Invoice",
-    description: "Securely pay an invoice or project advance to Arshdeep Singh through Razorpay.",
+    title: "Invoice Payments",
+    description:
+      "Settle an invoice or an advance with Arshdeep Singh via Razorpay's secure checkout.",
   },
   hero: {
-    eyebrow: "Payments",
-    title: "Pay an invoice or deposit",
-    highlight: "invoice or deposit",
-    subtitle:
-      "A quick, secure way to pay a project advance, milestone or monthly invoice — by UPI, card or net banking.",
+    label: "Payments",
+    title: "Settle an invoice or a deposit",
+    text: "Advances, milestone payments and monthly invoices can all be paid here in a minute, by UPI, card or net banking.",
   },
   steps: {
-    title: "How it works",
+    title: "How payment works",
     items: [
-      "Have your invoice handy — you'll need the invoice number and the amount.",
-      "Click the payment button and enter the amount and your details in Razorpay's secure checkout.",
-      "Pay by UPI, card or net banking. Razorpay handles the payment; this site never sees your card or bank details.",
-      "You'll get a receipt from Razorpay straight away, and I'll confirm and mark the invoice as paid within one business day.",
+      "Keep your invoice nearby — you'll need its number and the amount.",
+      "Press the payment button and fill in the sum and your details on Razorpay's protected checkout.",
+      "Choose UPI, card or net banking. Razorpay processes it, and your card or bank details never touch this site.",
+      "Razorpay sends a receipt at once, and I confirm and mark the invoice paid within one business day.",
     ],
   },
   methods: {
-    title: "Accepted payment methods",
-    items: [
-      { icon: "Smartphone", label: "UPI (GPay, PhonePe, Paytm…)" },
-      { icon: "CreditCard", label: "Credit and debit cards" },
-      { icon: "Landmark", label: "Net banking" },
-    ] satisfies { icon: IconName; label: string }[],
+    title: "Ways to pay",
+    items: ["UPI (GPay, PhonePe, Paytm…)", "Debit or credit card", "Net banking"],
   },
   security:
-    "Payments are processed by Razorpay, a PCI DSS–compliant payment gateway. Card details are entered on Razorpay's checkout and are never collected or stored by this website.",
+    "Razorpay, a PCI DSS–compliant gateway, handles every payment. You type card details into Razorpay's own checkout; this website never receives or keeps them.",
   card: {
-    title: "Make a payment",
-    text: "Enter the amount shown on your invoice and add the invoice number in the notes.",
-    linkCta: "Pay securely with Razorpay",
+    title: "Pay now",
+    text: "Enter the amount on your invoice and put the invoice number in the notes.",
+    linkCta: "Pay securely through Razorpay",
     placeholder:
-      "Online payment isn't set up yet. Please pay using the bank or UPI details on your invoice, or email me for a payment link.",
-    other: "Prefer a bank transfer? The account details are on your invoice.",
+      "Paying online isn't available just yet. Use the bank or UPI details printed on your invoice, or email me and I'll send a payment link.",
+    other: "Would a bank transfer suit you better? The account details are on your invoice.",
   },
   policies: {
-    text: "By paying you agree to the",
+    text: "Paying means you accept the",
     terms: { label: "Terms & Conditions", href: "/terms-and-conditions" },
     refund: { label: "Refund & Cancellation Policy", href: "/refund-policy" },
   },

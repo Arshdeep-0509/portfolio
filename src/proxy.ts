@@ -25,16 +25,16 @@ function mdxSlugExists(collection: MdxCollection, slug: string): boolean {
 export function proxy(request: NextRequest) {
   const [, section, slug, ...rest] = request.nextUrl.pathname.split("/");
   if (!slug || rest.length > 0) return NextResponse.next();
-  // Section-level metadata routes (e.g. /services/opengraph-image) aren't slugs.
-  if (/^(opengraph|twitter)-image/.test(slug)) return NextResponse.next();
+  // Section-level metadata routes (e.g. /services/opengraph-image) and the journal feed aren't slugs.
+  if (/^(opengraph|twitter)-image/.test(slug) || slug === "rss.xml") return NextResponse.next();
 
   const exists =
     section === "services"
       ? serviceSlugs.has(slug)
       : section === "work"
         ? mdxSlugExists("work", slug)
-        : section === "insights"
-          ? siteConfig.featureFlags.blog && mdxSlugExists("insights", slug)
+        : section === "journal"
+          ? siteConfig.featureFlags.blog && mdxSlugExists("journal", slug)
           : true;
 
   if (exists) return NextResponse.next();
@@ -43,5 +43,5 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/services/:slug", "/work/:slug", "/insights/:slug"],
+  matcher: ["/services/:slug", "/work/:slug", "/journal/:slug"],
 };

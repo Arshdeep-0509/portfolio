@@ -21,7 +21,8 @@ import {
 import { verifyTurnstile } from "@/lib/turnstile";
 
 /**
- * POST /api/contact — JSON from the project form on /contact.
+ * POST /api/contact — JSON from the project form on /contact and the QuickStart form
+ * (service "quick") at the foot of other pages.
  *
  * 1. Validate with the shared strict zod schema (unknown fields are rejected).
  * 2. Spam: honeypot and a 3-second minimum fill time (bots get a fake success; nothing is stored
@@ -38,13 +39,13 @@ const rateLimited = createRateLimiter({ name: "contact", windowMs: 60 * 60 * 100
 const MAX_BODY_BYTES = 32 * 1024;
 
 const messages: Record<ContactErrorCode, string> = {
-  bad_request: "Something was wrong with that request. Please refresh the page and try again.",
-  invalid: "Please check the highlighted fields.",
+  bad_request: "That request couldn't be read. Refresh the page and send it again.",
+  invalid: "A few fields need another look.",
   rate_limited:
-    "Too many messages from your connection. Please try again in an hour, or email me directly.",
-  bot_check_failed: "We couldn't verify you're human. Please retry the check and send again.",
+    "Lots of messages have come from your connection. Wait an hour and retry, or write to me by email.",
+  bot_check_failed: "The human check didn't pass. Run it once more, then send again.",
   server_error:
-    "Something went wrong sending your message. Please try again, or email me directly.",
+    "Your message didn't go through on my side. Try once more, or write to me by email.",
 };
 
 function fail(
@@ -103,7 +104,8 @@ export async function POST(request: Request) {
     lead = await saveLead({
       name: data.name,
       email: data.email.toLowerCase(),
-      phone: `${data.phoneCountry} ${data.phone}`,
+      // Quick enquiries may leave the phone out; the column stays NOT NULL, so store "".
+      phone: data.phone ? `${data.phoneCountry} ${data.phone}` : "",
       company: data.company || null,
       service: data.service,
       budget: data.budget || null,

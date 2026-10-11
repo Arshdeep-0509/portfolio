@@ -2,113 +2,128 @@
 @plugin "@tailwindcss/typography";
 
 /* =============================================================================
-   DESIGN TOKENS
-   The raw values live here as CSS variables. The @theme blocks below map them
-   into Tailwind (v4 is configured in CSS; there is no tailwind.config.ts).
-   Components only ever use these utilities, never raw hex values.
+   SKYLAMP DESIGN TOKENS
+   A lamp in the night sky: deep night surfaces, warm paper surfaces, one saffron light.
+   Raw values live here as CSS variables; the @theme blocks below map them into Tailwind
+   (v4 is configured in CSS — there is no tailwind.config.ts). Components use the utilities,
+   never raw hex values. Token table and contrast notes: REBRAND.md.
    ========================================================================== */
 
 :root {
-  /* Brand */
-  --navy-950: #07172e;
-  --navy-900: #0b2545;
-  --blue-800: #16447f;
-  --primary: #1d5fd1;
-  --primary-hover: #174fb0;
-  --sky-400: #38bdf8;
-  --sky-200: #b9e6ff;
+  /* Night — dark surfaces */
+  --night-950: #0a0a12; /* deepest sky: hero, footer */
+  --night-900: #12121f; /* dark sections */
+  --night-800: #1c1b2e; /* cards on dark */
+  --dusk-700: #2e2a4f; /* indigo dusk, gradients on dark */
 
-  /* Surfaces */
-  --soft: #eef4ff;
-  --tint: #f5f8ff;
-  --bg: #f8fafc;
-  --surface: #ffffff;
+  /* Lamp — the one accent */
+  --lamp-500: #f5a524; /* fills: buttons, highlights. Never body text on paper (1.9:1). */
+  --lamp-400: #ffc15e; /* glow, hover, accent text on night (12:1) */
+  --lamp-700: #a65e00; /* accent text on ivory (4.7:1) */
+  --lamp-800: #9a5600; /* AA tint: accent text on sand, where --lamp-700 is 4.3:1 (4.9:1) */
+  --ember-500: #f2683c; /* flame orange, gradient end */
+  --starlight: #c9d2ff; /* tiny accents on dark: labels, star dots */
 
-  /* Text & lines */
-  --text: #0f172a;
-  --muted: #475569;
-  --subtle: #64748b; /* AA on white/--bg only — use --muted on --tint/--soft */
-  --border: #e2e8f0;
+  /* Paper — light surfaces */
+  --ivory-50: #fbf8f2; /* main light background */
+  --sand-100: #f3ede2; /* alternate light section */
 
-  /* Status */
-  --amber-500: #f59e0b;
-  --success: #16a34a; /* icons/borders only: 3.3:1 on white, too low for text */
-  --success-strong: #166534; /* text on --success-soft (6.5:1) */
-  --success-soft: #dcfce7;
-  --danger: #dc2626;
-  --danger-soft: #fee2e2;
+  /* Text */
+  --ink-900: #16141f; /* text on light (17:1 on ivory) */
+  --ink-600: #4a4658; /* muted text on light (8.6:1) */
+  --mist-300: #b8b4c6; /* muted text on dark (9.8:1 on night-950) */
 
-  /* Gradients */
-  --grad-hero: radial-gradient(circle at 0% 0%, #16447f 0%, #1d5fd1 55%, #0b2545 100%);
-  --grad-cta: linear-gradient(135deg, #1d5fd1, #0b2545);
-  --grad-section: radial-gradient(circle at 0% 0%, #f5f8ff 0%, #ffffff 70%);
-  --grad-footer: linear-gradient(90deg, #0b2545 0%, #0f3c68 100%);
+  /* Lines */
+  --line: #e6dfd3; /* hairlines on light */
+  --line-dark: rgb(255 255 255 / 0.1); /* hairlines on dark */
 
-  /* Shadows */
-  --shadow-card: 0 10px 30px -12px rgb(15 23 42 / 0.12);
-  --shadow-card-hover: 0 20px 40px -16px rgb(29 95 209 / 0.25);
-  --shadow-nav: 0 4px 20px rgb(15 23 42 / 0.06);
+  /* Status. The base values are for dots, icons and borders; the -700/-300 tints carry text. */
+  --success: #2f9e6e;
+  --success-700: #1f7a50; /* AA tint: success text on paper (5.0:1 ivory, 4.6:1 sand) */
+  --danger: #d64545;
+  --danger-700: #b83a3a; /* AA tint: error text on paper (5.4:1 ivory, 4.9:1 sand) */
+  --danger-300: #ff8a7a; /* AA tint: error text on night (8.6:1) */
+
+  /* Gradients and textures */
+  --grad-flame: linear-gradient(135deg, #ffc15e 0%, #f5a524 45%, #f2683c 100%);
+  --grad-horizon: radial-gradient(
+    120% 80% at 50% 115%,
+    rgb(245 165 36 / 0.3) 0%,
+    rgb(46 42 79 / 0.55) 38%,
+    #0a0a12 72%
+  );
+  /* Two offset layers of 1px star dots at 6% and 4%. Sizes/positions: the bg-stars utility. */
+  --stars:
+    radial-gradient(circle, rgb(201 210 255 / 0.06) 1px, transparent 1.5px),
+    radial-gradient(circle, rgb(201 210 255 / 0.04) 1px, transparent 1.5px);
+  /* Fractal noise tile; laid over ivory at 2.5% by the grain utility. */
+  --paper-grain: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+
+  /* Depth: cards are flat; only hover adds a lamp glow. */
+  --glow-card: 0 0 0 1px var(--lamp-500), 0 18px 40px -24px rgb(245 165 36 / 0.55);
 
   /* Layout */
-  --container-max: 1200px;
+  --container-max: 1240px;
   --gutter: 16px;
   --gutter-desktop: 24px;
-  --section-y: 64px;
-  --section-y-desktop: 96px;
-  --card-pad: 28px;
-  --header-h: 64px;
+  --section-y: 72px;
+  --section-y-desktop: 120px;
+  --strip-h: 0px; /* utility strip above the main bar: hidden on mobile */
+  --bar-h: 68px;
+  --header-h: calc(var(--strip-h) + var(--bar-h));
 
-  /* Motion */
-  --motion-fast: 200ms;
-  --motion-reveal: 500ms;
+  /* Motion: calm and slow */
+  --motion-fast: 220ms;
+  --motion-reveal: 700ms;
+  --ease-calm: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-/* The fixed header is 64px tall, 72px from lg. */
 @media (width >= 64rem) {
   :root {
-    --header-h: 72px;
+    --strip-h: 32px;
   }
 }
 
 /* -----------------------------------------------------------------------------
-   TONE — contextual colours that flip on dark backgrounds.
-   <Section background="dark|gradient"> and glass cards add .tone-dark or
-   .tone-gradient, so headings, labels and focus rings adapt automatically.
-   .tone-light restores the defaults, e.g. for a white card inside a dark section.
-   Values were chosen from measured contrast (see README › Design system).
+   TONES — contextual colours. <Section tone="…"> adds one of these classes so text, hairlines,
+   accents and focus rings inside pick readable values automatically. Every pairing below is
+   measured (scripts/contrast-check.mjs prints the table).
    -------------------------------------------------------------------------- */
 :root,
-.tone-light {
-  --tone-fg: var(--text);
-  --tone-muted: var(--muted);
-  --tone-highlight: var(--primary);
-  --tone-accent: var(--primary);
-  --tone-accent-text: var(--primary);
-  --focus-ring: var(--primary);
+.tone-ivory {
+  --fg: var(--ink-900);
+  --fg-muted: var(--ink-600);
+  --accent: var(--lamp-700);
+  --rule: var(--line);
+  --focus: var(--lamp-700);
+  --danger-fg: var(--danger-700);
+  --success-fg: var(--success-700);
+  --field-bg: #fffdf9;
 }
 
-/* Navy backgrounds: sky-400 reads at 7:1+, the primary ring would not (2.6:1). */
-.tone-dark {
-  --tone-fg: var(--surface);
-  --tone-muted: var(--sky-200);
-  --tone-highlight: var(--sky-400);
-  --tone-accent: var(--sky-400);
-  --tone-accent-text: var(--sky-400);
-  --focus-ring: var(--sky-400);
+.tone-sand {
+  --fg: var(--ink-900);
+  --fg-muted: var(--ink-600);
+  --accent: var(--lamp-800);
+  --rule: var(--line);
+  --focus: var(--lamp-800);
+  --danger-fg: var(--danger-700);
+  --success-fg: var(--success-700);
+  --field-bg: var(--ivory-50);
 }
 
-/* The hero gradient passes through #1D5FD1, where sky-400 falls to 2.7:1 and
-   sky-200 to 4.4:1. So: white body copy, sky-200 only for large highlighted words. */
-.tone-gradient {
-  --tone-fg: var(--surface);
-  --tone-muted: var(--surface);
-  --tone-highlight: var(--sky-200);
-  --tone-accent: var(--sky-200);
-  --tone-accent-text: var(--surface);
-  --focus-ring: var(--surface);
+.tone-night {
+  --fg: var(--ivory-50);
+  --fg-muted: var(--mist-300);
+  --accent: var(--lamp-400);
+  --rule: var(--line-dark);
+  --focus: var(--lamp-400);
+  --danger-fg: var(--danger-300);
+  --success-fg: var(--success);
+  --field-bg: rgb(255 255 255 / 0.04);
 }
 
-/* Reset Tailwind's default scales so only design tokens exist. */
+/* Reset Tailwind's default scales so only these tokens exist. */
 @theme {
   --color-*: initial;
   --radius-*: initial;
@@ -117,132 +132,80 @@
 }
 
 @theme inline {
-  --color-navy-950: var(--navy-950);
-  --color-navy-900: var(--navy-900);
-  --color-blue-800: var(--blue-800);
-  --color-primary: var(--primary);
-  --color-primary-hover: var(--primary-hover);
-  --color-sky-400: var(--sky-400);
-  --color-sky-200: var(--sky-200);
-  --color-soft: var(--soft);
-  --color-tint: var(--tint);
-  --color-bg: var(--bg);
-  --color-surface: var(--surface);
-  --color-ink: var(--text);
-  --color-muted: var(--muted);
-  --color-subtle: var(--subtle);
-  --color-border: var(--border);
-  --color-amber-500: var(--amber-500);
+  --color-night-950: var(--night-950);
+  --color-night-900: var(--night-900);
+  --color-night-800: var(--night-800);
+  --color-dusk-700: var(--dusk-700);
+  --color-lamp-400: var(--lamp-400);
+  --color-lamp-500: var(--lamp-500);
+  --color-lamp-700: var(--lamp-700);
+  --color-lamp-800: var(--lamp-800);
+  --color-ember-500: var(--ember-500);
+  --color-starlight: var(--starlight);
+  --color-ivory-50: var(--ivory-50);
+  --color-sand-100: var(--sand-100);
+  --color-ink-900: var(--ink-900);
+  --color-ink-600: var(--ink-600);
+  --color-mist-300: var(--mist-300);
+  --color-line: var(--line);
+  --color-line-dark: var(--line-dark);
   --color-success: var(--success);
-  --color-success-strong: var(--success-strong);
-  --color-success-soft: var(--success-soft);
+  --color-success-700: var(--success-700);
   --color-danger: var(--danger);
-  --color-danger-soft: var(--danger-soft);
-  --color-white: var(--surface);
+  --color-danger-700: var(--danger-700);
+  --color-danger-300: var(--danger-300);
 
-  --color-tone-fg: var(--tone-fg);
-  --color-tone-muted: var(--tone-muted);
-  --color-tone-highlight: var(--tone-highlight);
-  --color-tone-accent: var(--tone-accent);
-  --color-tone-accent-text: var(--tone-accent-text);
+  /* Contextual (see TONES) */
+  --color-fg: var(--fg);
+  --color-fg-muted: var(--fg-muted);
+  --color-accent: var(--accent);
+  --color-rule: var(--rule);
+  --color-danger-fg: var(--danger-fg);
+  --color-success-fg: var(--success-fg);
+  --color-field: var(--field-bg);
 
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-heading: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
+  --font-display: var(--font-fraunces), ui-serif, Georgia, serif;
+  --font-sans: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, monospace;
 
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  --radius-xl: 24px;
-  --radius-pill: 9999px;
+  /* 4px cards and inputs, 8px buttons; full rounding is reserved for status dots. */
+  --radius-card: 4px;
+  --radius-button: 8px;
+  --radius-dot: 999px;
 
-  --shadow-card: var(--shadow-card);
-  --shadow-card-hover: var(--shadow-card-hover);
-  --shadow-nav: var(--shadow-nav);
+  --shadow-glow: var(--glow-card);
 
-  --spacing-card: var(--card-pad);
-
-  --text-h1: clamp(2.25rem, 1.6rem + 3vw, 3.5rem);
-  --text-h1--line-height: 1.1;
-  --text-h2: clamp(1.75rem, 1.3rem + 2vw, 2.5rem);
-  --text-h2--line-height: 1.2;
-  --text-h3: 1.25rem;
-  --text-h3--line-height: 1.4;
-  --text-body: 1rem;
+  --text-h1: clamp(2.75rem, 1.8rem + 4.5vw, 5rem);
+  --text-h1--line-height: 1.02;
+  --text-h1--letter-spacing: -0.02em;
+  --text-h2: clamp(2rem, 1.4rem + 2.6vw, 3.25rem);
+  --text-h2--line-height: 1.06;
+  --text-h2--letter-spacing: -0.015em;
+  --text-h3: 1.375rem;
+  --text-h3--line-height: 1.3;
+  --text-body: 1.0625rem;
   --text-body--line-height: 1.7;
-  --text-small: 0.875rem;
+  --text-small: 0.9375rem;
   --text-small--line-height: 1.6;
-  --text-eyebrow: 0.75rem;
-  --text-eyebrow--line-height: 1.4;
-  --text-eyebrow--letter-spacing: 0.12em;
+  --text-label: 0.75rem;
+  --text-label--line-height: 1.4;
+  --text-label--letter-spacing: 0.08em;
 
-  --animate-marquee: marquee var(--marquee-duration, 40s) linear infinite;
-  --animate-modal-in: modal-in var(--motion-fast) ease-out;
-  --animate-backdrop-in: backdrop-in var(--motion-fast) ease-out;
-  --animate-sheet-in: sheet-in 280ms ease-out;
-  --animate-menu-in: menu-in var(--motion-fast) ease-out;
-  /* Hero entrance runs in CSS (not JS) so it starts on first paint and never delays LCP. */
-  --animate-hero-in: hero-in var(--motion-reveal) ease-out both;
-  /* The H1 is the LCP element: it slides but never fades, so it counts as painted on the first frame. */
-  --animate-hero-rise: hero-rise var(--motion-reveal) ease-out both;
-  --animate-hero-art-in: hero-art-in 700ms ease-out both;
-  --animate-bob: bob 4s ease-in-out infinite;
-  --animate-fade-in: fade-in 300ms ease-out;
+  --animate-rise: rise var(--motion-reveal) var(--ease-calm) both;
+  --animate-fade-in: fade-in 400ms var(--ease-calm) both;
+  --animate-overlay-in: overlay-in 320ms var(--ease-calm) both;
+  --animate-panel-in: panel-in var(--motion-fast) var(--ease-calm) both;
+  --animate-corner-in: corner-in 600ms var(--ease-calm) both;
+  --animate-lamp-breathe: lamp-breathe 6s ease-in-out infinite;
+  --animate-caret: caret 1s steps(1) infinite;
 
-  @keyframes marquee {
+  /* The hero H1 is the LCP element: it rises but never fades or clips, so it paints on frame one. */
+  @keyframes rise {
     from {
-      transform: translateX(0);
-    }
-    to {
-      transform: translateX(-50%);
-    }
-  }
-  @keyframes modal-in {
-    from {
-      opacity: 0;
-      transform: scale(0.96);
-    }
-    to {
-      opacity: 1;
-      transform: scale(1);
-    }
-  }
-  @keyframes sheet-in {
-    from {
-      opacity: 0;
-      transform: translateX(24px);
-    }
-    to {
-      opacity: 1;
-      transform: translateX(0);
-    }
-  }
-  @keyframes hero-in {
-    from {
-      opacity: 0;
-      transform: translateY(16px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-  @keyframes hero-rise {
-    from {
-      transform: translateY(16px);
+      transform: translateY(12px);
     }
     to {
       transform: translateY(0);
-    }
-  }
-  @keyframes hero-art-in {
-    from {
-      opacity: 0;
-      transform: scale(0.96);
-    }
-    to {
-      opacity: 1;
-      transform: scale(1);
     }
   }
   @keyframes fade-in {
@@ -253,32 +216,74 @@
       opacity: 1;
     }
   }
-  @keyframes bob {
+  @keyframes overlay-in {
+    from {
+      opacity: 0;
+      clip-path: inset(0 0 100% 0);
+    }
+    to {
+      opacity: 1;
+      clip-path: inset(0);
+    }
+  }
+  @keyframes panel-in {
+    from {
+      opacity: 0;
+      transform: translateY(-4px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  @keyframes corner-in {
+    from {
+      opacity: 0;
+      transform: translate(-16px, 24px);
+    }
+    to {
+      opacity: 1;
+      transform: translate(0, 0);
+    }
+  }
+  @keyframes lamp-breathe {
     0%,
     100% {
-      transform: translateY(0);
+      opacity: 0.55;
     }
     50% {
-      transform: translateY(-8px);
-    }
-  }
-  @keyframes menu-in {
-    from {
-      opacity: 0;
-      transform: translateY(-6px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-  @keyframes backdrop-in {
-    from {
-      opacity: 0;
-    }
-    to {
       opacity: 1;
     }
+  }
+  @keyframes caret {
+    50% {
+      opacity: 0;
+    }
+  }
+}
+
+/* BuildLog keyframes, referenced from inline styles (so they live outside @theme, which only
+   emits keyframes that a utility uses). Each line is uncovered one character per step by a
+   clip-path — repaint only, never layout (animating width cost ~1.5s of layout in Lighthouse). */
+@keyframes log-type {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+@keyframes log-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes log-caret {
+  50% {
+    opacity: 0;
   }
 }
 
@@ -303,42 +308,67 @@
   }
 }
 
-@utility bg-grad-hero {
-  background-image: var(--grad-hero);
+@utility bg-grad-flame {
+  background-image: var(--grad-flame);
 }
-@utility bg-grad-cta {
-  background-image: var(--grad-cta);
-}
-@utility bg-grad-section {
-  background-image: var(--grad-section);
-}
-@utility bg-grad-footer {
-  background-image: var(--grad-footer);
+@utility bg-grad-horizon {
+  background-image: var(--grad-horizon);
 }
 
-/* Translucent card for dark backgrounds. */
-@utility glass {
-  background-color: color-mix(in srgb, var(--surface) 8%, transparent);
-  border: 1px solid color-mix(in srgb, var(--surface) 18%, transparent);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+/* Star field for night sections: two offset dot layers. */
+@utility bg-stars {
+  background-image: var(--stars);
+  background-size:
+    46px 46px,
+    71px 71px;
+  background-position:
+    0 0,
+    23px 35px;
 }
 
-/* Dotted overlay for the CTA band (white dots at 6%). */
-@utility bg-dots {
-  background-image: radial-gradient(
-    color-mix(in srgb, var(--surface) 6%, transparent) 1.5px,
-    transparent 1.5px
-  );
-  background-size: 18px 18px;
+/* Paper grain over ivory: a pseudo-element, so it never affects layout or text colour. */
+@utility grain {
+  position: relative;
+  isolation: isolate;
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background-image: var(--paper-grain);
+    opacity: 0.025;
+  }
 }
 
-/* Faint blueprint grid, used by InfoCard. */
-@utility bg-grid {
-  background-image:
-    linear-gradient(color-mix(in srgb, var(--primary) 6%, transparent) 1px, transparent 1px),
-    linear-gradient(90deg, color-mix(in srgb, var(--primary) 6%, transparent) 1px, transparent 1px);
-  background-size: 24px 24px;
+/* Mono label: 12px uppercase IBM Plex Mono. */
+@utility label-mono {
+  font-family: var(--font-mono);
+  font-size: var(--text-label);
+  line-height: var(--text-label--line-height);
+  letter-spacing: var(--text-label--letter-spacing);
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+/* Fraunces with the SOFT axis at 50 and automatic optical sizing. */
+@utility font-display-soft {
+  font-family: var(--font-display);
+  font-variation-settings: "SOFT" 50;
+  font-optical-sizing: auto;
+}
+
+/* Animated underline for text links: grows from the left on hover and focus. */
+@utility link-underline {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 0% 1px;
+  transition: background-size var(--motion-fast) var(--ease-calm);
+  &:hover,
+  &:focus-visible {
+    background-size: 100% 1px;
+  }
 }
 
 /* =============================================================================
@@ -350,10 +380,9 @@
     -webkit-text-size-adjust: 100%;
   }
 
-  /* Anchor targets land below the fixed header, and below a sticky sub-nav when the page
-     has one (it sets --subnav-h on its wrapper). */
+  /* Anchor targets land below the fixed header (and a sticky sub-bar when a page sets --subnav-h). */
   [id] {
-    scroll-margin-top: calc(var(--header-h) + var(--subnav-h, 0px) + 16px);
+    scroll-margin-top: calc(var(--header-h) + var(--subnav-h, 0px) + 24px);
   }
 
   @media (prefers-reduced-motion: no-preference) {
@@ -363,8 +392,8 @@
   }
 
   body {
-    background-color: var(--bg);
-    color: var(--text);
+    background-color: var(--ivory-50);
+    color: var(--ink-900);
     font-size: var(--text-body);
     line-height: 1.7;
   }
@@ -373,55 +402,119 @@
   h2,
   h3,
   h4 {
-    font-family: var(--font-heading);
-    color: var(--tone-fg);
+    font-family: var(--font-display);
+    font-variation-settings: "SOFT" 50;
+    font-weight: 560;
+    color: var(--fg);
     text-wrap: balance;
   }
 
-  ::selection {
-    background-color: var(--sky-200);
-    color: var(--navy-950);
+  /* Emphasised words in headlines: Fraunces italic over a thin flame underline. */
+  :where(h1, h2, .headline) em {
+    font-family: var(--font-fraunces-italic), var(--font-display);
+    font-style: italic;
+    font-weight: 500;
+    padding-bottom: 6px;
+    background: var(--grad-flame) no-repeat left bottom / 100% 2px;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
   }
 
-  /* One visible focus style everywhere; colour adapts to the section tone. */
+  ::selection {
+    background-color: var(--lamp-400);
+    color: var(--ink-900);
+  }
+
+  /* One visible focus style everywhere; its colour follows the section tone. */
   :focus-visible {
-    outline: 2px solid var(--focus-ring);
-    outline-offset: 2px;
+    outline: 2px solid var(--focus);
+    outline-offset: 3px;
   }
 }
 
-/* Long-form prose (case studies, blog posts). The default Tailwind palette is reset, so the
-   typography plugin's colours are mapped onto the design tokens here. */
+/* -----------------------------------------------------------------------------
+   HEADER STATES
+   Solid by default: ivory bar, ink text, bottom hairline. On routes that open with a night hero
+   (data-over-hero, set from the pathname — see isOverHeroRoute in navTypes.ts) it is transparent
+   with ivory text until the page has scrolled 40px or a menu is open (data-solid). Both
+   attributes are in the server HTML, so the first paint is already right.
+
+   Deliberately no :has() here: a body-level :has() is re-checked on DOM changes across the page
+   and showed up as ~0.8s of extra style work in Lighthouse.
+   -------------------------------------------------------------------------- */
+#main {
+  padding-top: var(--header-h);
+}
+/* A night hero slides up under the fixed header; it adds the header height to its own padding. */
+[data-under-header] {
+  margin-top: calc(-1 * var(--header-h));
+}
+
+.site-bar {
+  background-color: rgb(251 248 242 / 0.94);
+  border-bottom: 1px solid var(--line);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  transition:
+    background-color 300ms var(--ease-calm),
+    border-color 300ms var(--ease-calm);
+}
+
+.site-header[data-over-hero]:not([data-solid]) .site-bar {
+  --fg: var(--ivory-50);
+  --fg-muted: var(--mist-300);
+  --accent: var(--lamp-400);
+  --rule: var(--line-dark);
+  --focus: var(--lamp-400);
+  background-color: transparent;
+  border-bottom-color: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+/* Long-form prose (case studies, journal posts). The default palette is reset, so the
+   typography plugin's colours are mapped onto the tokens here. */
 .prose {
-  --tw-prose-body: var(--muted);
-  --tw-prose-headings: var(--text);
-  --tw-prose-lead: var(--muted);
-  --tw-prose-links: var(--primary);
-  --tw-prose-bold: var(--text);
-  --tw-prose-counters: var(--muted);
-  --tw-prose-bullets: var(--primary);
-  --tw-prose-hr: var(--border);
-  --tw-prose-quotes: var(--text);
-  --tw-prose-quote-borders: var(--primary);
-  --tw-prose-captions: var(--muted);
-  --tw-prose-code: var(--navy-900);
+  --tw-prose-body: var(--ink-600);
+  --tw-prose-headings: var(--ink-900);
+  --tw-prose-lead: var(--ink-600);
+  --tw-prose-links: var(--lamp-700);
+  --tw-prose-bold: var(--ink-900);
+  --tw-prose-counters: var(--ink-600);
+  --tw-prose-bullets: var(--lamp-700);
+  --tw-prose-hr: var(--line);
+  --tw-prose-quotes: var(--ink-900);
+  --tw-prose-quote-borders: var(--lamp-500);
+  --tw-prose-captions: var(--ink-600);
+  --tw-prose-code: var(--ink-900);
   --tw-prose-pre-code: inherit;
-  --tw-prose-pre-bg: var(--navy-950);
-  --tw-prose-th-borders: var(--border);
-  --tw-prose-td-borders: var(--border);
+  --tw-prose-pre-bg: var(--night-950);
+  --tw-prose-th-borders: var(--line);
+  --tw-prose-td-borders: var(--line);
   font-size: 1.0625rem;
   line-height: 1.75;
 }
 .prose :where(h2, h3) {
-  font-family: var(--font-heading);
+  font-family: var(--font-display);
+  font-variation-settings: "SOFT" 50;
+  font-weight: 560;
   letter-spacing: -0.01em;
 }
+.prose :where(h2) {
+  font-size: 1.875rem;
+  line-height: 1.15;
+}
 .prose :where(a) {
-  text-underline-offset: 3px;
+  text-decoration-color: var(--lamp-500);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+}
+.prose :where(a):hover {
+  text-decoration-thickness: 2px;
 }
 .prose :where(:not(pre) > code) {
-  background: var(--soft);
-  border-radius: 6px;
+  background: var(--sand-100);
+  border-radius: 4px;
   padding: 0.15em 0.4em;
   font-weight: 500;
 }
@@ -430,7 +523,7 @@
   content: none;
 }
 .prose :where(pre) {
-  border-radius: var(--radius-lg);
+  border-radius: 4px;
   padding: 1.1rem 1.25rem;
   font-size: 0.875rem;
 }
@@ -443,28 +536,51 @@ mark[data-placeholder] {
   background: transparent;
   color: inherit;
   font-weight: 600;
-  text-decoration: underline dashed var(--amber-500) 2px;
+  text-decoration: underline dashed var(--lamp-500) 2px;
   text-underline-offset: 4px;
 }
 
-/* Scroll reveal (see components/ui/Reveal.tsx). Hidden until RevealObserver marks it. */
+/* -----------------------------------------------------------------------------
+   MOTION
+   -------------------------------------------------------------------------- */
+
+/* "Glow-in" scroll reveal (components/ui/Reveal.tsx): hidden until RevealObserver marks it. */
 [data-reveal] {
   opacity: 0;
-  transform: translateY(16px);
+  filter: blur(8px);
+  transform: translateY(12px);
   transition:
-    opacity var(--motion-reveal) ease-out,
-    transform var(--motion-reveal) ease-out;
+    opacity var(--motion-reveal) var(--ease-calm),
+    filter var(--motion-reveal) var(--ease-calm),
+    transform var(--motion-reveal) var(--ease-calm);
   transition-delay: var(--reveal-delay, 0ms);
 }
 [data-reveal][data-revealed] {
   opacity: 1;
+  filter: none;
   transform: none;
 }
 
-/* Nothing moves when the user asks for reduced motion. */
+/* Headline mask: the title is wiped in from the top, so its lines appear one after another. */
+[data-reveal="mask"] {
+  opacity: 1;
+  filter: none;
+  transform: none;
+  clip-path: inset(0 0 100% 0);
+  transition: clip-path 1100ms var(--ease-calm);
+}
+[data-reveal="mask"][data-revealed] {
+  clip-path: inset(0 0 -12% 0);
+}
+
+/* Nothing moves when the visitor asks for reduced motion. */
 @media (prefers-reduced-motion: reduce) {
-  [data-reveal] {
+  [data-reveal],
+  [data-reveal="mask"] {
+    opacity: 1;
+    filter: none;
     transform: none;
+    clip-path: none;
   }
 
   *,

@@ -2,28 +2,42 @@ import { z } from "zod";
 import "@/lib/schemas/zodJitless";
 
 /**
- * Shared by the contact form (client) and POST /api/contact (server). Strict objects: any field
+ * Shared by the contact forms (client) and POST /api/contact (server). Strict objects: any field
  * that isn't listed here is rejected. Option lists live here (not in src/content) because both
  * validation and the email templates depend on their ids.
+ *
+ * Two forms post here: the full project form on /contact, and the short QuickStart form at the
+ * foot of every other page, which sends service "quick" — the only case where the phone number
+ * may be left out and a one-line message is enough.
  */
 
 export const MESSAGE_MIN = 30;
+/** QuickStart asks for a one-line idea. */
+export const QUICK_MESSAGE_MIN = 10;
 export const MESSAGE_MAX = 3000;
 /** Submissions faster than this after the form appeared are treated as bots. */
 export const MIN_FILL_MS = 3000;
 
+export const QUICK_SERVICE = "quick";
+
 export const serviceOptions = [
-  { id: "mvp", label: "Build an MVP" },
-  { id: "web-app", label: "Web application" },
-  { id: "mobile-app", label: "Mobile app" },
-  { id: "ui-ux", label: "UI/UX design" },
-  { id: "ai", label: "AI integration or automation" },
-  { id: "devops", label: "DevOps / cloud setup" },
-  { id: "marketing", label: "Digital or growth marketing" },
-  { id: "consultation", label: "Product / tech consultation" },
-  { id: "maintenance", label: "Bug fixing or maintenance" },
-  { id: "other", label: "Other" },
+  { id: "mvp", label: "A first version (MVP)" },
+  { id: "web-app", label: "A web application" },
+  { id: "mobile-app", label: "A mobile app" },
+  { id: "ui-ux", label: "UI or UX design" },
+  { id: "ai", label: "AI features or automation" },
+  { id: "devops", label: "DevOps or cloud setup" },
+  { id: "marketing", label: "Digital marketing, SEO or growth" },
+  { id: "consultation", label: "Advice on product or tech" },
+  { id: "maintenance", label: "Fixes or maintenance" },
+  { id: "other", label: "Something else" },
+  { id: QUICK_SERVICE, label: "Quick enquiry" },
 ] as const;
+
+/** The options a visitor picks from on /contact (QuickStart sets "quick" itself). */
+export const selectableServiceOptions = serviceOptions.filter(
+  (option) => option.id !== QUICK_SERVICE,
+);
 
 export const currencies = ["INR", "USD"] as const;
 export type Currency = (typeof currencies)[number];
@@ -34,24 +48,24 @@ export const budgetOptions = [
   { id: "50k-1.5l", INR: "₹50k – ₹1.5L", USD: "$600 – $1,800" },
   { id: "1.5l-5l", INR: "₹1.5L – ₹5L", USD: "$1,800 – $6,000" },
   { id: "5l-plus", INR: "₹5L+", USD: "$6,000+" },
-  { id: "not-sure", INR: "Not sure yet", USD: "Not sure yet" },
+  { id: "not-sure", INR: "Undecided", USD: "Undecided" },
 ] as const;
 
 export const timelineOptions = [
-  { id: "asap", label: "ASAP" },
+  { id: "asap", label: "As soon as possible" },
   { id: "1-3-months", label: "1–3 months" },
   { id: "3-6-months", label: "3–6 months" },
-  { id: "exploring", label: "Just exploring" },
+  { id: "exploring", label: "Only exploring" },
 ] as const;
 
 export const heardFromOptions = [
-  { id: "google", label: "Google search" },
+  { id: "google", label: "A Google search" },
   { id: "linkedin", label: "LinkedIn" },
   { id: "instagram", label: "Instagram" },
   { id: "github", label: "GitHub" },
-  { id: "referral", label: "Referral from someone" },
+  { id: "referral", label: "Someone recommended you" },
   { id: "article", label: "An article or post" },
-  { id: "other", label: "Somewhere else" },
+  { id: "other", label: "Elsewhere" },
 ] as const;
 
 export const countryCodes = [
@@ -78,55 +92,84 @@ const ids = <T extends readonly { id: string }[]>(options: T) =>
 const optionalChoice = <T extends readonly { id: string }[]>(options: T) =>
   z.union([z.enum(ids(options)), z.literal("")]).optional();
 
-export const contactFormSchema = z.strictObject({
+const PHONE_PATTERN = /^[\d\s()-]{6,18}$/;
+
+const contactFields = {
   name: z
     .string()
     .trim()
-    .min(2, "Please enter your full name.")
-    .max(100, "Please keep your name under 100 characters."),
+    .min(2, "Add your name so I know who I'm writing to.")
+    .max(100, "Names need to stay under 100 characters."),
   email: z
     .string()
     .trim()
-    .min(1, "Please enter your email address.")
-    .max(254, "That email address is too long.")
-    .email("Please enter a valid email address."),
+    .min(1, "An email address is needed for my reply.")
+    .max(254, "That address is longer than email allows.")
+    .email("That email address doesn't look right."),
   phoneCountry: z.enum(
     countryCodes.map((country) => country.code) as [string, ...string[]],
-    "Please choose a country code.",
+    "Pick a country code.",
   ),
-  phone: z
-    .string()
-    .trim()
-    .min(1, "Please enter your phone number.")
-    .regex(/^[\d\s()-]{6,18}$/, "Please enter a valid phone number, digits only."),
-  company: z.string().trim().max(120, "Please keep this under 120 characters.").optional(),
-  service: z.enum(ids(serviceOptions), "Please choose what you need help with."),
+  /** Required for project enquiries; may be empty on a quick enquiry (checked below). */
+  phone: z.string().trim().max(18, "Phone numbers need to stay under 18 digits."),
+  company: z.string().trim().max(120, "Keep this under 120 characters.").optional(),
+  service: z.enum(ids(serviceOptions), "Tell me what you need help with."),
   budgetCurrency: z.enum(currencies),
   budget: optionalChoice(budgetOptions),
   timeline: optionalChoice(timelineOptions),
   message: z
     .string()
     .trim()
-    .min(
-      MESSAGE_MIN,
-      `Please write at least ${MESSAGE_MIN} characters so I understand the project.`,
-    )
-    .max(MESSAGE_MAX, `Please keep your message under ${MESSAGE_MAX} characters.`),
+    .min(QUICK_MESSAGE_MIN, `A few more words, please — at least ${QUICK_MESSAGE_MIN} characters.`)
+    .max(MESSAGE_MAX, `Messages need to stay under ${MESSAGE_MAX} characters.`),
   heardFrom: optionalChoice(heardFromOptions),
   nda: z.boolean(),
-  consent: z.literal(true, "Please agree to the Privacy Policy so I can reply to you."),
+  consent: z.literal(true, "Tick the box to accept the Privacy Policy so I can reply."),
   /** Honeypot — see newsletterSchema. */
   website: z.string().max(500).optional(),
-});
+};
+
+/** Rules that depend on the kind of enquiry: project enquiries need a phone and more detail. */
+function enquiryRules(
+  value: { service: string; phone: string; message: string },
+  ctx: z.RefinementCtx,
+) {
+  const quick = value.service === QUICK_SERVICE;
+  if (!quick && value.phone.length === 0) {
+    ctx.addIssue({
+      code: "custom",
+      path: ["phone"],
+      message: "Add a phone number for a quick call.",
+    });
+  } else if (value.phone.length > 0 && !PHONE_PATTERN.test(value.phone)) {
+    ctx.addIssue({
+      code: "custom",
+      path: ["phone"],
+      message: "Use digits only for the phone number.",
+    });
+  }
+  if (!quick && value.message.length < MESSAGE_MIN) {
+    ctx.addIssue({
+      code: "custom",
+      path: ["message"],
+      message: `Write at least ${MESSAGE_MIN} characters so I can picture the project.`,
+    });
+  }
+}
+
+export const contactFormSchema = z.strictObject(contactFields).superRefine(enquiryRules);
 
 /** What the browser actually POSTs: the form plus anti-spam and attribution metadata. */
-export const contactRequestSchema = contactFormSchema.extend({
-  /** Epoch ms when the visitor first focused the form; 0 if never (time-to-submit check). */
-  startedAt: z.number().int().nonnegative(),
-  turnstileToken: z.string().max(4096).optional(),
-  /** Path (and query) of the page the form was sent from. */
-  sourcePage: z.string().max(300).optional(),
-});
+export const contactRequestSchema = z
+  .strictObject({
+    ...contactFields,
+    /** Epoch ms when the visitor first focused the form; 0 if never (time-to-submit check). */
+    startedAt: z.number().int().nonnegative(),
+    turnstileToken: z.string().max(4096).optional(),
+    /** Path (and query) of the page the form was sent from. */
+    sourcePage: z.string().max(300).optional(),
+  })
+  .superRefine(enquiryRules);
 
 export type ContactFormInput = z.infer<typeof contactFormSchema>;
 export type ContactRequest = z.infer<typeof contactRequestSchema>;
@@ -144,8 +187,10 @@ export type ContactResponse =
       fieldErrors?: Partial<Record<keyof ContactFormInput, string>>;
     };
 
+type ServiceId = ContactFormInput["service"];
+
 /** Maps ?service=<service slug> or ?topic=<topic> from links around the site to a form option. */
-const prefillMap: Record<string, ContactFormInput["service"]> = {
+const prefillMap: Record<string, ServiceId> = {
   // Service page slugs (src/content/services.ts)
   "mvp-development": "mvp",
   "full-stack-development": "web-app",
@@ -160,25 +205,48 @@ const prefillMap: Record<string, ContactFormInput["service"]> = {
   "ai-integration": "ai",
   "ai-creative": "ai",
   "devops-cloud": "devops",
-  // Topics used in links (products.ts, servicesPage.ts)
+  // Topics used in links (products.ts, the service picker, the corner card)
   "mvp-scoping": "mvp",
-  "school-platform": "consultation",
+  "trading-platform": "consultation",
+  "pharma-inventory": "consultation",
   consultation: "consultation",
   maintenance: "maintenance",
   "bug-fix": "maintenance",
 };
 
+/** ?bundle=<id> from the "Popular combinations" cards on /services pre-selects several options. */
+export const bundlePrefill: Record<string, ServiceId[]> = {
+  "launch-kit": ["mvp", "ui-ux", "devops"],
+  "ai-upgrade": ["ai", "web-app", "devops"],
+  "growth-engine": ["marketing", "ai"],
+};
+
 export function serviceFromQuery(
   service: string | null,
   topic: string | null,
-): ContactFormInput["service"] | undefined {
-  const valid = new Set<string>(ids(serviceOptions));
+): ServiceId | undefined {
+  const valid = new Set<string>(ids(selectableServiceOptions));
   for (const value of [service, topic]) {
     if (!value) continue;
     if (prefillMap[value]) return prefillMap[value];
-    if (valid.has(value)) return value as ContactFormInput["service"];
+    if (valid.has(value)) return value as ServiceId;
   }
   return undefined;
+}
+
+/**
+ * Every option a contact link asks for, in order: ?bundle=, then ?services=a,b (service slugs
+ * from the picker), then ?service= / ?topic=. Unknown values are ignored; duplicates removed.
+ */
+export function servicesFromQuery(params: URLSearchParams): ServiceId[] {
+  const picked: ServiceId[] = [...(bundlePrefill[params.get("bundle") ?? ""] ?? [])];
+  for (const slug of (params.get("services") ?? "").split(",")) {
+    const id = serviceFromQuery(slug.trim(), null);
+    if (id) picked.push(id);
+  }
+  const single = serviceFromQuery(params.get("service"), params.get("topic"));
+  if (single) picked.push(single);
+  return [...new Set(picked)];
 }
 
 export function optionLabel(

@@ -1,5 +1,5 @@
-import { WorkBrowser } from "@/components/sections/work/WorkBrowser";
-import { CompactPageHero } from "@/components/sections/shared/CompactPageHero";
+import { WorkIndex } from "@/components/sections/work/WorkIndex";
+import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { Section } from "@/components/ui/Section";
 import { workContent } from "@/content/work";
 import { getCaseStudies } from "@/lib/mdx";
@@ -11,9 +11,10 @@ export const metadata = buildMetadata({
   path: "/work",
 });
 
+/** "Selected work": text-link filters, then alternating full-width project rows. */
 export default function WorkPage() {
   const { hero } = workContent;
-  // Only card fields go to the client — never the MDX bodies.
+  // Only row fields go to the client — never the MDX bodies.
   const studies = getCaseStudies().map((study) => ({
     slug: study.slug,
     title: study.title,
@@ -23,24 +24,20 @@ export default function WorkPage() {
     status: study.status,
     stack: study.stack,
     categories: study.categories,
+    role: study.role,
+    publishedAt: study.publishedAt,
   }));
 
   return (
-    <>
-      <CompactPageHero
-        breadcrumb={[{ label: "Home", href: "/" }, { label: "Work" }]}
-        eyebrow={hero.eyebrow}
-        title={hero.title}
-        highlight={hero.highlight}
-        subtitle={hero.subtitle}
-      />
-      <Section background="section" aria-labelledby="case-studies-title">
-        {/* Keeps the outline h1 → h2 → card h3 without adding visible text. */}
-        <h2 id="case-studies-title" className="sr-only">
-          Case studies
-        </h2>
-        <WorkBrowser studies={studies} copy={workContent} />
-      </Section>
-    </>
+    <Section tone="ivory" padding="none" className="pt-16 pb-24 lg:pt-24 lg:pb-32">
+      <Breadcrumb items={[{ label: "Home", href: "/" }, { label: "Work" }]} />
+      <div className="mt-8 grid gap-6 lg:grid-cols-12 lg:items-end lg:gap-8">
+        <h1 className="text-h1 text-fg lg:col-span-7">{hero.title}</h1>
+        <p className="text-lg text-fg-muted lg:col-span-4 lg:col-start-9">{hero.text}</p>
+      </div>
+      <div className="mt-14">
+        <WorkIndex studies={studies} copy={workContent} />
+      </div>
+    </Section>
   );
 }

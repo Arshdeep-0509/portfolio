@@ -98,7 +98,7 @@ export const refundPolicy: LegalDocument = {
         {
           type: "ul",
           items: [
-            'Email [EMAIL] with the subject "Refund request", your invoice number and the reason.',
+            'Email arshdeepsinghdev96@gmail.com with the subject "Refund request", your invoice number and the reason.',
             "I'll reply within [3] working days to confirm the amount, or to explain if part of it isn't refundable.",
             "Once agreed, the refund is sent within [10] working days to the original payment method (card, UPI or net banking via Razorpay) or by bank transfer. Your bank may take a few more days to show it.",
           ],
@@ -115,7 +115,7 @@ export const refundPolicy: LegalDocument = {
       blocks: [
         {
           type: "p",
-          text: "Questions about payments or refunds? Email [EMAIL] or write to [LEGAL_ENTITY], [ADDRESS], [CITY], [STATE], India.",
+          text: "Questions about payments or refunds? Email arshdeepsinghdev96@gmail.com or write to [LEGAL_ENTITY], [ADDRESS], Bengaluru, [STATE], India.",
         },
       ],
     },

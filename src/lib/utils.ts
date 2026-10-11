@@ -4,16 +4,20 @@ import { LOCALE, SITE_URL } from "@/lib/constants";
 
 /**
  * tailwind-merge must know the custom theme keys from globals.css. Otherwise it reads
- * `text-small` as a colour and silently drops `text-white` from the same class list.
+ * `text-small` as a colour and silently drops `text-fg` from the same class list.
  */
 const twMerge = extendTailwindMerge({
   extend: {
     theme: {
-      text: ["h1", "h2", "h3", "body", "small", "eyebrow"],
-      radius: ["pill"],
-      shadow: ["card", "card-hover", "nav"],
-      spacing: ["card"],
-      font: ["heading"],
+      text: ["h1", "h2", "h3", "body", "small", "label"],
+      radius: ["card", "button", "dot"],
+      shadow: ["glow"],
+      font: ["display", "sans", "mono"],
+    },
+    // Texture utilities from globals.css are background *images*; without this they would be
+    // read as colours and silently remove the bg-night-* colour beside them.
+    classGroups: {
+      "bg-image": ["bg-stars", "bg-grad-flame", "bg-grad-horizon"],
     },
   },
 });
@@ -37,4 +41,9 @@ export function formatDate(
 export function absoluteUrl(path = "/"): string {
   if (/^https?:\/\//i.test(path)) return path;
   return `${SITE_URL}${path.startsWith("/") ? path : `/${path}`}`;
+}
+
+/** Two-digit index for mono labels and numbered rows: 3 → "03". */
+export function pad2(value: number): string {
+  return String(value).padStart(2, "0");
 }

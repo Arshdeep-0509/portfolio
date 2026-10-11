@@ -17,7 +17,7 @@ test("reject: choice stored, banner gone, no analytics requests", async ({ page 
   await page.goto("/");
   const banner = page.getByRole("region", { name: /Cookies/ });
   await expect(banner).toBeVisible();
-  await banner.getByRole("button", { name: /^Reject/ }).click();
+  await banner.getByRole("button", { name: "Essential only" }).click();
   await expect(banner).toBeHidden();
   expect(await consentCookie(page)).toMatchObject({ v: 1, analytics: false, marketing: false });
   await page.goto("/services");
@@ -30,7 +30,7 @@ test("accept: choice stored, and the footer reopens the settings", async ({ page
   await page.goto("/");
   await page
     .getByRole("region", { name: /Cookies/ })
-    .getByRole("button", { name: "Accept all" })
+    .getByRole("button", { name: "Allow all" })
     .click();
   await expect.poll(() => consentCookie(page)).toMatchObject({ analytics: true, marketing: true });
   await page.getByRole("contentinfo").getByRole("button", { name: "Cookie settings" }).click();
@@ -39,6 +39,6 @@ test("accept: choice stored, and the footer reopens the settings", async ({ page
   const analytics = dialog.getByRole("switch", { name: "Analytics" });
   await expect(analytics).toHaveAttribute("aria-checked", "true");
   await analytics.click();
-  await dialog.getByRole("button", { name: "Save choices" }).click();
+  await dialog.getByRole("button", { name: "Save my choices" }).click();
   await expect.poll(() => consentCookie(page)).toMatchObject({ analytics: false });
 });

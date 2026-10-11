@@ -18,7 +18,7 @@ const FILE = path.join(process.cwd(), ".data", "newsletter-subscribers.jsonl");
 
 export type SaveResult = "created" | "exists";
 
-export async function saveSubscriber(email: string, source = "insights"): Promise<SaveResult> {
+export async function saveSubscriber(email: string, source = "footer"): Promise<SaveResult> {
   const record = { email: email.toLowerCase(), source, subscribedAt: new Date().toISOString() };
 
   const webhook = process.env.NEWSLETTER_WEBHOOK_URL;

@@ -7,20 +7,18 @@ import type { CaseStudyCategory } from "@/lib/contentTypes";
 
 export const workContent = {
   seo: {
-    title: "Work & Case Studies",
+    title: "Selected Work — Web, Mobile, AI & DevOps Projects",
     description:
-      "Products I've designed, built and shipped — the problem, the approach and what happened. Web, mobile, AI and DevOps case studies.",
+      "Products I've designed, built and shipped, written up honestly: the problem, the approach and what came of it. Web, mobile, AI and DevOps work.",
   },
   hero: {
-    eyebrow: "Work",
-    title: "Work & case studies",
-    highlight: "case studies",
-    subtitle:
-      "Products I've designed, built and shipped — the problem, the approach and what happened.",
+    label: "Selected work",
+    title: "Selected work",
+    text: "Products I've designed, built and run — the problem, how I approached it and what happened next.",
   },
   filters: {
-    label: "Filter case studies by type",
-    all: "All",
+    label: "Show work of type",
+    all: "Everything",
     options: [
       { id: "web", label: "Web" },
       { id: "mobile", label: "Mobile" },
@@ -30,36 +28,38 @@ export const workContent = {
     ] satisfies { id: CaseStudyCategory; label: string }[],
   },
   empty: {
-    filtered: "No case studies match those filters yet.",
-    clear: "Clear filters",
-    none: "Case studies are being written up. In the meantime, I'm happy to walk you through my work on a call.",
+    filtered: "Nothing in that category yet.",
+    clear: "Show everything",
+    none: "Write-ups are on their way. Meanwhile, I'm glad to walk you through my work on a call.",
   },
-  card: { cta: "Read case study" },
+  row: { status: "Status", year: "Year", role: "Role", cta: "Read the case study" },
   status: {
     live: "Live",
     "in-development": "In development",
     concept: "Concept",
   },
   detail: {
-    facts: { client: "Client", role: "Role", timeline: "Timeline", stack: "Stack" },
-    links: { live: "View live product", github: "View source on GitHub" },
+    factsTitle: "Project facts",
+    facts: {
+      client: "Client",
+      role: "Role",
+      timeline: "Timeline",
+      stack: "Stack",
+      status: "Status",
+    },
+    links: { live: "Open the live product", github: "Read the source on GitHub" },
+    contents: "Chapters",
     sections: {
       problem: "The problem",
-      goals: "Goals",
-      approach: "Approach",
+      goals: "What it had to do",
+      approach: "How I approached it",
       architecture: "Architecture",
       features: "Key features",
       screens: "Screens",
       results: "Results",
-      next: "What I'd do next",
+      next: "What comes next",
     },
-    cta: {
-      title: "Want something similar?",
-      highlight: "something similar",
-      text: "Tell me about your product. You'll get a clear scope, the right stack and an honest timeline — usually within one business day.",
-      primary: { label: "Start your project", href: "/contact" },
-      secondary: { label: "See all services", href: "/services" },
-    },
-    pager: { previous: "Previous case study", next: "Next case study" },
+    screensHint: "Select a screen to enlarge it.",
+    pager: { previous: "Older case study", next: "Newer case study" },
   },
 };

@@ -4,90 +4,94 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, useWatch } from "react-hook-form";
-import { CircleCheck, Mail } from "lucide-react";
+import { CircleCheck } from "lucide-react";
 import { CalendlyButton } from "@/components/sections/contact/CalendlyButton";
 import { Button } from "@/components/ui/Button";
 import { Checkbox } from "@/components/ui/form/Checkbox";
+import {
+  ChoiceChips,
+  SegmentedControl,
+  SelectableCard,
+  Toggle,
+} from "@/components/ui/form/Choices";
 import { FieldError, Label } from "@/components/ui/form/Field";
 import { Input, Select } from "@/components/ui/form/Input";
 import { Textarea } from "@/components/ui/form/Textarea";
 import { Turnstile } from "@/components/ui/form/Turnstile";
+import { FormWizard } from "@/components/ui/FormWizard";
 import { useToast } from "@/components/ui/Toast";
+import type { contactContent } from "@/content/contact";
 import { trackEvent } from "@/lib/analytics";
 import {
+  budgetLabel,
   budgetOptions,
   contactFormSchema,
   countryCodes,
-  currencies,
   heardFromOptions,
   MESSAGE_MAX,
   MESSAGE_MIN,
-  serviceFromQuery,
-  serviceOptions,
+  optionLabel,
+  selectableServiceOptions,
+  servicesFromQuery,
   timelineOptions,
   type ContactFormInput,
   type ContactRequest,
   type ContactResponse,
 } from "@/lib/schemas/contact";
-import { cn } from "@/lib/utils";
+import { useUrlSearch } from "@/lib/useUrlSearch";
+import { cn, pad2 } from "@/lib/utils";
 
-type ContactFormProps = {
-  copy: {
-    detailsHeading: string;
-    projectHeading: string;
-    messagePlaceholder: string;
-    submit: string;
-    success: { title: string; text: string; book: string; home: string };
-    errorToast: { title: string; fallback: string };
-  };
-  /** Real mailto: link for the error fallback, or null while the email is a placeholder. */
-  emailHref: string | null;
-  /** Real Calendly URL, or null while it is a placeholder. */
-  calendlyUrl: string | null;
-  privacyHref: string;
-};
-
+type FormCopy = (typeof contactContent)["form"];
 type FieldName = keyof ContactFormInput;
+type ServiceId = ContactFormInput["service"];
 
-const FIELD_ORDER: FieldName[] = [
-  "name",
-  "email",
-  "phoneCountry",
-  "phone",
-  "company",
-  "service",
-  "budget",
-  "timeline",
-  "message",
-  "heardFrom",
-  "nda",
-  "consent",
+/** Fields validated on steps 2 and 3 (step 1 is the service selection). */
+const STEP_FIELDS: FieldName[][] = [
+  ["service"],
+  ["budget", "timeline", "message", "nda"],
+  ["name", "email", "phoneCountry", "phone", "company", "heardFrom", "consent"],
 ];
 
 // Inlined at build time; without it the widget is skipped and the server skips verification too.
 const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
 
-/** Keeps a live region mounted so errors that appear on blur are announced. */
-function ErrorSlot({ id, message }: { id: string; message?: string }) {
-  return (
-    <div aria-live="polite">
-      <FieldError id={id}>{message}</FieldError>
-    </div>
-  );
-}
+type ContactFormProps = {
+  copy: FormCopy;
+  /** Real mailto: link for the error fallback, or null while the email is a placeholder. */
+  emailHref: string | null;
+  /** Real Calendly URL, or null while it is a placeholder. */
+  calendlyUrl: string | null;
+  calendlyTitle: string;
+  privacyHref: string;
+};
 
 /**
- * Project enquiry form. Validates on blur with the same zod schema the API uses, then POSTs JSON
- * to /api/contact. "How can I help?" is pre-filled from ?service= or ?topic=.
+ * The project enquiry as a three-step wizard on the shared schema and /api/contact:
+ * 1. What do you need? — services as selectable cards (several allowed; the first becomes the
+ *    `service` field and the rest are added to the message);
+ * 2. About the project — budget, currency, timeline, message with a live counter, NDA;
+ * 3. About you — contact details and consent, then a review and Submit.
+ * Query parameters pre-select services (?service=, ?topic=, ?bundle=, ?services=).
  */
-export function ContactForm({ copy, emailHref, calendlyUrl, privacyHref }: ContactFormProps) {
+export function ContactForm({
+  copy,
+  emailHref,
+  calendlyUrl,
+  calendlyTitle,
+  privacyHref,
+}: ContactFormProps) {
   const toast = useToast();
-  // When the visitor first focuses the form; the server treats very fast (or missing) times as bots.
   const [startedAt, setStartedAt] = useState(0);
   const [sentName, setSentName] = useState<string | null>(null);
   const [summary, setSummary] = useState("");
   const [token, setToken] = useState<string | null>(null);
   const [widgetKey, setWidgetKey] = useState(0);
+  const [step, setStep] = useState(0);
+  // Until the visitor changes the selection, it comes from the URL (?bundle=, ?service=…).
+  const query = useUrlSearch();
+  const [chosen, setChosen] = useState<ServiceId[] | null>(null);
+  const picked = chosen ?? servicesFromQuery(query);
+  const [pickError, setPickError] = useState(false);
 
   const {
     register,
@@ -96,6 +100,8 @@ export function ContactForm({ copy, emailHref, calendlyUrl, privacyHref }: Conta
     setValue,
     setError,
     setFocus,
+    trigger,
+    getFieldState,
     formState: { errors, isSubmitting },
   } = useForm<ContactFormInput>({
     resolver: zodResolver(contactFormSchema),
@@ -116,15 +122,54 @@ export function ContactForm({ copy, emailHref, calendlyUrl, privacyHref }: Conta
     },
   });
 
-  const currency = useWatch({ control, name: "budgetCurrency" });
-  const message = useWatch({ control, name: "message" }) ?? "";
-  const remaining = Math.max(0, MESSAGE_MIN - message.trim().length);
+  /**
+   * register() plus one rule: a field that is currently showing an error re-checks itself on every
+   * change. Without it the error only clears on blur, so the first click on Next blurs the field,
+   * the message disappears, the button moves up under the pointer and the click is lost.
+   */
+  const field = (name: keyof ContactFormInput) =>
+    register(name, {
+      onChange: () => {
+        if (getFieldState(name).error) void trigger(name);
+      },
+    });
 
+  const values = useWatch({ control });
+  const message = values.message ?? "";
+  const remaining = Math.max(0, MESSAGE_MIN - message.trim().length);
+  const currency = values.budgetCurrency ?? "INR";
+
+  function choose(next: ServiceId[]) {
+    setChosen(next);
+    setPickError(false);
+  }
+
+  // The first selected option is the form's `service` field.
+  const lead = picked[0];
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const service = serviceFromQuery(params.get("service"), params.get("topic"));
-    if (service) setValue("service", service, { shouldDirty: true });
-  }, [setValue]);
+    if (lead) setValue("service", lead, { shouldDirty: true });
+  }, [lead, setValue]);
+
+  function stepOf(field: FieldName) {
+    return STEP_FIELDS.findIndex((group) => group.includes(field));
+  }
+
+  function goToFirstError(fields: FieldName[]) {
+    const first = [...fields].sort((a, b) => stepOf(a) - stepOf(b))[0];
+    if (!first) return;
+    setStep(Math.max(0, stepOf(first)));
+    requestAnimationFrame(() => setFocus(first));
+  }
+
+  async function validateStep(index: number) {
+    if (index === 0) {
+      const ok = picked.length > 0;
+      setPickError(!ok);
+      if (!ok) requestAnimationFrame(() => document.getElementById("contact-service-0")?.focus());
+      return ok;
+    }
+    return trigger(STEP_FIELDS[index], { shouldFocus: true });
+  }
 
   function showFailure(text: string) {
     toast({
@@ -136,15 +181,19 @@ export function ContactForm({ copy, emailHref, calendlyUrl, privacyHref }: Conta
     });
   }
 
-  async function onSubmit(values: ContactFormInput) {
+  async function onSubmit(data: ContactFormInput) {
     setSummary("");
     if (TURNSTILE_SITE_KEY && !token) {
-      setSummary("Please complete the quick human check above the button.");
+      setSummary(copy.botCheck);
       return;
     }
-
+    const extras = picked.slice(1).map((id) => optionLabel(selectableServiceOptions, id));
     const payload: ContactRequest = {
-      ...values,
+      ...data,
+      service: picked[0] ?? data.service,
+      message: extras.length
+        ? `${data.message}\n\n${copy.alsoInterested}: ${extras.join(", ")}`
+        : data.message,
       startedAt,
       turnstileToken: token ?? undefined,
       sourcePage: `${window.location.pathname}${window.location.search}`,
@@ -156,56 +205,56 @@ export function ContactForm({ copy, emailHref, calendlyUrl, privacyHref }: Conta
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-      const data = (await response.json().catch(() => null)) as ContactResponse | null;
-
-      if (response.ok && data?.ok) {
+      const result = (await response.json().catch(() => null)) as ContactResponse | null;
+      if (response.ok && result?.ok) {
         trackEvent("generate_lead", {
           form: "contact",
-          service: values.service,
-          budget: values.budget ? `${values.budget} (${values.budgetCurrency})` : "not_given",
+          service: payload.service,
+          budget: data.budget ? `${data.budget} (${data.budgetCurrency})` : "not_given",
         });
-        setSentName(values.name.trim().split(/\s+/)[0] ?? values.name);
+        setSentName(data.name.trim().split(/\s+/)[0] ?? data.name);
         return;
       }
-
-      if (data && !data.ok && data.fieldErrors) {
-        const fields = FIELD_ORDER.filter((field) => data.fieldErrors?.[field]);
-        fields.forEach((field) => setError(field, { message: data.fieldErrors?.[field] }));
-        if (fields[0]) setFocus(fields[0]);
+      if (result && !result.ok && result.fieldErrors) {
+        const fields = (Object.keys(result.fieldErrors) as FieldName[]).filter(
+          (field) => stepOf(field) !== -1,
+        );
+        fields.forEach((field) => setError(field, { message: result.fieldErrors?.[field] }));
+        goToFirstError(fields);
       }
-      showFailure(data && !data.ok ? data.error : "Please try again in a moment.");
+      showFailure(result && !result.ok ? result.error : copy.errorToast.retry);
     } catch {
-      showFailure("Check your connection and try again.");
+      showFailure(copy.errorToast.offline);
     } finally {
-      // Turnstile tokens are single-use: get a fresh one for the next attempt.
       setToken(null);
       setWidgetKey((key) => key + 1);
     }
   }
 
   function onInvalid(invalid: Partial<Record<FieldName, unknown>>) {
-    const count = Object.keys(invalid).length;
-    setSummary(`Please fix ${count} field${count === 1 ? "" : "s"} before sending.`);
+    const fields = Object.keys(invalid) as FieldName[];
+    setSummary(copy.fixFields.replace("{n}", String(fields.length)));
+    goToFirstError(fields);
   }
 
   if (sentName) {
     return (
-      <div className="tone-light rounded-xl border border-border bg-surface p-8 text-center shadow-card sm:p-12">
-        <CircleCheck aria-hidden="true" className="mx-auto size-12 text-success" />
-        <h3
+      <div className="rounded-card border border-lamp-500/60 p-8 sm:p-12">
+        <CircleCheck aria-hidden="true" strokeWidth={1.5} className="size-10 text-success-fg" />
+        <h2
           ref={(heading) => heading?.focus()}
           tabIndex={-1}
-          className="mt-4 text-h3 font-bold text-ink outline-none"
+          className="mt-4 text-h3 text-fg outline-none"
         >
           {copy.success.title.replace("{firstName}", sentName)}
-        </h3>
-        <p className="mx-auto mt-3 max-w-md text-muted">{copy.success.text}</p>
-        <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+        </h2>
+        <p className="mt-3 max-w-md text-fg-muted">{copy.success.text}</p>
+        <div className="mt-8 flex flex-col gap-3 sm:flex-row">
           {calendlyUrl ? (
             <CalendlyButton
               url={calendlyUrl}
               label={copy.success.book}
-              modalTitle={copy.success.book}
+              modalTitle={calendlyTitle}
             />
           ) : null}
           <Button href="/" variant="outline">
@@ -218,8 +267,9 @@ export function ContactForm({ copy, emailHref, calendlyUrl, privacyHref }: Conta
 
   const describe = (field: FieldName, extra?: string) =>
     [extra, errors[field] ? `contact-${field}-error` : null].filter(Boolean).join(" ") || undefined;
-
-  const legend = "font-heading text-small font-bold tracking-wide text-primary uppercase";
+  const pickedLabels = picked
+    .map((id) => optionLabel(selectableServiceOptions, id))
+    .filter(Boolean);
 
   return (
     <form
@@ -228,234 +278,329 @@ export function ContactForm({ copy, emailHref, calendlyUrl, privacyHref }: Conta
         if (!startedAt) setStartedAt(Date.now());
       }}
       noValidate
-      aria-label="Project enquiry"
-      className="tone-light relative rounded-xl border border-border bg-surface p-6 shadow-card sm:p-8"
+      aria-label={copy.ariaLabel}
+      className="relative"
     >
-      <fieldset>
-        <legend className={legend}>{copy.detailsHeading}</legend>
-        <div className="mt-4 grid gap-x-5 gap-y-5 sm:grid-cols-2">
-          <div>
-            <Label htmlFor="contact-name" required>
-              Full name
-            </Label>
-            <Input
-              id="contact-name"
-              autoComplete="name"
-              invalid={Boolean(errors.name)}
-              aria-describedby={describe("name")}
-              aria-required="true"
-              {...register("name")}
-            />
-            <ErrorSlot id="contact-name-error" message={errors.name?.message} />
-          </div>
-          <div>
-            <Label htmlFor="contact-email" required>
-              Email
-            </Label>
-            <Input
-              id="contact-email"
-              type="email"
-              inputMode="email"
-              autoComplete="email"
-              invalid={Boolean(errors.email)}
-              aria-describedby={describe("email")}
-              aria-required="true"
-              {...register("email")}
-            />
-            <ErrorSlot id="contact-email-error" message={errors.email?.message} />
-          </div>
-          <div>
-            <Label htmlFor="contact-phone" required>
-              Phone
-            </Label>
-            <div className="flex gap-2">
-              <div className="w-28 shrink-0">
-                <Select
-                  aria-label="Country code"
-                  autoComplete="tel-country-code"
-                  className="pr-8 pl-3"
-                  {...register("phoneCountry")}
-                >
-                  {countryCodes.map((country) => (
-                    <option key={country.code} value={country.code}>
-                      {country.label}
-                    </option>
-                  ))}
-                </Select>
+      <FormWizard
+        step={step}
+        onStepChange={setStep}
+        validateStep={validateStep}
+        submitLabel={isSubmitting ? copy.sending : copy.submit}
+        submitting={isSubmitting}
+        reviewTitle={copy.reviewTitle}
+        review={
+          <dl className="grid gap-x-8 gap-y-3 text-small sm:grid-cols-2">
+            {[
+              [copy.review.services, pickedLabels.join(", ")],
+              [copy.review.budget, budgetLabel(values.budget, currency) ?? copy.noAnswer],
+              [
+                copy.review.timeline,
+                optionLabel(timelineOptions, values.timeline) ?? copy.noAnswer,
+              ],
+              [copy.review.nda, values.nda ? copy.review.yes : copy.review.no],
+            ].map(([term, detail]) => (
+              <div key={term}>
+                <dt className="label-mono text-fg-muted">{term}</dt>
+                <dd className="mt-0.5 text-fg">{detail || "—"}</dd>
               </div>
-              <Input
-                id="contact-phone"
-                type="tel"
-                inputMode="tel"
-                autoComplete="tel-national"
-                placeholder="98765 43210"
-                invalid={Boolean(errors.phone)}
-                aria-describedby={describe("phone")}
-                aria-required="true"
-                {...register("phone")}
-              />
+            ))}
+            <div className="sm:col-span-2">
+              <dt className="label-mono text-fg-muted">{copy.message}</dt>
+              <dd className="mt-0.5 line-clamp-3 text-fg">{message || "—"}</dd>
             </div>
-            <ErrorSlot id="contact-phone-error" message={errors.phone?.message} />
-          </div>
-          <div>
-            <Label htmlFor="contact-company">Company / organisation</Label>
-            <Input
-              id="contact-company"
-              autoComplete="organization"
-              placeholder="Optional"
-              invalid={Boolean(errors.company)}
-              aria-describedby={describe("company")}
-              {...register("company")}
-            />
-            <ErrorSlot id="contact-company-error" message={errors.company?.message} />
-          </div>
-        </div>
-      </fieldset>
-
-      <fieldset className="mt-8 border-t border-border pt-6">
-        <legend className={cn(legend, "float-left w-full")}>{copy.projectHeading}</legend>
-        <div className="clear-both grid gap-x-5 gap-y-5 pt-4 sm:grid-cols-2">
-          <div className="sm:col-span-2">
-            <Label htmlFor="contact-service" required>
-              How can I help?
-            </Label>
-            <Select
-              id="contact-service"
-              placeholder="Choose one"
-              defaultValue=""
-              invalid={Boolean(errors.service)}
-              aria-describedby={describe("service")}
-              aria-required="true"
-              {...register("service")}
-            >
-              {serviceOptions.map((option) => (
-                <option key={option.id} value={option.id}>
-                  {option.label}
-                </option>
-              ))}
-            </Select>
-            <ErrorSlot id="contact-service-error" message={errors.service?.message} />
-          </div>
-
-          <div>
-            <div className="mb-1.5 flex items-center justify-between gap-3">
-              <Label htmlFor="contact-budget" className="mb-0">
-                Budget range
-              </Label>
-              <div
-                role="radiogroup"
-                aria-label="Budget currency"
-                className="inline-flex rounded-pill border border-border p-0.5"
-              >
-                {currencies.map((code) => (
-                  <label
-                    key={code}
-                    className="cursor-pointer rounded-pill px-3 py-1 font-mono text-xs font-medium text-muted has-[:checked]:bg-primary has-[:checked]:text-white has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-primary"
-                  >
-                    <input
-                      type="radio"
-                      value={code}
-                      className="sr-only"
-                      {...register("budgetCurrency")}
-                    />
-                    {code}
-                  </label>
-                ))}
-              </div>
-            </div>
-            <Select id="contact-budget" {...register("budget")}>
-              <option value="">Prefer not to say</option>
-              {budgetOptions.map((option) => (
-                <option key={option.id} value={option.id}>
-                  {option[currency ?? "INR"]}
-                </option>
-              ))}
-            </Select>
-          </div>
-
-          <div>
-            <Label htmlFor="contact-timeline">Timeline</Label>
-            <Select id="contact-timeline" {...register("timeline")}>
-              <option value="">Not sure yet</option>
-              {timelineOptions.map((option) => (
-                <option key={option.id} value={option.id}>
-                  {option.label}
-                </option>
-              ))}
-            </Select>
-          </div>
-
-          <div className="sm:col-span-2">
-            <Label htmlFor="contact-message" required>
-              Your message
-            </Label>
-            <Textarea
-              id="contact-message"
-              rows={6}
-              maxLength={MESSAGE_MAX}
-              showCount={false}
-              placeholder={copy.messagePlaceholder}
-              invalid={Boolean(errors.message)}
-              aria-describedby={describe("message", "contact-message-count")}
-              aria-required="true"
-              {...register("message")}
-            />
+          </dl>
+        }
+        footer={
+          <>
             <p
-              id="contact-message-count"
-              className={cn(
-                "mt-1.5 flex justify-between gap-3 font-mono text-xs",
-                remaining > 0 ? "text-muted" : "text-success-strong",
-              )}
+              aria-live="assertive"
+              className={cn("mb-4 text-small font-semibold text-danger-fg", !summary && "sr-only")}
             >
-              <span>
-                {remaining > 0
-                  ? `${remaining} more character${remaining === 1 ? "" : "s"} needed (min ${MESSAGE_MIN})`
-                  : "Looks good"}
-              </span>
-              <span>
-                {message.length} / {MESSAGE_MAX}
-              </span>
+              {summary}
             </p>
-            <ErrorSlot id="contact-message-error" message={errors.message?.message} />
-          </div>
-
-          <div className="sm:col-span-2">
-            <Label htmlFor="contact-heard">How did you hear about me?</Label>
-            <Select id="contact-heard" {...register("heardFrom")}>
-              <option value="">Prefer not to say</option>
-              {heardFromOptions.map((option) => (
-                <option key={option.id} value={option.id}>
-                  {option.label}
-                </option>
+            <ul className="flex flex-col gap-1.5 text-small text-fg-muted sm:flex-row sm:gap-6">
+              {copy.reassurance.map((line) => (
+                <li key={line} className="flex items-center gap-2">
+                  <span aria-hidden="true" className="size-1.5 rounded-dot bg-lamp-500" />
+                  {line}
+                </li>
               ))}
-            </Select>
-          </div>
-
-          <div className="sm:col-span-2">
-            <Checkbox id="contact-nda" label="I need an NDA first" {...register("nda")} />
-            <Checkbox
-              id="contact-consent"
-              invalid={Boolean(errors.consent)}
-              aria-describedby={describe("consent")}
-              aria-required="true"
-              label={
-                <>
-                  I agree to the{" "}
-                  <Link href={privacyHref} className="font-semibold text-primary underline">
-                    Privacy Policy
-                  </Link>
-                  <span aria-hidden="true" className="ml-0.5 text-danger">
-                    *
-                  </span>
-                  <span className="sr-only"> (required)</span>
-                </>
-              }
-              {...register("consent")}
-            />
-            <ErrorSlot id="contact-consent-error" message={errors.consent?.message} />
-          </div>
-        </div>
-      </fieldset>
+            </ul>
+          </>
+        }
+        steps={[
+          {
+            id: "need",
+            title: copy.steps.need.title,
+            description: copy.steps.need.description,
+            content: (
+              <fieldset aria-describedby={pickError ? "contact-service-error" : undefined}>
+                <legend className="sr-only">{copy.steps.need.title}</legend>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  {selectableServiceOptions.map((option, index) => {
+                    const order = picked.indexOf(option.id);
+                    return (
+                      <SelectableCard
+                        key={option.id}
+                        id={`contact-service-${index}`}
+                        name="services"
+                        value={option.id}
+                        title={option.label}
+                        checked={order !== -1}
+                        onChange={(event) =>
+                          choose(
+                            event.target.checked
+                              ? [...picked, option.id]
+                              : picked.filter((id) => id !== option.id),
+                          )
+                        }
+                        leading={
+                          order === 0 ? (
+                            <span className="font-mono text-[10px] tracking-wider text-accent uppercase">
+                              {pad2(1)}
+                            </span>
+                          ) : undefined
+                        }
+                      />
+                    );
+                  })}
+                </div>
+                <FieldError id="contact-service-error">
+                  {pickError ? copy.servicesError : errors.service?.message}
+                </FieldError>
+              </fieldset>
+            ),
+          },
+          {
+            id: "project",
+            title: copy.steps.project.title,
+            description: copy.steps.project.description,
+            content: (
+              <div className="space-y-8">
+                <div>
+                  <div className="mb-2 flex flex-wrap items-center justify-between gap-3">
+                    <p id="contact-budget-label" className="text-small font-semibold text-fg">
+                      {copy.budget}
+                    </p>
+                    <SegmentedControl
+                      label={copy.currency}
+                      name="budgetCurrency"
+                      idPrefix="contact-currency"
+                      options={[
+                        { value: "INR", label: "INR" },
+                        { value: "USD", label: "USD" },
+                      ]}
+                      inputProps={field("budgetCurrency")}
+                      className="w-32"
+                    />
+                  </div>
+                  <SegmentedControl
+                    label={copy.budget}
+                    name="budget"
+                    idPrefix="contact-budget"
+                    options={[
+                      ...budgetOptions
+                        .filter((option) => option.id !== "not-sure")
+                        .map((option) => ({ value: option.id, label: option[currency] })),
+                      { value: "", label: copy.noAnswer },
+                    ]}
+                    inputProps={field("budget")}
+                  />
+                </div>
+                <ChoiceChips
+                  label={copy.timeline}
+                  hideLabel={false}
+                  name="timeline"
+                  idPrefix="contact-timeline"
+                  options={[
+                    ...timelineOptions.map((option) => ({ value: option.id, label: option.label })),
+                    { value: "", label: copy.noAnswer },
+                  ]}
+                  inputProps={field("timeline")}
+                />
+                <div>
+                  <Label htmlFor="contact-message" required>
+                    {copy.message}
+                  </Label>
+                  <Textarea
+                    id="contact-message"
+                    rows={6}
+                    maxLength={MESSAGE_MAX}
+                    showCount={false}
+                    placeholder={copy.messagePlaceholder}
+                    invalid={Boolean(errors.message)}
+                    aria-describedby={describe(
+                      "message",
+                      "contact-message-count contact-message-tips",
+                    )}
+                    aria-required="true"
+                    {...field("message")}
+                  />
+                  <p
+                    id="contact-message-count"
+                    className={cn(
+                      "mt-2 flex justify-between gap-3 font-mono text-xs",
+                      remaining > 0 ? "text-fg-muted" : "text-success-fg",
+                    )}
+                  >
+                    <span>
+                      {remaining > 0
+                        ? copy.counter.need
+                            .replace("{n}", String(remaining))
+                            .replace("{min}", String(MESSAGE_MIN))
+                        : copy.counter.ok}
+                    </span>
+                    <span>
+                      {message.length} / {MESSAGE_MAX}
+                    </span>
+                  </p>
+                  <FieldError id="contact-message-error">{errors.message?.message}</FieldError>
+                  <div
+                    id="contact-message-tips"
+                    className="mt-4 border-l-2 border-lamp-500 pl-4 text-small text-fg-muted"
+                  >
+                    <p className="font-semibold text-fg">{copy.tipsTitle}</p>
+                    <p className="mt-1">{copy.tips.join(" · ")}</p>
+                  </div>
+                </div>
+                <Toggle
+                  id="contact-nda"
+                  label={copy.nda.label}
+                  description={copy.nda.description}
+                  {...field("nda")}
+                />
+              </div>
+            ),
+          },
+          {
+            id: "you",
+            title: copy.steps.you.title,
+            description: copy.steps.you.description,
+            content: (
+              <div className="grid gap-x-5 gap-y-5 sm:grid-cols-2">
+                <div>
+                  <Label htmlFor="contact-name" required>
+                    {copy.name}
+                  </Label>
+                  <Input
+                    id="contact-name"
+                    autoComplete="name"
+                    invalid={Boolean(errors.name)}
+                    aria-describedby={describe("name")}
+                    aria-required="true"
+                    {...field("name")}
+                  />
+                  <FieldError id="contact-name-error">{errors.name?.message}</FieldError>
+                </div>
+                <div>
+                  <Label htmlFor="contact-email" required>
+                    {copy.email}
+                  </Label>
+                  <Input
+                    id="contact-email"
+                    type="email"
+                    inputMode="email"
+                    autoComplete="email"
+                    invalid={Boolean(errors.email)}
+                    aria-describedby={describe("email")}
+                    aria-required="true"
+                    {...field("email")}
+                  />
+                  <FieldError id="contact-email-error">{errors.email?.message}</FieldError>
+                </div>
+                <div>
+                  <Label htmlFor="contact-phone" required>
+                    {copy.phone}
+                  </Label>
+                  <div className="flex gap-2">
+                    <div className="w-28 shrink-0">
+                      <Select
+                        aria-label={copy.countryCode}
+                        autoComplete="tel-country-code"
+                        className="pr-8 pl-3"
+                        {...field("phoneCountry")}
+                      >
+                        {countryCodes.map((country) => (
+                          <option key={country.code} value={country.code}>
+                            {country.label}
+                          </option>
+                        ))}
+                      </Select>
+                    </div>
+                    <Input
+                      id="contact-phone"
+                      type="tel"
+                      inputMode="tel"
+                      autoComplete="tel-national"
+                      placeholder="98765 43210"
+                      invalid={Boolean(errors.phone)}
+                      aria-describedby={describe("phone")}
+                      aria-required="true"
+                      {...field("phone")}
+                    />
+                  </div>
+                  <FieldError id="contact-phone-error">{errors.phone?.message}</FieldError>
+                </div>
+                <div>
+                  <Label htmlFor="contact-company">{copy.company}</Label>
+                  <Input
+                    id="contact-company"
+                    autoComplete="organization"
+                    placeholder={copy.optional}
+                    invalid={Boolean(errors.company)}
+                    aria-describedby={describe("company")}
+                    {...field("company")}
+                  />
+                  <FieldError id="contact-company-error">{errors.company?.message}</FieldError>
+                </div>
+                <div className="sm:col-span-2">
+                  <Label htmlFor="contact-heard">{copy.heardFrom}</Label>
+                  <Select id="contact-heard" {...field("heardFrom")}>
+                    <option value="">{copy.noAnswer}</option>
+                    {heardFromOptions.map((option) => (
+                      <option key={option.id} value={option.id}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </Select>
+                </div>
+                <div className="sm:col-span-2">
+                  <Checkbox
+                    id="contact-consent"
+                    invalid={Boolean(errors.consent)}
+                    aria-describedby={describe("consent")}
+                    aria-required="true"
+                    label={
+                      <>
+                        {copy.consentBefore}{" "}
+                        <Link
+                          href={privacyHref}
+                          className="font-semibold text-accent underline underline-offset-4"
+                        >
+                          {copy.consentLink}
+                        </Link>
+                        <span aria-hidden="true" className="ml-0.5 text-danger-fg">
+                          *
+                        </span>
+                        <span className="sr-only"> (required)</span>
+                      </>
+                    }
+                    {...field("consent")}
+                  />
+                  <FieldError id="contact-consent-error" className="mt-0">
+                    {errors.consent?.message}
+                  </FieldError>
+                </div>
+                {TURNSTILE_SITE_KEY ? (
+                  <div className="sm:col-span-2">
+                    <Turnstile key={widgetKey} siteKey={TURNSTILE_SITE_KEY} onToken={setToken} />
+                  </div>
+                ) : null}
+              </div>
+            ),
+          },
+        ]}
+      />
 
       {/* Honeypot: hidden from people and assistive tech; bots tend to fill it in. */}
       <div aria-hidden="true" className="absolute -left-[9999px] h-px w-px overflow-hidden">
@@ -467,34 +612,6 @@ export function ContactForm({ copy, emailHref, calendlyUrl, privacyHref }: Conta
           autoComplete="off"
           {...register("website")}
         />
-      </div>
-
-      {TURNSTILE_SITE_KEY ? (
-        <div className="mt-6">
-          <Turnstile key={widgetKey} siteKey={TURNSTILE_SITE_KEY} onToken={setToken} />
-        </div>
-      ) : null}
-
-      <p
-        aria-live="assertive"
-        className={cn("text-small font-semibold text-danger", summary && "mt-6")}
-      >
-        {summary}
-      </p>
-
-      <div className="mt-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <Button type="submit" size="lg" loading={isSubmitting} className="w-full sm:w-auto">
-          {isSubmitting ? "Sending…" : copy.submit}
-        </Button>
-        {emailHref ? (
-          <a
-            href={emailHref}
-            className="inline-flex min-h-11 items-center gap-2 text-small font-semibold text-primary underline-offset-4 hover:underline"
-          >
-            <Mail aria-hidden="true" className="size-4" />
-            Or email me directly
-          </a>
-        ) : null}
       </div>
     </form>
   );

@@ -1,49 +1,70 @@
-import type { IconName } from "@/content/services";
-
-/** The engagement process, shown on Home and reused by Why Me and Services. */
+/**
+ * How a project runs: six steps, shown on Home (StickyScrollStory) and linked from /approach.
+ *
+ * `duration` is a typical range. Ranges in [BRACKETS] are placeholders the owner must confirm
+ * before launch; the others restate figures used elsewhere on the site (scope "within a few
+ * days", one- to two-week sprints, ongoing support on a retainer).
+ */
 
 export type ProcessStep = {
-  step: number;
+  id: string;
   title: string;
+  /** What happens in the step. */
   text: string;
-  icon: IconName;
+  /** The single result you can expect when it ends. */
+  outcome: string;
+  /** Two or three things you receive at this step. */
+  receive: string[];
+  duration: string;
 };
 
 export const processSteps: ProcessStep[] = [
   {
-    step: 1,
-    title: "Discovery & scope",
-    text: "We dig into the idea, your users and the business model, then agree the MVP scope, must-have features and how we'll measure success.",
-    icon: "Search",
+    id: "step-discovery",
+    title: "Discovery and scope",
+    text: "We talk through the idea, the people it serves and how it will make money, then settle what the first release must include and how we'll judge it.",
+    outcome: "Everyone agrees on what version one is — and what it isn't.",
+    receive: ["Written scope", "Success measures", "Milestone plan"],
+    duration: "Within a few days",
   },
   {
-    step: 2,
-    title: "UX & prototype",
-    text: "User flows, wireframes and a clickable prototype you can put in front of people before a single line of code is written.",
-    icon: "PenTool",
+    id: "step-prototype",
+    title: "Flows and prototype",
+    text: "User journeys, wireframes and a clickable prototype you can show to real people before any code exists.",
+    outcome: "You've watched people try it before a line of code is written.",
+    receive: ["User flows", "Wireframes", "Clickable prototype"],
+    duration: "[1–2 weeks]",
   },
   {
-    step: 3,
-    title: "Build in sprints",
-    text: "One- to two-week sprints, each ending with a demo build. Frontend, backend and integrations move forward together.",
-    icon: "Code",
+    id: "step-build",
+    title: "Building in sprints",
+    text: "Short sprints, each finishing with a demo build. Screens, server and integrations move forward together.",
+    outcome: "A working build lands in your hands every week or two.",
+    receive: ["Demo build", "Written update", "Shared board"],
+    duration: "1–2 weeks per sprint",
   },
   {
-    step: 4,
-    title: "Test & harden",
-    text: "Manual and automated tests, security checks and performance tuning across the devices your users actually have.",
-    icon: "ShieldCheck",
+    id: "step-test",
+    title: "Testing and hardening",
+    text: "Hands-on and automated tests, security checks and speed tuning on the phones and laptops your users really own.",
+    outcome: "Problems are found by me, not by your first customers.",
+    receive: ["Test results", "Security checks", "Speed report"],
+    duration: "[3–5 days]",
   },
   {
-    step: 5,
-    title: "Launch & measure",
-    text: "Release to the cloud or the app stores, with analytics and error tracking switched on from the first day.",
-    icon: "Rocket",
+    id: "step-launch",
+    title: "Launch and measurement",
+    text: "The product goes live on the web or in the stores, recording usage and errors from the very first visitor.",
+    outcome: "Real people are using it, and you can see what they do.",
+    receive: ["Live release", "Analytics", "Error tracking"],
+    duration: "[2–3 days]",
   },
   {
-    step: 6,
-    title: "Support & scale",
-    text: "Iterations, new features, performance work and infrastructure scaling as your user base grows.",
-    icon: "TrendingUp",
+    id: "step-grow",
+    title: "Support and growth",
+    text: "Iterations, new features, speed work and more infrastructure as your user base grows.",
+    outcome: "The product keeps improving after launch day.",
+    receive: ["Bug-fix window", "Roadmap", "Monthly or hourly help"],
+    duration: "Ongoing",
   },
 ];

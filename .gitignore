@@ -54,3 +54,8 @@ next-env.d.ts
 
 # Self-hosted deployment secrets (copy deploy/production.env.example)
 /deploy/production.env
+
+# Originality check reference text (pnpm originality). Paste-ins stay local; the retired
+# labels list is committed so CI can prove none of them come back.
+/reference/*.txt
+!/reference/old-site.txt

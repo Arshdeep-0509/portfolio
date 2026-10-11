@@ -26,16 +26,14 @@ export default function GlobalError({
           minHeight: "100vh",
           display: "grid",
           placeItems: "center",
-          fontFamily: "system-ui, sans-serif",
-          background: "#f8fafc",
-          color: "#0f172a",
+          fontFamily: "Georgia, serif",
+          background: "#0A0A12",
+          color: "#FBF8F2",
         }}
       >
         <main style={{ textAlign: "center", padding: 24 }}>
-          <h1 style={{ fontSize: 28, margin: 0 }}>Something went wrong</h1>
-          <p style={{ color: "#475569" }}>
-            Sorry — the site hit an error. It&apos;s been reported.
-          </p>
+          <h1 style={{ fontSize: 28, margin: 0 }}>The site hit a problem</h1>
+          <p style={{ color: "#B8B4C6" }}>I&apos;ve been notified and will look into it.</p>
           <button
             type="button"
             onClick={() => retry()}
@@ -43,15 +41,15 @@ export default function GlobalError({
               marginTop: 12,
               minHeight: 44,
               padding: "0 24px",
-              borderRadius: 999,
+              borderRadius: 8,
               border: 0,
-              background: "#1d5fd1",
-              color: "#fff",
+              background: "linear-gradient(135deg, #FFC15E 0%, #F5A524 45%, #F2683C 100%)",
+              color: "#16141F",
               fontWeight: 600,
               cursor: "pointer",
             }}
           >
-            Try again
+            Load it again
           </button>
         </main>
       </body>

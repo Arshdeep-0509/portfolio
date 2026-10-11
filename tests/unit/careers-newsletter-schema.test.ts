@@ -18,7 +18,7 @@ const valid = {
   portfolio: "github.com/rahul",
   linkedin: "",
   resume: pdf(),
-  availability: "Immediately",
+  availability: "Right away",
   message: "I love building accessible React interfaces and want to work on real products.",
   consent: true,
   website: "",
