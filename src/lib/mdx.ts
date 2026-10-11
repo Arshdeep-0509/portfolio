@@ -57,6 +57,11 @@ const caseStudySchema = z.object({
   summary: z.string(),
   cover: z.string(),
   coverAlt: z.string().optional(),
+  /** Width / height of the cover, e.g. "1901/860", so the case-study page shows it uncropped. */
+  coverAspect: z
+    .string()
+    .regex(/^\d+(\.\d+)?\/\d+(\.\d+)?$/)
+    .default("16/10"),
   status: z.enum(["live", "in-development", "concept"]),
   /** A real client name only with written permission; otherwise "Personal product". */
   client: z.string().default("Personal product"),

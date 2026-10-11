@@ -73,7 +73,7 @@ function buildWhatsappUrl(rawPhone: string): string {
 export const siteConfig: SiteConfig = {
   name: "Arshdeep Singh",
   legalName: "[LEGAL_ENTITY]",
-  tagline: "I automate businesses, so you can focus on growing them.",
+  tagline: "Business automation that frees you to grow.",
   description:
     "Arshdeep Singh, a full-stack, AI and DevOps engineer in India, builds web apps, mobile apps and AI features for founders and small teams — tidy code, steady releases.",
   positioning:

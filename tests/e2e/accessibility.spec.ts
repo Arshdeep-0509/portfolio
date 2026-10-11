@@ -11,6 +11,7 @@ const pages = [
   "/work",
   "/work/ima-banjara-hills",
   "/work/trading-platform",
+  "/work/avior-convent-school",
   "/contact",
   "/collaborate",
   "/privacy-policy",
