@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Fraunces, IBM_Plex_Mono, Manrope } from "next/font/google";
+import { Preloader, preloaderScript } from "@/components/layout/Preloader";
 import { Providers } from "@/components/layout/Providers";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { siteConfig } from "@/content/site";
@@ -80,9 +81,16 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en-IN"
       // Tells Next.js to jump, not smooth-scroll, to the top on page changes.
       data-scroll-behavior="smooth"
+      // The head script below may add data-preloader before React hydrates.
+      suppressHydrationWarning
       className={`${fraunces.variable} ${frauncesItalic.variable} ${manrope.variable} ${plexMono.variable} h-full antialiased`}
     >
+      <head>
+        {/* Decides before first paint whether the opening sequence plays. */}
+        <script dangerouslySetInnerHTML={{ __html: preloaderScript }} />
+      </head>
       <body className="flex min-h-full flex-col font-sans">
+        <Preloader />
         {/* Without JavaScript, scroll reveals would never run; show their content. */}
         <noscript>
           <style>

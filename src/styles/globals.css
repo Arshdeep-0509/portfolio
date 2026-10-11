@@ -573,8 +573,239 @@ mark[data-placeholder] {
   clip-path: inset(0 0 -12% 0);
 }
 
+/* ==========================================================================
+   PRELOADER — the opening sequence (components/layout/Preloader.tsx), ~3.6s, on every full load.
+   0.15s the "A" draws · 0.6s the lamp ignites and lights the sky · 0.95s the name rises ·
+   1.45s the rule sweeps · 1.6s the tagline arrives · 3.0s the sky rolls up like a curtain.
+   ========================================================================== */
+.preloader {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  pointer-events: none;
+  animation: preloader-curtain 650ms cubic-bezier(0.76, 0, 0.24, 1) 3s forwards;
+}
+[data-preloader="off"] .preloader {
+  display: none;
+}
+.preloader-sky {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: min(140vw, 1400px);
+  aspect-ratio: 1;
+  translate: -50% -62%;
+  background: radial-gradient(
+    closest-side,
+    rgb(245 165 36 / 0.22),
+    rgb(242 104 60 / 0.08) 45%,
+    transparent 72%
+  );
+  opacity: 0;
+  scale: 0.3;
+  animation: preloader-dawn 1400ms cubic-bezier(0.22, 1, 0.36, 1) 650ms forwards;
+}
+.preloader-stage {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-inline: 1rem;
+  text-align: center;
+  animation: preloader-lift 600ms cubic-bezier(0.55, 0, 1, 0.45) 2.85s forwards;
+}
+.preloader-mark {
+  width: clamp(5rem, 3.75rem + 5vw, 8rem);
+  overflow: visible;
+}
+.preloader-stroke {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: preloader-draw 800ms cubic-bezier(0.65, 0, 0.35, 1) 150ms forwards;
+}
+.preloader-flame {
+  transform-box: fill-box;
+  transform-origin: center;
+  scale: 0;
+  animation:
+    preloader-ignite 700ms cubic-bezier(0.34, 1.56, 0.64, 1) 600ms forwards,
+    preloader-flicker 1.6s ease-in-out 1.3s infinite;
+}
+.preloader-glow {
+  transform-box: fill-box;
+  transform-origin: center;
+  opacity: 0;
+  scale: 0.2;
+  animation: preloader-halo 1100ms cubic-bezier(0.22, 1, 0.36, 1) 700ms forwards;
+}
+.preloader-name {
+  margin-top: 1.75rem;
+  font-size: clamp(2.5rem, 1.6rem + 4.5vw, 5rem);
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--ivory-50);
+  perspective: 600px;
+}
+.preloader-name span {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(0.55em) rotateX(-70deg);
+  filter: blur(8px);
+  animation: preloader-letter 600ms cubic-bezier(0.22, 1, 0.36, 1) calc(950ms + var(--i) * 40ms)
+    forwards;
+}
+.preloader-rule {
+  display: block;
+  width: min(14rem, 60vw);
+  height: 2px;
+  margin-top: 1.25rem;
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent, var(--lamp-500), var(--ember-500), transparent);
+  scale: 0 1;
+  animation: preloader-sweep 700ms cubic-bezier(0.65, 0, 0.35, 1) 1.45s forwards;
+}
+.preloader-tagline {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0 0.32em;
+  max-width: 42rem;
+  margin-top: 1.25rem;
+  font-size: clamp(1rem, 0.9rem + 0.6vw, 1.375rem);
+  color: var(--lamp-400);
+}
+.preloader-tagline span {
+  opacity: 0;
+  translate: 0 0.6em;
+  animation: preloader-word 450ms cubic-bezier(0.22, 1, 0.36, 1) calc(1.6s + var(--i) * 60ms)
+    forwards;
+}
+
+@keyframes preloader-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes preloader-ignite {
+  0% {
+    scale: 0;
+  }
+  60% {
+    scale: 1.5;
+  }
+  100% {
+    scale: 1;
+  }
+}
+@keyframes preloader-flicker {
+  0%,
+  100% {
+    scale: 1;
+  }
+  50% {
+    scale: 1.12;
+  }
+}
+@keyframes preloader-halo {
+  0% {
+    opacity: 0;
+    scale: 0.2;
+  }
+  55% {
+    opacity: 1;
+    scale: 1.9;
+  }
+  100% {
+    opacity: 1;
+    scale: 1.35;
+  }
+}
+@keyframes preloader-dawn {
+  to {
+    opacity: 1;
+    scale: 1;
+  }
+}
+@keyframes preloader-letter {
+  to {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+}
+@keyframes preloader-sweep {
+  to {
+    scale: 1 1;
+  }
+}
+@keyframes preloader-word {
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+@keyframes preloader-lift {
+  to {
+    opacity: 0;
+    translate: 0 -2.5rem;
+  }
+}
+@keyframes preloader-fade {
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+@keyframes preloader-curtain {
+  0% {
+    clip-path: inset(0 0 0 0);
+  }
+  99% {
+    clip-path: inset(0 0 100% 0);
+  }
+  100% {
+    clip-path: inset(0 0 100% 0);
+    visibility: hidden;
+  }
+}
+
 /* Nothing moves when the visitor asks for reduced motion. */
 @media (prefers-reduced-motion: reduce) {
+  /* The preloader holds still — mark, name and tagline in place — then fades. */
+  .preloader,
+  .preloader * {
+    animation: none !important;
+  }
+  .preloader {
+    animation: preloader-fade 500ms ease 2s forwards !important;
+  }
+  .preloader-stroke {
+    stroke-dashoffset: 0;
+  }
+  .preloader-flame,
+  .preloader-sky {
+    opacity: 1;
+    scale: 1;
+  }
+  .preloader-glow {
+    opacity: 1;
+    scale: 1.35;
+  }
+  .preloader-name span,
+  .preloader-tagline span {
+    opacity: 1;
+    transform: none;
+    translate: none;
+    filter: none;
+  }
+  .preloader-rule {
+    scale: 1 1;
+  }
+
   [data-reveal],
   [data-reveal="mask"] {
     opacity: 1;

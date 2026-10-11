@@ -128,7 +128,10 @@ export default async function CaseStudyPage({ params }: PageProps<"/work/[slug]"
         </div>
         {/* The whole cover, never cropped: screenshots read better complete than full-bleed. */}
         <div className="container-site pb-16 lg:pb-24">
-          <div className="relative aspect-[16/10] w-full overflow-hidden rounded-card border border-line-dark bg-night-900">
+          <div
+            className="relative w-full overflow-hidden rounded-card border border-line-dark bg-night-900"
+            style={{ aspectRatio: study.coverAspect }}
+          >
             <Image
               src={study.cover}
               alt={study.coverAlt ?? ""}
