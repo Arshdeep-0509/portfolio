@@ -1,0 +1,23 @@
+ignoredBuiltDependencies:
+  - sharp
+  - unrs-resolver
+
+# Security patches for transitive dependencies (pnpm audit). All are build/dev-time tools:
+# lodash, mysql2 and deepmerge-ts come in through the Prisma CLI; postcss-selector-parser
+# through @tailwindcss/typography. Re-check after upgrading those packages, and remove an
+# override once its parent depends on a patched version.
+overrides:
+  lodash: ^4.18.1
+  mysql2: ^3.24.5
+  deepmerge-ts: ^8.0.2
+  postcss-selector-parser: ^7.1.6
+
+# Advisories with no patched release. Neither is reachable from the production server:
+# - braces (GHSA-vfj7-8cjw-p6xm): only used by ESLint's file globbing at lint time, on our
+#   own glob patterns.
+# - sprintf-js (GHSA-hp3w-g68c-fv3c): pulled in by argparse, which js-yaml uses only for its
+#   CLI; gray-matter calls js-yaml's parser, which never reaches it.
+auditConfig:
+  ignoreGhsas:
+    - GHSA-vfj7-8cjw-p6xm
+    - GHSA-hp3w-g68c-fv3c

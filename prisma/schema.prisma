@@ -1,0 +1,47 @@
+// Leads from the contact form (/contact → POST /api/contact).
+// Generate the client with `pnpm db:generate`; apply migrations with `pnpm db:migrate`.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum LeadStatus {
+  new
+  contacted
+  qualified
+  won
+  lost
+  spam
+}
+
+model Lead {
+  id             String     @id @default(uuid()) @db.Uuid
+  createdAt      DateTime   @default(now()) @map("created_at")
+  name           String
+  email          String
+  phone          String
+  company        String?
+  service        String
+  budget         String?
+  budgetCurrency String?    @map("budget_currency")
+  timeline       String?
+  message        String
+  nda            Boolean    @default(false)
+  heardFrom      String?    @map("heard_from")
+  sourcePage     String?    @map("source_page")
+  utmSource      String?    @map("utm_source")
+  utmMedium      String?    @map("utm_medium")
+  utmCampaign    String?    @map("utm_campaign")
+  utmTerm        String?    @map("utm_term")
+  utmContent     String?    @map("utm_content")
+  status         LeadStatus @default(new)
+
+  @@index([createdAt])
+  @@index([status])
+  @@map("leads")
+}

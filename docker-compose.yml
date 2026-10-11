@@ -1,0 +1,101 @@
+# Self-hosted stack (see DEPLOYMENT.md): Next.js app + PostgreSQL + Nginx (TLS via Let's Encrypt)
+# + nightly database backups. Configuration lives in deploy/production.env.
+#
+#   First time:  ./deploy/init-letsencrypt.sh      (gets the TLS certificate)
+#   Releases:    ./deploy/deploy.sh <image-tag>    (zero-downtime swap; run by GitHub Actions)
+#
+# The app is never published directly — only Nginx listens on 80/443.
+
+name: arshdeep-site
+
+x-env: &env
+  env_file: deploy/production.env
+
+services:
+  app:
+    <<: *env
+    image: ${APP_IMAGE:-arshdeep-site:latest}
+    build:
+      context: .
+      target: runner
+      args:
+        NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-}
+        NEXT_PUBLIC_GA_MEASUREMENT_ID: ${NEXT_PUBLIC_GA_MEASUREMENT_ID:-}
+        NEXT_PUBLIC_CLARITY_PROJECT_ID: ${NEXT_PUBLIC_CLARITY_PROJECT_ID:-}
+        NEXT_PUBLIC_TURNSTILE_SITE_KEY: ${NEXT_PUBLIC_TURNSTILE_SITE_KEY:-}
+        NEXT_PUBLIC_SENTRY_DSN: ${NEXT_PUBLIC_SENTRY_DSN:-}
+        NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION: ${NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION:-}
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - app-data:/app/.data
+    expose:
+      - "3000"
+    # Health check is defined in the Dockerfile (GET /api/health).
+
+  migrate:
+    <<: *env
+    image: ${MIGRATE_IMAGE:-arshdeep-migrate:latest}
+    build:
+      context: .
+      target: migrator
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: "no"
+    profiles: [tools]
+
+  db:
+    <<: *env
+    image: postgres:16-alpine
+    restart: unless-stopped
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  nginx:
+    <<: *env
+    build: deploy/nginx
+    restart: unless-stopped
+    depends_on:
+      - app
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - certbot-www:/var/www/certbot:ro
+      - letsencrypt:/etc/letsencrypt:ro
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1/nginx-health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  certbot:
+    image: certbot/certbot:latest
+    restart: unless-stopped
+    volumes:
+      - certbot-www:/var/www/certbot
+      - letsencrypt:/etc/letsencrypt
+    # Renews twice a day when due; Nginx reloads its certificates every 6 hours.
+    entrypoint: /bin/sh -c 'trap exit TERM; while :; do certbot renew --webroot -w /var/www/certbot --quiet; sleep 12h & wait $${!}; done'
+
+  backup:
+    <<: *env
+    build: deploy/backup
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  pg-data:
+  app-data:
+  certbot-www:
+  letsencrypt:

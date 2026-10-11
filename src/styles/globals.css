@@ -1,0 +1,510 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+/* =============================================================================
+   DESIGN TOKENS
+   The raw values live here as CSS variables. The @theme blocks below map them
+   into Tailwind (v4 is configured in CSS; there is no tailwind.config.ts).
+   Components only ever use these utilities, never raw hex values.
+   ========================================================================== */
+
+:root {
+  /* Brand */
+  --navy-950: #07172e;
+  --navy-900: #0b2545;
+  --blue-800: #16447f;
+  --primary: #1d5fd1;
+  --primary-hover: #174fb0;
+  --sky-400: #38bdf8;
+  --sky-200: #b9e6ff;
+
+  /* Surfaces */
+  --soft: #eef4ff;
+  --tint: #f5f8ff;
+  --bg: #f8fafc;
+  --surface: #ffffff;
+
+  /* Text & lines */
+  --text: #0f172a;
+  --muted: #475569;
+  --subtle: #64748b; /* AA on white/--bg only — use --muted on --tint/--soft */
+  --border: #e2e8f0;
+
+  /* Status */
+  --amber-500: #f59e0b;
+  --success: #16a34a; /* icons/borders only: 3.3:1 on white, too low for text */
+  --success-strong: #166534; /* text on --success-soft (6.5:1) */
+  --success-soft: #dcfce7;
+  --danger: #dc2626;
+  --danger-soft: #fee2e2;
+
+  /* Gradients */
+  --grad-hero: radial-gradient(circle at 0% 0%, #16447f 0%, #1d5fd1 55%, #0b2545 100%);
+  --grad-cta: linear-gradient(135deg, #1d5fd1, #0b2545);
+  --grad-section: radial-gradient(circle at 0% 0%, #f5f8ff 0%, #ffffff 70%);
+  --grad-footer: linear-gradient(90deg, #0b2545 0%, #0f3c68 100%);
+
+  /* Shadows */
+  --shadow-card: 0 10px 30px -12px rgb(15 23 42 / 0.12);
+  --shadow-card-hover: 0 20px 40px -16px rgb(29 95 209 / 0.25);
+  --shadow-nav: 0 4px 20px rgb(15 23 42 / 0.06);
+
+  /* Layout */
+  --container-max: 1200px;
+  --gutter: 16px;
+  --gutter-desktop: 24px;
+  --section-y: 64px;
+  --section-y-desktop: 96px;
+  --card-pad: 28px;
+  --header-h: 64px;
+
+  /* Motion */
+  --motion-fast: 200ms;
+  --motion-reveal: 500ms;
+}
+
+/* The fixed header is 64px tall, 72px from lg. */
+@media (width >= 64rem) {
+  :root {
+    --header-h: 72px;
+  }
+}
+
+/* -----------------------------------------------------------------------------
+   TONE — contextual colours that flip on dark backgrounds.
+   <Section background="dark|gradient"> and glass cards add .tone-dark or
+   .tone-gradient, so headings, labels and focus rings adapt automatically.
+   .tone-light restores the defaults, e.g. for a white card inside a dark section.
+   Values were chosen from measured contrast (see README › Design system).
+   -------------------------------------------------------------------------- */
+:root,
+.tone-light {
+  --tone-fg: var(--text);
+  --tone-muted: var(--muted);
+  --tone-highlight: var(--primary);
+  --tone-accent: var(--primary);
+  --tone-accent-text: var(--primary);
+  --focus-ring: var(--primary);
+}
+
+/* Navy backgrounds: sky-400 reads at 7:1+, the primary ring would not (2.6:1). */
+.tone-dark {
+  --tone-fg: var(--surface);
+  --tone-muted: var(--sky-200);
+  --tone-highlight: var(--sky-400);
+  --tone-accent: var(--sky-400);
+  --tone-accent-text: var(--sky-400);
+  --focus-ring: var(--sky-400);
+}
+
+/* The hero gradient passes through #1D5FD1, where sky-400 falls to 2.7:1 and
+   sky-200 to 4.4:1. So: white body copy, sky-200 only for large highlighted words. */
+.tone-gradient {
+  --tone-fg: var(--surface);
+  --tone-muted: var(--surface);
+  --tone-highlight: var(--sky-200);
+  --tone-accent: var(--sky-200);
+  --tone-accent-text: var(--surface);
+  --focus-ring: var(--surface);
+}
+
+/* Reset Tailwind's default scales so only design tokens exist. */
+@theme {
+  --color-*: initial;
+  --radius-*: initial;
+  --shadow-*: initial;
+  --font-*: initial;
+}
+
+@theme inline {
+  --color-navy-950: var(--navy-950);
+  --color-navy-900: var(--navy-900);
+  --color-blue-800: var(--blue-800);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-sky-400: var(--sky-400);
+  --color-sky-200: var(--sky-200);
+  --color-soft: var(--soft);
+  --color-tint: var(--tint);
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-ink: var(--text);
+  --color-muted: var(--muted);
+  --color-subtle: var(--subtle);
+  --color-border: var(--border);
+  --color-amber-500: var(--amber-500);
+  --color-success: var(--success);
+  --color-success-strong: var(--success-strong);
+  --color-success-soft: var(--success-soft);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --color-white: var(--surface);
+
+  --color-tone-fg: var(--tone-fg);
+  --color-tone-muted: var(--tone-muted);
+  --color-tone-highlight: var(--tone-highlight);
+  --color-tone-accent: var(--tone-accent);
+  --color-tone-accent-text: var(--tone-accent-text);
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-pill: 9999px;
+
+  --shadow-card: var(--shadow-card);
+  --shadow-card-hover: var(--shadow-card-hover);
+  --shadow-nav: var(--shadow-nav);
+
+  --spacing-card: var(--card-pad);
+
+  --text-h1: clamp(2.25rem, 1.6rem + 3vw, 3.5rem);
+  --text-h1--line-height: 1.1;
+  --text-h2: clamp(1.75rem, 1.3rem + 2vw, 2.5rem);
+  --text-h2--line-height: 1.2;
+  --text-h3: 1.25rem;
+  --text-h3--line-height: 1.4;
+  --text-body: 1rem;
+  --text-body--line-height: 1.7;
+  --text-small: 0.875rem;
+  --text-small--line-height: 1.6;
+  --text-eyebrow: 0.75rem;
+  --text-eyebrow--line-height: 1.4;
+  --text-eyebrow--letter-spacing: 0.12em;
+
+  --animate-marquee: marquee var(--marquee-duration, 40s) linear infinite;
+  --animate-modal-in: modal-in var(--motion-fast) ease-out;
+  --animate-backdrop-in: backdrop-in var(--motion-fast) ease-out;
+  --animate-sheet-in: sheet-in 280ms ease-out;
+  --animate-menu-in: menu-in var(--motion-fast) ease-out;
+  /* Hero entrance runs in CSS (not JS) so it starts on first paint and never delays LCP. */
+  --animate-hero-in: hero-in var(--motion-reveal) ease-out both;
+  /* The H1 is the LCP element: it slides but never fades, so it counts as painted on the first frame. */
+  --animate-hero-rise: hero-rise var(--motion-reveal) ease-out both;
+  --animate-hero-art-in: hero-art-in 700ms ease-out both;
+  --animate-bob: bob 4s ease-in-out infinite;
+  --animate-fade-in: fade-in 300ms ease-out;
+
+  @keyframes marquee {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+  @keyframes modal-in {
+    from {
+      opacity: 0;
+      transform: scale(0.96);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+  @keyframes sheet-in {
+    from {
+      opacity: 0;
+      transform: translateX(24px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  @keyframes hero-in {
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  @keyframes hero-rise {
+    from {
+      transform: translateY(16px);
+    }
+    to {
+      transform: translateY(0);
+    }
+  }
+  @keyframes hero-art-in {
+    from {
+      opacity: 0;
+      transform: scale(0.96);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes bob {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-8px);
+    }
+  }
+  @keyframes menu-in {
+    from {
+      opacity: 0;
+      transform: translateY(-6px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  @keyframes backdrop-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+}
+
+/* =============================================================================
+   UTILITIES
+   ========================================================================== */
+
+@utility container-site {
+  width: 100%;
+  max-width: calc(var(--container-max) + 2 * var(--gutter-desktop));
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+  @media (width >= 64rem) {
+    padding-inline: var(--gutter-desktop);
+  }
+}
+
+@utility section-y {
+  padding-block: var(--section-y);
+  @media (width >= 64rem) {
+    padding-block: var(--section-y-desktop);
+  }
+}
+
+@utility bg-grad-hero {
+  background-image: var(--grad-hero);
+}
+@utility bg-grad-cta {
+  background-image: var(--grad-cta);
+}
+@utility bg-grad-section {
+  background-image: var(--grad-section);
+}
+@utility bg-grad-footer {
+  background-image: var(--grad-footer);
+}
+
+/* Translucent card for dark backgrounds. */
+@utility glass {
+  background-color: color-mix(in srgb, var(--surface) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--surface) 18%, transparent);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+/* Dotted overlay for the CTA band (white dots at 6%). */
+@utility bg-dots {
+  background-image: radial-gradient(
+    color-mix(in srgb, var(--surface) 6%, transparent) 1.5px,
+    transparent 1.5px
+  );
+  background-size: 18px 18px;
+}
+
+/* Faint blueprint grid, used by InfoCard. */
+@utility bg-grid {
+  background-image:
+    linear-gradient(color-mix(in srgb, var(--primary) 6%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--primary) 6%, transparent) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* =============================================================================
+   BASE
+   ========================================================================== */
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  /* Anchor targets land below the fixed header, and below a sticky sub-nav when the page
+     has one (it sets --subnav-h on its wrapper). */
+  [id] {
+    scroll-margin-top: calc(var(--header-h) + var(--subnav-h, 0px) + 16px);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+
+  body {
+    background-color: var(--bg);
+    color: var(--text);
+    font-size: var(--text-body);
+    line-height: 1.7;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-heading);
+    color: var(--tone-fg);
+    text-wrap: balance;
+  }
+
+  ::selection {
+    background-color: var(--sky-200);
+    color: var(--navy-950);
+  }
+
+  /* One visible focus style everywhere; colour adapts to the section tone. */
+  :focus-visible {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 2px;
+  }
+}
+
+/* Long-form prose (case studies, blog posts). The default Tailwind palette is reset, so the
+   typography plugin's colours are mapped onto the design tokens here. */
+.prose {
+  --tw-prose-body: var(--muted);
+  --tw-prose-headings: var(--text);
+  --tw-prose-lead: var(--muted);
+  --tw-prose-links: var(--primary);
+  --tw-prose-bold: var(--text);
+  --tw-prose-counters: var(--muted);
+  --tw-prose-bullets: var(--primary);
+  --tw-prose-hr: var(--border);
+  --tw-prose-quotes: var(--text);
+  --tw-prose-quote-borders: var(--primary);
+  --tw-prose-captions: var(--muted);
+  --tw-prose-code: var(--navy-900);
+  --tw-prose-pre-code: inherit;
+  --tw-prose-pre-bg: var(--navy-950);
+  --tw-prose-th-borders: var(--border);
+  --tw-prose-td-borders: var(--border);
+  font-size: 1.0625rem;
+  line-height: 1.75;
+}
+.prose :where(h2, h3) {
+  font-family: var(--font-heading);
+  letter-spacing: -0.01em;
+}
+.prose :where(a) {
+  text-underline-offset: 3px;
+}
+.prose :where(:not(pre) > code) {
+  background: var(--soft);
+  border-radius: 6px;
+  padding: 0.15em 0.4em;
+  font-weight: 500;
+}
+.prose :where(:not(pre) > code)::before,
+.prose :where(:not(pre) > code)::after {
+  content: none;
+}
+.prose :where(pre) {
+  border-radius: var(--radius-lg);
+  padding: 1.1rem 1.25rem;
+  font-size: 0.875rem;
+}
+.prose :where(figure[data-rehype-pretty-code-figure]) {
+  margin-block: 1.75em;
+}
+
+/* [PLACEHOLDER] tokens marked in MDX by rehypeMarkPlaceholders. */
+mark[data-placeholder] {
+  background: transparent;
+  color: inherit;
+  font-weight: 600;
+  text-decoration: underline dashed var(--amber-500) 2px;
+  text-underline-offset: 4px;
+}
+
+/* Scroll reveal (see components/ui/Reveal.tsx). Hidden until RevealObserver marks it. */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(16px);
+  transition:
+    opacity var(--motion-reveal) ease-out,
+    transform var(--motion-reveal) ease-out;
+  transition-delay: var(--reveal-delay, 0ms);
+}
+[data-reveal][data-revealed] {
+  opacity: 1;
+  transform: none;
+}
+
+/* Nothing moves when the user asks for reduced motion. */
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal] {
+    transform: none;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ==========================================================================
+   PRINT — legal pages print as a clean document (site chrome uses print:hidden)
+   ========================================================================== */
+
+@media print {
+  @page {
+    margin: 18mm 16mm;
+  }
+
+  body {
+    background: #fff !important;
+  }
+
+  /* On paper a link is only useful if you can read where it goes. */
+  .legal-prose a[href^="http"]::after,
+  .legal-prose a[href^="mailto:"]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.85em;
+    word-break: break-all;
+  }
+
+  .legal-prose :where(h2, h3) {
+    break-after: avoid;
+  }
+
+  .legal-prose :where(li, tr, p) {
+    break-inside: avoid;
+  }
+}

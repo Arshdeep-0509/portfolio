@@ -1,0 +1,76 @@
+# ${DOMAIN} is filled in by entrypoint.sh. Security headers (CSP, HSTS…) come from Next.js.
+
+# Docker's DNS, re-resolved every 10s: during a release both app containers are in rotation,
+# and the old one drops out without an Nginx reload.
+resolver 127.0.0.11 valid=10s ipv6=off;
+
+# HTTP: Let's Encrypt challenges, a health endpoint for Docker, everything else → HTTPS apex.
+server {
+  listen 80;
+  listen [::]:80;
+  server_name ${DOMAIN} www.${DOMAIN} _;
+
+  location /.well-known/acme-challenge/ {
+    root /var/www/certbot;
+  }
+
+  location = /nginx-health {
+    access_log off;
+    return 200 "ok\n";
+  }
+
+  location / {
+    return 301 https://${DOMAIN}$request_uri;
+  }
+}
+
+# www → apex (301), over HTTPS too.
+server {
+  listen 443 ssl;
+  listen [::]:443 ssl;
+  http2 on;
+  server_name www.${DOMAIN};
+
+  ssl_certificate /etc/letsencrypt/live/${DOMAIN}/fullchain.pem;
+  ssl_certificate_key /etc/letsencrypt/live/${DOMAIN}/privkey.pem;
+  include /etc/nginx/http.d/tls.inc;
+
+  return 301 https://${DOMAIN}$request_uri;
+}
+
+server {
+  listen 443 ssl;
+  listen [::]:443 ssl;
+  http2 on;
+  server_name ${DOMAIN};
+
+  ssl_certificate /etc/letsencrypt/live/${DOMAIN}/fullchain.pem;
+  ssl_certificate_key /etc/letsencrypt/live/${DOMAIN}/privkey.pem;
+  include /etc/nginx/http.d/tls.inc;
+
+  set $app http://app:3000;
+
+  # Content-hashed build assets: cache for a year.
+  location /_next/static/ {
+    proxy_pass $app;
+    proxy_set_header Host $host;
+    proxy_hide_header Cache-Control;
+    add_header Cache-Control "public, max-age=31536000, immutable";
+  }
+
+  location / {
+    proxy_pass $app;
+    proxy_http_version 1.1;
+    proxy_set_header Host $host;
+    # Overwrite (don't append) so visitors can't spoof the IP the rate limiter sees.
+    proxy_set_header X-Forwarded-For $remote_addr;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-Proto https;
+    proxy_set_header X-Forwarded-Host $host;
+    proxy_set_header Connection "";
+    # If a container is going away mid-release, retry on the other one.
+    proxy_connect_timeout 3s;
+    proxy_next_upstream error timeout http_502 http_503;
+    proxy_read_timeout 60s;
+  }
+}

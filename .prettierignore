@@ -1,0 +1,13 @@
+.next
+out
+build
+node_modules
+pnpm-lock.yaml
+next-env.d.ts
+
+src/generated
+
+# Nginx config is not a format Prettier understands
+deploy/nginx/*.inc
+deploy/nginx/*.conf
+deploy/nginx/*.template

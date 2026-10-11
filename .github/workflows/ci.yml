@@ -1,0 +1,83 @@
+# Runs on every pull request and on pushes to main.
+# Make it a required status check (Settings → Branches → main → "Require status checks to pass":
+# select "CI / verify") so a failing run blocks the merge.
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  NEXT_TELEMETRY_DISABLED: "1"
+  # Canonicals, sitemap and OG URLs during CI point at the local server.
+  NEXT_PUBLIC_SITE_URL: http://localhost:3100
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint (zero warnings)
+        run: pnpm lint
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Formatting
+        run: pnpm format:check
+
+      - name: Unit tests
+        run: pnpm test
+
+      - name: Dependency audit
+        run: pnpm audit --audit-level moderate
+
+      - name: Build
+        run: pnpm build
+
+      - name: Install Playwright browser
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: E2E tests (desktop + mobile)
+        run: pnpm test:e2e
+
+      - name: Broken-link check
+        run: |
+          pnpm start --port 3100 &
+          npx --yes wait-on@8 http://localhost:3100/api/health
+          pnpm test:links
+          kill %1
+
+      - name: Lighthouse CI (/, /services, /contact)
+        run: npx --yes @lhci/cli@0.15.x autorun
+
+      - name: Upload reports
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reports
+          path: |
+            playwright-report/
+            test-results/
+            .lighthouseci/
+          retention-days: 14

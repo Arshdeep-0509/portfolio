@@ -1,0 +1,77 @@
+---
+title: Multi-Tenant SaaS Analytics & Observability Platform
+summary: Tenant-isolated analytics, dashboards and alerting for SaaS teams that need to see how each customer uses — and experiences — their product.
+cover: /images/work/saas-analytics-platform-cover.svg
+coverAlt: Placeholder cover image for the SaaS analytics and observability platform case study
+status: in-development
+client: Personal product
+role: Architecture, full-stack engineering and DevOps
+timeline: "[TIMELINE] — in development"
+# Confirm this matches the stack actually used.
+stack: [Next.js, Node.js, PostgreSQL, ClickHouse, Redis, Docker, Kubernetes, Grafana]
+categories: [web, devops]
+# Service pages for these slugs link to this case study.
+services:
+  [
+    devops-cloud,
+    backend-development,
+    full-stack-development,
+    frontend-development,
+    web-applications,
+  ]
+links: {}
+# Results stay empty until the product is live and there are real, verifiable numbers.
+results: []
+publishedAt: 2026-10-09
+problem: >-
+  SaaS teams often know their overall usage numbers but not how individual customers experience the
+  product — which tenant is struggling, which feature is slow for whom, and when something breaks
+  for one account. [ADD DETAILS — the specific gap you set out to close.]
+goals:
+  - Strict tenant isolation for data and access
+  - Per-tenant dashboards for usage and performance
+  - Alerting that points at the affected tenant, not just the service
+  - "[ADD GOAL]"
+architecture:
+  src: /images/work/architecture-placeholder.svg
+  alt: Placeholder for the system architecture diagram
+  caption: "[ADD CAPTION — ingestion, storage, query and alerting paths]"
+features:
+  - icon: Lock
+    title: Tenant isolation
+    text: Each customer's data and dashboards are separated at the data and access layers.
+  - icon: ChartColumn
+    title: Per-tenant dashboards
+    text: "[ADD DETAILS — which metrics and views each tenant gets]"
+  - icon: BellRing
+    title: Alerting
+    text: "[ADD DETAILS — thresholds, anomaly detection and notification channels]"
+  - icon: Workflow
+    title: Event ingestion
+    text: "[ADD DETAILS — how events and metrics reach the platform]"
+screens:
+  - src: /images/work/screen-placeholder.svg
+    alt: Placeholder screenshot
+    caption: "[SCREENSHOT — tenant dashboard]"
+  - src: /images/work/screen-placeholder.svg
+    alt: Placeholder screenshot
+    caption: "[SCREENSHOT — alert configuration]"
+nextSteps:
+  - "[ADD — what you would build or change next, and why]"
+draft: false
+---
+
+The platform is designed around tenants from the first table: every event, metric and alert
+belongs to exactly one customer, and isolation is enforced in the data layer rather than only in the
+interface.
+
+[ADD DETAILS — how you approached ingestion, storage, query performance, isolation and alerting.
+Describe the real decisions and trade-offs.]
+
+## Isolation first
+
+[ADD DETAILS — how tenant isolation is enforced and tested.]
+
+## Keeping queries fast
+
+[ADD DETAILS — storage choices, aggregation and caching.]
