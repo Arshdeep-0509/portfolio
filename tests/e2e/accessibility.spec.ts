@@ -5,14 +5,22 @@ import { expect, test } from "./fixtures";
 const pages = [
   "/",
   "/services",
-  "/services/mvp-development",
+  "/services/ai-integration",
+  "/approach",
+  "/about",
+  "/work",
+  "/work/ima-banjara-hills",
+  "/work/trading-platform",
   "/contact",
-  "/careers",
+  "/collaborate",
   "/privacy-policy",
+  "/this-page-does-not-exist",
 ];
 
 for (const path of pages) {
   test(`no WCAG 2.2 AA violations on ${path}`, async ({ page }) => {
+    // Every page loads in parallel with the rest of the suite; axe itself takes a few seconds.
+    test.setTimeout(60_000);
     await page.goto(path);
     // Let scroll-reveal animations finish so colours are measured at full opacity.
     await page.evaluate(async () => {

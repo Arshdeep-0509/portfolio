@@ -1,69 +1,59 @@
-import type { BadgeVariant } from "@/components/ui/Badge";
-import type { IconName } from "@/content/services";
-import { siteConfig } from "@/content/site";
-import { isPlaceholder } from "@/lib/constants";
+import type { StatusKind } from "@/components/ui/StatusDot";
+import { bookingHref } from "@/lib/booking";
 
 /**
- * Own products and initiatives. Statuses and descriptions must match reality —
- * review every entry before launch.
+ * "From the lab": my own products and the free scoping call. Statuses and descriptions must match
+ * reality — review every entry before launch.
  */
 
-export type Product = {
+export type LabItem = {
   slug: string;
-  icon: IconName;
+  kind: "product" | "offer";
   name: string;
   description: string;
-  statuses: { label: string; variant: BadgeVariant }[];
-  features: string[];
-  cta: { label: string; href: string };
-  /** "wide" spans the full row and shows `bullets` and `note`. */
-  variant?: "default" | "wide";
+  status: { kind: StatusKind; label: string };
+  facts: string[];
+  /** Extra lines for the offer card. */
   bullets?: string[];
   note?: string;
+  cta: { label: string; href: string };
 };
 
-// Until a real Calendly link replaces [CALENDLY_URL], send people to the contact form instead
-// of a broken link.
-const bookingHref = isPlaceholder(siteConfig.calendlyUrl)
-  ? "/contact?topic=mvp-scoping"
-  : siteConfig.calendlyUrl;
-
-export const products: Product[] = [
+export const labItems: LabItem[] = [
   {
-    slug: "school-platform",
-    icon: "GraduationCap",
-    name: "School Management Platform",
+    slug: "trading-platform",
+    kind: "product",
+    name: "Trader's Platform",
     description:
-      "A unified web and mobile platform for schools from pre-primary to senior secondary, with role-based access for every user and agentic AI assistants for staff, students and parents.",
-    statuses: [{ label: "In development", variant: "in-development" }],
-    features: ["RBAC", "Web + App", "Agentic AI"],
-    cta: { label: "Request updates", href: "/contact?topic=school-platform" },
+      "Stock analysis built around an RSI-HA strategy — the Relative Strength Index read alongside Heikin-Ashi candles — for intraday and swing trading.",
+    status: { kind: "in-development", label: "In development" },
+    facts: ["RSI-HA", "Intraday", "Swing"],
+    cta: { label: "Read the write-up", href: "/work/trading-platform" },
   },
   {
-    slug: "saas-observability",
-    icon: "ChartNoAxesCombined",
-    name: "Multi-Tenant SaaS Analytics & Observability Platform",
+    slug: "pharma-inventory",
+    kind: "product",
+    name: "Hospital Pharmacy Inventory Management",
     description:
-      "Tenant-isolated analytics, dashboards and alerting for SaaS teams that need to see how each customer uses — and experiences — their product.",
-    statuses: [{ label: "In development", variant: "in-development" }],
-    features: ["Multi-tenant", "Observability", "DevOps"],
-    cta: { label: "Follow the build", href: "/work" },
+      "Software that keeps a hospital pharmacy's medicine stock in order: what's on the shelf, what's running low and what's close to expiry.",
+    status: { kind: "in-development", label: "In development" },
+    facts: ["Hospital pharmacy", "Stock control", "Expiry tracking"],
+    cta: { label: "Ask about it", href: "/contact?topic=pharma-inventory" },
   },
   {
     slug: "mvp-scoping",
-    icon: "CalendarCheck",
-    name: "Free MVP scoping session",
+    kind: "offer",
+    name: "Free 30-minute idea-to-scope call",
     description:
-      "A 30-minute call to cut your idea down to a first version you can actually launch.",
-    statuses: [{ label: "Limited", variant: "limited" }],
-    features: ["30 minutes", "Video call", "Free"],
-    variant: "wide",
+      "Thirty minutes spent shrinking your idea into a first release that's realistic to build.",
+    status: { kind: "limited", label: "Limited" },
+    facts: ["30 minutes", "Video call", "Free"],
     bullets: [
-      "Bring: your idea, who it's for, and any sketches or competitor links",
-      "Leave with: a feature shortlist, a suggested stack and a rough timeline",
-      "For: founders before their first build, or rethinking an MVP that stalled",
+      "Come with the idea, the audience and any sketches or competitor links",
+      "Go away with a short feature list, a stack suggestion and a ballpark timeline",
+      "Best before a first build, or when an MVP has stalled",
     ],
-    note: "No sales pressure. If I'm not the right fit, I'll say so.",
-    cta: { label: "Book a slot", href: bookingHref },
+    note: "No hard sell. If someone else suits you better, I'll tell you.",
+    cta: { label: "Book a free call", href: bookingHref },
   },
 ];

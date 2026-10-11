@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import Image from "next/image";
 import { Expand } from "lucide-react";
 import { PlaceholderText } from "@/components/ui/PlaceholderText";
+import { ScrollSnapRow } from "@/components/ui/ScrollSnapRow";
 import { isUnoptimized } from "@/lib/images";
 
 export type GalleryImage = { src: string; alt: string; caption?: string };
@@ -15,9 +16,7 @@ const GalleryLightbox = dynamic(
   { ssr: false },
 );
 
-/**
- * Thumbnail grid that opens a lightbox (GalleryLightbox, loaded on first open).
- */
+/** Screens in a scroll-snap row; selecting one opens it in a lightbox (loaded on first open). */
 export function Gallery({ images, label }: { images: GalleryImage[]; label: string }) {
   const [index, setIndex] = useState<number | null>(null);
   // Stays mounted after the first open so the native dialog can restore focus on close.
@@ -26,7 +25,7 @@ export function Gallery({ images, label }: { images: GalleryImage[]; label: stri
 
   return (
     <>
-      <ul className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      <ScrollSnapRow label={label} itemWidth="min(88%, 38rem)">
         {images.map((image, i) => (
           <li key={`${image.src}-${i}`}>
             <figure>
@@ -36,30 +35,30 @@ export function Gallery({ images, label }: { images: GalleryImage[]; label: stri
                   setLoaded(true);
                   setIndex(i);
                 }}
-                aria-label={`Open screen ${i + 1} of ${count}: ${image.alt}`}
-                className="group relative block aspect-[16/10] w-full overflow-hidden rounded-lg border border-border bg-soft shadow-card"
+                aria-label={`Enlarge screen ${i + 1} of ${count}: ${image.alt}`}
+                className="group relative block aspect-[16/10] w-full overflow-hidden rounded-card border border-rule bg-night-900"
               >
                 <Image
                   src={image.src}
                   alt=""
                   fill
-                  sizes="(min-width: 1024px) 380px, (min-width: 640px) 50vw, 100vw"
+                  sizes="(min-width: 1024px) 608px, 88vw"
                   unoptimized={isUnoptimized(image.src)}
-                  className="object-cover transition-transform duration-500 group-hover:scale-[1.04] motion-reduce:group-hover:scale-100"
+                  className="object-cover transition-transform duration-700 group-hover:scale-[1.02]"
                 />
-                <span className="absolute right-3 bottom-3 inline-flex size-9 items-center justify-center rounded-pill bg-navy-900/85 text-white">
-                  <Expand aria-hidden="true" className="size-4" />
+                <span className="absolute right-3 bottom-3 inline-flex size-9 items-center justify-center rounded-button bg-night-950/85 text-ivory-50">
+                  <Expand aria-hidden="true" strokeWidth={1.5} className="size-4" />
                 </span>
               </button>
               {image.caption ? (
-                <figcaption className="mt-2 text-small text-muted">
+                <figcaption className="mt-3 text-small text-fg-muted">
                   <PlaceholderText text={image.caption} />
                 </figcaption>
               ) : null}
             </figure>
           </li>
         ))}
-      </ul>
+      </ScrollSnapRow>
 
       {loaded ? (
         <GalleryLightbox images={images} label={label} index={index} onIndexChange={setIndex} />

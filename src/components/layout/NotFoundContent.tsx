@@ -1,65 +1,61 @@
 import Link from "next/link";
-import { ArrowRight, Home } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/Button";
-import { Container } from "@/components/ui/Container";
-import { siteConfig } from "@/content/site";
+import { CursorGlow } from "@/components/ui/CursorGlow";
 
-const quickLinks = [
-  { label: "Contact", href: "/contact", text: "Tell me about your project" },
-  { label: "Work", href: "/work", text: "See what I've built" },
-  ...(siteConfig.featureFlags.blog
-    ? [{ label: "Insights", href: "/insights", text: "Notes on building products" }]
-    : []),
+const links = [
+  { label: "Home", href: "/", text: "Start again from the top" },
+  { label: "Services", href: "/services", text: "Everything I can build for you" },
+  { label: "Contact", href: "/contact", text: "Ask me where the page went" },
 ];
 
-/** Body of the 404 page, shared by the root and (site) not-found files. */
+/** Body of the 404 page, shared by the root and (site) not-found files: a night sky, one lamp. */
 export function NotFoundContent() {
   return (
-    <section className="bg-tint">
-      <Container className="flex flex-col items-center section-y text-center">
-        <p
-          aria-hidden="true"
-          className="bg-grad-hero bg-clip-text font-heading text-[clamp(6rem,4rem+10vw,10rem)] leading-none font-extrabold tracking-tight text-transparent"
-        >
-          404
-        </p>
-        <h1 className="mt-4 text-h2 font-extrabold tracking-tight">
-          <span className="sr-only">Error 404: </span>This page took a wrong turn
+    <section
+      data-under-header=""
+      aria-labelledby="not-found-title"
+      className="tone-night relative isolate flex min-h-svh items-center overflow-hidden bg-night-950 bg-stars pt-(--header-h) text-fg"
+    >
+      <CursorGlow rest={{ x: "50%", y: "40%" }} size={640} />
+      <div className="container-site py-24">
+        <p className="label-mono text-accent">(404) Not found</p>
+        <h1 id="not-found-title" className="mt-6 max-w-[16ch] text-h1 text-fg">
+          This page is <em>off the map</em>
         </h1>
-        <p className="mt-4 max-w-md text-muted">
-          The link may be out of date, or the page has moved. Let&apos;s get you back on track.
+        <p className="mt-6 max-w-md text-fg-muted">
+          The link may be old, or the page has moved. One of these will get you back on course.
         </p>
-        <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-          <Button href="/" leftIcon={<Home aria-hidden="true" className="size-4" />}>
-            Back to home
-          </Button>
-          <Button href="/services" variant="outline">
-            Explore services
+        <div className="mt-10">
+          <Button href="/" size="lg">
+            Return to the home page
           </Button>
         </div>
-
-        <nav aria-label="Popular pages" className="mt-12 w-full max-w-2xl">
-          <ul className="grid gap-3 sm:grid-cols-3">
-            {quickLinks.map((link) => (
-              <li key={link.href}>
+        <nav aria-label="Useful pages" className="mt-14 max-w-2xl border-t border-rule">
+          <ul>
+            {links.map((link) => (
+              <li key={link.href} className="border-b border-rule">
                 <Link
                   href={link.href}
-                  className="group flex h-full items-center justify-between gap-3 rounded-lg border border-border bg-surface px-5 py-4 text-left shadow-card transition-shadow duration-200 hover:shadow-card-hover"
+                  className="group flex min-h-16 items-center justify-between gap-4 py-3"
                 >
                   <span>
-                    <span className="block font-semibold text-ink">{link.label}</span>
-                    <span className="block text-small text-muted">{link.text}</span>
+                    <span className="block font-display-soft text-xl text-fg group-hover:text-accent">
+                      {link.label}
+                    </span>
+                    <span className="block text-small text-fg-muted">{link.text}</span>
                   </span>
                   <ArrowRight
                     aria-hidden="true"
-                    className="size-4 shrink-0 text-primary transition-transform duration-200 group-hover:translate-x-1 motion-reduce:group-hover:translate-x-0"
+                    strokeWidth={1.5}
+                    className="size-5 text-accent transition-transform group-hover:translate-x-1"
                   />
                 </Link>
               </li>
             ))}
           </ul>
         </nav>
-      </Container>
+      </div>
     </section>
   );
 }

@@ -1,9 +1,9 @@
 /**
  * Scroll reveal without per-element JavaScript. These render plain elements marked `data-reveal`;
  * the single global <RevealObserver> (in Providers) adds `data-revealed` when each one enters the
- * viewport, and CSS in globals.css fades it up 16px. No hydration cost per card.
+ * viewport, and CSS in globals.css runs the "glow-in": opacity 0→1, blur 8px→0, y 12px→0, 700ms.
  *
- * - Reduced motion: no movement (globals.css); content simply appears.
+ * - Reduced motion: nothing moves or blurs (globals.css); content simply appears.
  * - No JavaScript: a <noscript> rule in the root layout shows everything.
  */
 
@@ -12,32 +12,33 @@ type RevealProps = {
   /** Milliseconds to wait before animating. */
   delay?: number;
   className?: string;
+  as?: "div" | "li" | "p";
 };
 
-export function Reveal({ children, delay = 0, className }: RevealProps) {
+export function Reveal({ children, delay = 0, className, as: Tag = "div" }: RevealProps) {
   return (
-    <div
+    <Tag
       data-reveal=""
       className={className}
       style={delay ? ({ "--reveal-delay": `${delay}ms` } as React.CSSProperties) : undefined}
     >
       {children}
-    </div>
+    </Tag>
   );
 }
 
 type RevealGroupProps = {
   children: React.ReactNode;
-  /** Milliseconds between consecutive items. Default 80. */
+  /** Milliseconds between consecutive items. Default 90. */
   stagger?: number;
   className?: string;
-  as?: "div" | "ul";
+  as?: "div" | "ul" | "ol" | "dl";
 };
 
-/** Wraps a grid; each <RevealItem index={i}> waits `index × stagger` ms. */
+/** Wraps a list; each <RevealItem index={i}> waits `index × stagger` ms. */
 export function RevealGroup({
   children,
-  stagger = 80,
+  stagger = 90,
   className,
   as: Tag = "div",
 }: RevealGroupProps) {
@@ -65,7 +66,7 @@ export function RevealItem({ children, index = 0, className, as: Tag = "div" }: 
       data-reveal=""
       className={className}
       style={
-        { "--reveal-delay": `calc(${index} * var(--reveal-stagger, 80ms))` } as React.CSSProperties
+        { "--reveal-delay": `calc(${index} * var(--reveal-stagger, 90ms))` } as React.CSSProperties
       }
     >
       {children}

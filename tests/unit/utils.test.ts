@@ -12,7 +12,16 @@ describe("cn", () => {
 
   it("keeps custom font-size tokens alongside text colours", () => {
     // Regression: without the extendTailwindMerge config, text-small was read as a colour.
-    expect(cn("text-small text-white", "text-muted")).toBe("text-small text-muted");
+    expect(cn("text-small text-fg", "text-fg-muted")).toBe("text-small text-fg-muted");
+    expect(cn("text-label text-ivory-50", "text-lamp-700")).toBe("text-label text-lamp-700");
+  });
+
+  it("keeps a background colour next to a texture utility", () => {
+    expect(cn("bg-night-950 bg-stars", "text-fg")).toBe("bg-night-950 bg-stars text-fg");
+  });
+
+  it("knows the Skylamp radius tokens", () => {
+    expect(cn("rounded-card", "rounded-button")).toBe("rounded-button");
   });
 
   it("drops falsy values", () => {

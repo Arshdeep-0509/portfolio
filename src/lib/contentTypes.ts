@@ -11,7 +11,7 @@ export type PostCategory = (typeof postCategories)[number];
 
 export type CaseStudyStatus = "live" | "in-development" | "concept";
 
-/** What a case study card needs — no MDX body. */
+/** What a case study row needs — no MDX body. */
 export type CaseStudyCardData = {
   slug: string;
   title: string;
@@ -21,9 +21,12 @@ export type CaseStudyCardData = {
   status: CaseStudyStatus;
   stack: string[];
   categories: CaseStudyCategory[];
+  role: string;
+  /** YYYY-MM-DD */
+  publishedAt: string;
 };
 
-/** What a post card needs — no MDX body. */
+/** What a journal index row needs — no MDX body. */
 export type PostCardData = {
   slug: string;
   title: string;

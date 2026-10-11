@@ -39,60 +39,62 @@ function receivedAt(lead: StoredLead) {
 }
 
 function messageBlock(message: string) {
-  return `<p style="margin:0 0 24px;padding:12px 16px;background:${colors.bg};border-left:3px solid ${colors.primary};white-space:pre-wrap;">${escapeHtml(message)}</p>`;
+  return `<p style="margin:0 0 24px;padding:12px 16px;background:${colors.bg};border-left:3px solid ${colors.lamp};white-space:pre-wrap;">${escapeHtml(message)}</p>`;
 }
 
 export function leadNotificationEmail(lead: StoredLead): RenderedEmail {
   const l = labels(lead);
-  const subject = `New lead: ${l.service} — ${lead.name}${lead.nda ? " (NDA requested)" : ""}`;
+  const subject = `Enquiry: ${l.service} from ${lead.name}${lead.nda ? " (wants an NDA)" : ""}`;
   const utm = Object.entries(lead.utm)
     .filter(([, value]) => value)
     .map(([key, value]) => `${key}=${value}`)
     .join(" · ");
-  const whatsapp = `https://wa.me/${lead.phone.replace(/\D/g, "")}`;
+  // Quick enquiries may arrive without a phone number.
+  const digits = lead.phone.replace(/\D/g, "");
+  const whatsapp = digits ? `https://wa.me/${digits}` : null;
 
   const html = layout(
     subject,
-    `<h1 style="margin:0 0 4px;font-size:20px;">New project enquiry</h1>
-<p style="margin:0 0 20px;color:${colors.muted};">Reply to this email to answer ${escapeHtml(lead.name)} directly.</p>
-${lead.nda ? `<p style="margin:0 0 20px;padding:10px 14px;background:#fef3c7;border-radius:8px;font-weight:700;">NDA requested before sharing details.</p>` : ""}
+    `<h1 style="margin:0 0 4px;font-size:20px;">A new enquiry has arrived</h1>
+<p style="margin:0 0 20px;color:${colors.muted};">Replying to this email goes straight to ${escapeHtml(lead.name)}.</p>
+${lead.nda ? `<p style="margin:0 0 20px;padding:10px 14px;background:#f3ede2;border-left:3px solid #f5a524;border-radius:4px;font-weight:700;">They would like an NDA before sharing details.</p>` : ""}
 <table role="presentation" cellpadding="0" cellspacing="0" style="font-size:14px;margin-bottom:20px;">
 ${row("Name", lead.name)}
 ${row("Email", lead.email, `mailto:${lead.email}`)}
-${row("Phone", lead.phone, `tel:${lead.phone.replace(/[^\d+]/g, "")}`)}
-${row("WhatsApp", "Open chat", whatsapp)}
+${row("Phone", lead.phone || null, lead.phone ? `tel:${lead.phone.replace(/[^\d+]/g, "")}` : undefined)}
+${row("WhatsApp", whatsapp ? "Start a chat" : null, whatsapp ?? undefined)}
 ${row("Company", lead.company)}
-${row("Needs help with", l.service)}
+${row("Looking for", l.service)}
 ${row("Budget", l.budget)}
 ${row("Timeline", l.timeline)}
-${row("Heard about me", l.heardFrom)}
-${row("Sent from", lead.sourcePage)}
+${row("Found me through", l.heardFrom)}
+${row("Page", lead.sourcePage)}
 ${row("UTM", utm || null)}
 ${row("Received", receivedAt(lead))}
 ${row("Reference", lead.id)}
 </table>
-<h2 style="margin:0 0 8px;font-size:16px;">Message</h2>
+<h2 style="margin:0 0 8px;font-size:16px;">What they wrote</h2>
 ${messageBlock(lead.message)}`,
   );
 
   const text = [
-    "New project enquiry",
-    lead.nda ? "NDA requested before sharing details." : "",
+    "A new enquiry has arrived",
+    lead.nda ? "They would like an NDA before sharing details." : "",
     "",
     `Name: ${lead.name}`,
     `Email: ${lead.email}`,
-    `Phone: ${lead.phone} (WhatsApp: ${whatsapp})`,
+    `Phone: ${lead.phone || "—"}${whatsapp ? ` (WhatsApp: ${whatsapp})` : ""}`,
     `Company: ${lead.company ?? "—"}`,
-    `Needs help with: ${l.service}`,
+    `Looking for: ${l.service}`,
     `Budget: ${l.budget ?? "—"}`,
     `Timeline: ${l.timeline ?? "—"}`,
-    `Heard about me: ${l.heardFrom ?? "—"}`,
-    `Sent from: ${lead.sourcePage ?? "—"}`,
+    `Found me through: ${l.heardFrom ?? "—"}`,
+    `Page: ${lead.sourcePage ?? "—"}`,
     `UTM: ${utm || "—"}`,
     `Received: ${receivedAt(lead)}`,
     `Reference: ${lead.id}`,
     "",
-    "Message:",
+    "What they wrote:",
     lead.message,
   ].join("\n");
 
@@ -102,54 +104,54 @@ ${messageBlock(lead.message)}`,
 export function leadAutoReplyEmail(lead: StoredLead): RenderedEmail {
   const l = labels(lead);
   const firstName = lead.name.split(/\s+/)[0] || lead.name;
-  const subject = `Thanks, ${firstName} — I've got your message`;
+  const subject = `${firstName}, your message is with me`;
   const booking = isPlaceholder(siteConfig.calendlyUrl) ? null : siteConfig.calendlyUrl;
   const steps = [
-    "I'll read your message and reply within one business day, by email or WhatsApp.",
-    "If it helps, we'll have a 30–45 minute discovery call to understand your goals.",
-    "You'll get a written plan: scope, timeline and estimate. No pressure — you decide when to move forward.",
+    "I read it and write back within one business day, by email or WhatsApp.",
+    "Where useful, we talk for 30–45 minutes about your goals and your users.",
+    "You receive a written plan with scope, timeline and estimate, and decide in your own time.",
   ];
 
   const html = layout(
     subject,
-    `<h1 style="margin:0 0 16px;font-size:20px;">Thanks, ${escapeHtml(firstName)}!</h1>
-<p style="margin:0 0 16px;">Your message has reached me — I'll reply within one business day. Here's a copy of what you sent:</p>
+    `<h1 style="margin:0 0 16px;font-size:20px;">Thank you, ${escapeHtml(firstName)}.</h1>
+<p style="margin:0 0 16px;">It arrived safely, and you'll hear from me within one business day. For your records, this is what you sent:</p>
 <table role="presentation" cellpadding="0" cellspacing="0" style="font-size:14px;margin-bottom:16px;">
-${row("Needs help with", l.service)}
+${row("Looking for", l.service)}
 ${row("Budget", l.budget)}
 ${row("Timeline", l.timeline)}
 ${row("NDA first", lead.nda ? "Yes" : "No")}
 </table>
 ${messageBlock(lead.message)}
-<h2 style="margin:0 0 8px;font-size:16px;">What happens next</h2>
+<h2 style="margin:0 0 8px;font-size:16px;">From here</h2>
 <ol style="margin:0 0 20px;padding-left:20px;">${steps.map((step) => `<li style="margin-bottom:6px;">${escapeHtml(step)}</li>`).join("")}</ol>
 ${
   booking
-    ? `<p style="margin:0 0 20px;"><a href="${escapeHtml(booking)}" style="display:inline-block;background:${colors.primary};color:#ffffff;text-decoration:none;font-weight:700;padding:10px 18px;border-radius:999px;">Book a 30-min call</a></p>`
+    ? `<p style="margin:0 0 20px;"><a href="${escapeHtml(booking)}" style="display:inline-block;background:${colors.lamp};color:${colors.text};text-decoration:none;font-weight:700;padding:10px 18px;border-radius:8px;">Book a free call</a></p>`
     : ""
 }
-<p style="margin:0 0 16px;">Want to add something? Just reply to this email.</p>
+<p style="margin:0 0 16px;">Thought of something else? Reply to this email and it reaches me.</p>
 <p style="margin:0 0 24px;">— ${escapeHtml(siteConfig.name)}</p>
-<p style="margin:0;color:${colors.muted};font-size:13px;">You're receiving this because you contacted me at ${escapeHtml(siteConfig.url)}. Reference: ${escapeHtml(lead.id)}</p>`,
+<p style="margin:0;color:${colors.muted};font-size:13px;">This email went to you because you wrote to me through ${escapeHtml(siteConfig.url)}. Reference: ${escapeHtml(lead.id)}</p>`,
   );
 
   const text = [
-    `Thanks, ${firstName}!`,
+    `Thank you, ${firstName}.`,
     "",
-    "Your message has reached me — I'll reply within one business day. Here's a copy of what you sent:",
+    "It arrived safely, and you'll hear from me within one business day. For your records, this is what you sent:",
     "",
-    `Needs help with: ${l.service}`,
+    `Looking for: ${l.service}`,
     `Budget: ${l.budget ?? "—"}`,
     `Timeline: ${l.timeline ?? "—"}`,
     `NDA first: ${lead.nda ? "Yes" : "No"}`,
     "",
     lead.message,
     "",
-    "What happens next:",
+    "From here:",
     ...steps.map((step, index) => `${index + 1}. ${step}`),
-    ...(booking ? ["", `Book a 30-min call: ${booking}`] : []),
+    ...(booking ? ["", `Book a free call: ${booking}`] : []),
     "",
-    "Want to add something? Just reply to this email.",
+    "Thought of something else? Reply to this email and it reaches me.",
     "",
     `— ${siteConfig.name}`,
     "",
@@ -163,8 +165,8 @@ ${
 export function leadSummary(lead: StoredLead) {
   const l = labels(lead);
   return [
-    `New lead: ${lead.name} <${lead.email}> · ${lead.phone}`,
-    `${l.service}${l.budget ? ` · ${l.budget}` : ""}${l.timeline ? ` · ${l.timeline}` : ""}${lead.nda ? " · NDA requested" : ""}`,
+    `Enquiry: ${lead.name} <${lead.email}>${lead.phone ? ` · ${lead.phone}` : ""}`,
+    `${l.service}${l.budget ? ` · ${l.budget}` : ""}${l.timeline ? ` · ${l.timeline}` : ""}${lead.nda ? " · wants an NDA" : ""}`,
     lead.message.length > 280 ? `${lead.message.slice(0, 277)}…` : lead.message,
   ].join("\n");
 }

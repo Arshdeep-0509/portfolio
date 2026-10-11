@@ -1,14 +1,12 @@
 "use client";
 
 import { useId, useRef, useState } from "react";
-import { m } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 export type TabItem = {
   id: string;
   label: string;
-  /** Panel content for this tab. Omit when using the shared `children` panel instead. */
-  content?: React.ReactNode;
+  content: React.ReactNode;
 };
 
 type TabsProps = {
@@ -16,46 +14,17 @@ type TabsProps = {
   /** Accessible name for the tab list. */
   label: string;
   defaultTab?: string;
-  /** Controlled mode: the selected tab id, paired with onValueChange. */
-  value?: string;
-  onValueChange?: (id: string) => void;
-  /**
-   * Shared-panel mode: one tabpanel whose content the parent derives from the selected tab.
-   * Keeps the DOM small when tabs only filter one list (no hidden copy per tab).
-   */
-  children?: React.ReactNode;
-  /** Horizontal alignment of the tab list. Default "start". */
-  align?: "start" | "center";
   className?: string;
 };
 
-const panelClass = "mt-6 animate-fade-in rounded-md";
-
 /**
  * WAI-ARIA tabs with automatic activation: ←/→ move and select, Home/End jump to the ends.
- * The active pill slides between tabs (snaps instantly under reduced motion via MotionConfig).
+ * Tabs sit on a hairline; the active one is marked by a 2px lamp line, not a pill.
  */
-export function Tabs({
-  items,
-  label,
-  defaultTab,
-  value,
-  onValueChange,
-  children,
-  align = "start",
-  className,
-}: TabsProps) {
-  const [internal, setInternal] = useState(defaultTab ?? items[0]?.id);
-  const active = value ?? internal;
+export function Tabs({ items, label, defaultTab, className }: TabsProps) {
+  const [active, setActive] = useState(defaultTab ?? items[0]?.id);
   const baseId = useId();
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
-  const shared = children !== undefined;
-  const panelId = (id: string) => (shared ? `${baseId}-panel` : `${baseId}-panel-${id}`);
-
-  function setActive(id: string) {
-    setInternal(id);
-    onValueChange?.(id);
-  }
 
   function select(index: number) {
     const item = items[index];
@@ -79,76 +48,53 @@ export function Tabs({
 
   return (
     <div className={className}>
-      <div className={cn("flex", align === "center" && "justify-center")}>
-        <div
-          role="tablist"
-          aria-label={label}
-          className="tone-light inline-flex max-w-full gap-1 overflow-x-auto rounded-pill border border-border bg-surface p-1 shadow-card"
-        >
-          {items.map((item, index) => {
-            const selected = item.id === active;
-            return (
-              <button
-                key={item.id}
-                ref={(node) => {
-                  tabRefs.current[index] = node;
-                }}
-                id={`${baseId}-tab-${item.id}`}
-                role="tab"
-                type="button"
-                aria-selected={selected}
-                aria-controls={panelId(item.id)}
-                tabIndex={selected ? 0 : -1}
-                onClick={() => setActive(item.id)}
-                onKeyDown={(event) => onKeyDown(event, index)}
-                className={cn(
-                  "relative min-h-11 rounded-pill px-4 text-small font-semibold whitespace-nowrap transition-colors duration-200",
-                  selected ? "text-white" : "text-muted hover:text-ink",
-                )}
-              >
-                {selected ? (
-                  <m.span
-                    layoutId={`${baseId}-pill`}
-                    aria-hidden="true"
-                    className="absolute inset-0 rounded-pill bg-primary"
-                    transition={{ type: "spring", bounce: 0.15, duration: 0.4 }}
-                  />
-                ) : null}
-                <span className="relative">{item.label}</span>
-              </button>
-            );
-          })}
-        </div>
+      <div
+        role="tablist"
+        aria-label={label}
+        className="flex max-w-full gap-6 overflow-x-auto border-b border-rule sm:gap-10"
+      >
+        {items.map((item, index) => {
+          const selected = item.id === active;
+          return (
+            <button
+              key={item.id}
+              ref={(node) => {
+                tabRefs.current[index] = node;
+              }}
+              id={`${baseId}-tab-${item.id}`}
+              role="tab"
+              type="button"
+              aria-selected={selected}
+              aria-controls={`${baseId}-panel-${item.id}`}
+              tabIndex={selected ? 0 : -1}
+              onClick={() => setActive(item.id)}
+              onKeyDown={(event) => onKeyDown(event, index)}
+              className={cn(
+                "relative -mb-px min-h-12 shrink-0 border-b-2 pb-3 text-left font-display-soft text-xl whitespace-nowrap transition-colors duration-200 sm:text-2xl",
+                selected
+                  ? "border-lamp-500 text-fg"
+                  : "border-transparent text-fg-muted hover:text-fg",
+              )}
+            >
+              {item.label}
+            </button>
+          );
+        })}
       </div>
 
-      {shared ? (
+      {items.map((item) => (
         <div
-          // Re-keyed per tab so the fade replays when the filtered content changes.
-          key={active}
-          id={panelId("")}
+          key={item.id}
+          id={`${baseId}-panel-${item.id}`}
           role="tabpanel"
-          aria-labelledby={`${baseId}-tab-${active}`}
+          aria-labelledby={`${baseId}-tab-${item.id}`}
           tabIndex={0}
-          className={panelClass}
+          hidden={item.id !== active}
+          className="mt-10 animate-fade-in rounded-card"
         >
-          {children}
+          {item.content}
         </div>
-      ) : (
-        items.map((item) => (
-          <div
-            key={item.id}
-            id={panelId(item.id)}
-            role="tabpanel"
-            aria-labelledby={`${baseId}-tab-${item.id}`}
-            tabIndex={0}
-            hidden={item.id !== active}
-            // Fades in when shown (the global reduced-motion rule makes it instant).
-            className={panelClass}
-          >
-            {item.content}
-          </div>
-        ))
-      )}
+      ))}
     </div>
   );
 }

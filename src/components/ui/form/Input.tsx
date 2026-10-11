@@ -27,7 +27,7 @@ type SelectProps = React.ComponentProps<"select"> &
     placeholder?: string;
   };
 
-/** Native <select> (best keyboard and mobile support) with a custom chevron. */
+/** Native <select> (best keyboard and mobile support) with a thin chevron. */
 export function Select({ invalid, placeholder, className, children, ...props }: SelectProps) {
   return (
     <div className="relative">
@@ -45,7 +45,8 @@ export function Select({ invalid, placeholder, className, children, ...props }: 
       </select>
       <ChevronDown
         aria-hidden="true"
-        className="pointer-events-none absolute top-1/2 right-4 size-4 -translate-y-1/2 text-muted"
+        strokeWidth={1.5}
+        className="pointer-events-none absolute top-1/2 right-4 size-4 -translate-y-1/2 text-fg-muted"
       />
     </div>
   );

@@ -213,7 +213,7 @@ export const cookiePolicy: LegalDocument = {
     {
       id: "contact",
       title: "Contact",
-      blocks: [{ type: "p", text: "Questions about cookies? Email [EMAIL]." }],
+      blocks: [{ type: "p", text: "Questions about cookies? Email arshdeepsinghdev96@gmail.com." }],
     },
   ],
 };

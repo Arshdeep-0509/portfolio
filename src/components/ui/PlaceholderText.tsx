@@ -6,7 +6,7 @@ import { Fragment } from "react";
 const TOKEN = /(\[[A-Z0-9][^\]]*\])/;
 
 /**
- * Renders text with every [PLACEHOLDER] token visibly marked — semibold with a dashed amber
+ * Renders text with every [PLACEHOLDER] token visibly marked — semibold with a dashed lamp-coloured
  * underline — so unfilled content is hard to miss. Works on light and dark backgrounds because
  * it keeps the surrounding text colour.
  */
@@ -20,7 +20,7 @@ export function PlaceholderText({ text }: { text: string }) {
           <mark
             key={index}
             title="Placeholder — replace before launch"
-            className="bg-transparent font-semibold text-inherit underline decoration-amber-500 decoration-dashed decoration-2 underline-offset-4"
+            className="bg-transparent font-semibold text-inherit underline decoration-lamp-500 decoration-dashed decoration-2 underline-offset-4"
           >
             {part}
           </mark>

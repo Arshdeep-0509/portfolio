@@ -80,22 +80,22 @@ export function FileDrop({
           commit(Array.from(event.dataTransfer.files));
         }}
         className={cn(
-          "tone-light flex min-h-32 cursor-pointer flex-col items-center justify-center gap-2 rounded-md border-2 border-dashed bg-surface px-6 py-8 text-center transition-colors duration-200",
-          "has-[input:focus-visible]:outline-2 has-[input:focus-visible]:outline-offset-2 has-[input:focus-visible]:outline-primary",
+          "flex min-h-32 cursor-pointer flex-col items-center justify-center gap-2 rounded-card border border-dashed bg-field px-6 py-8 text-center transition-colors duration-200",
+          "has-[input:focus-visible]:outline-2 has-[input:focus-visible]:outline-offset-2 has-[input:focus-visible]:outline-[var(--focus)]",
           dragging
-            ? "border-primary bg-soft"
+            ? "border-lamp-500 bg-lamp-500/10"
             : invalid
               ? "border-danger"
-              : "border-subtle hover:border-primary",
+              : "border-fg-muted/60 hover:border-accent",
         )}
       >
-        <UploadCloud aria-hidden="true" className="size-7 text-primary" />
-        <span className="text-small font-semibold text-ink">
+        <UploadCloud aria-hidden="true" strokeWidth={1.5} className="size-7 text-accent" />
+        <span className="text-small font-semibold text-fg">
           Drag &amp; drop {multiple ? "files" : "a file"}, or{" "}
-          <span className="text-primary underline">browse</span>
+          <span className="text-accent underline underline-offset-4">browse</span>
         </span>
         {accept || maxSizeMB ? (
-          <span className="text-xs text-muted">
+          <span className="font-mono text-xs text-fg-muted">
             {[accept?.replaceAll(",", ", "), maxSizeMB ? `max ${maxSizeMB} MB` : null]
               .filter(Boolean)
               .join(" · ")}
@@ -116,22 +116,26 @@ export function FileDrop({
       </label>
 
       <div id={statusId} aria-live="polite">
-        {rejected ? <p className="mt-2 text-small text-danger">{rejected}</p> : null}
+        {rejected ? <p className="mt-2 text-small text-danger-fg">{rejected}</p> : null}
         {files.length > 0 ? (
           <ul className="mt-3 space-y-2">
             {files.map((file) => (
               <li
                 key={`${file.name}-${file.size}`}
-                className="tone-light flex items-center gap-3 rounded-md border border-border bg-surface px-3 py-2 text-small"
+                className="flex items-center gap-3 rounded-card border border-rule bg-field px-3 py-2 text-small"
               >
-                <FileText aria-hidden="true" className="size-4 shrink-0 text-primary" />
-                <span className="min-w-0 flex-1 truncate text-ink">{file.name}</span>
-                <span className="font-mono text-xs text-muted">{formatSize(file.size)}</span>
+                <FileText
+                  aria-hidden="true"
+                  strokeWidth={1.5}
+                  className="size-4 shrink-0 text-accent"
+                />
+                <span className="min-w-0 flex-1 truncate text-fg">{file.name}</span>
+                <span className="font-mono text-xs text-fg-muted">{formatSize(file.size)}</span>
                 <button
                   type="button"
                   onClick={() => commit(files.filter((f) => f !== file))}
                   aria-label={`Remove ${file.name}`}
-                  className="inline-flex size-8 items-center justify-center rounded-pill text-muted hover:bg-soft hover:text-ink"
+                  className="inline-flex size-8 items-center justify-center rounded-card text-fg-muted hover:text-fg"
                 >
                   <X aria-hidden="true" className="size-4" />
                 </button>

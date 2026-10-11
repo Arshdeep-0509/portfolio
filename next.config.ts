@@ -125,6 +125,16 @@ const nextConfig: NextConfig = {
       },
     },
   },
+  // Routes renamed in the Skylamp rebrand (src/lib/routes.ts › renamedRoutes). Permanent: 308.
+  async redirects() {
+    return [
+      { source: "/why-me", destination: "/approach", permanent: true },
+      { source: "/insights", destination: "/journal", permanent: true },
+      { source: "/insights/:slug", destination: "/journal/:slug", permanent: true },
+      { source: "/careers", destination: "/collaborate", permanent: true },
+      { source: "/rss.xml", destination: "/journal/rss.xml", permanent: true },
+    ];
+  },
   async headers() {
     return [
       { source: "/:path*", headers: securityHeaders },

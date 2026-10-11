@@ -1,10 +1,8 @@
 import { Fragment } from "react";
 import Link from "next/link";
-import { Mail } from "lucide-react";
-import { TableOfContents } from "@/components/sections/insights/PostWidgets";
-import { CompactPageHero } from "@/components/sections/shared/CompactPageHero";
+import { Breadcrumb } from "@/components/ui/Breadcrumb";
+import { ChapterNav } from "@/components/ui/ChapterNav";
 import { PlaceholderText } from "@/components/ui/PlaceholderText";
-import { Section } from "@/components/ui/Section";
 import type { LegalBlock, LegalDocument } from "@/content/legal/types";
 import { siteConfig } from "@/content/site";
 import { isPlaceholder } from "@/lib/constants";
@@ -82,7 +80,7 @@ function Block({ block }: { block: LegalBlock }) {
       );
     case "note":
       return (
-        <p className="not-prose rounded-lg border-l-4 border-primary bg-soft p-4 text-ink">
+        <p className="not-prose border-l-2 border-lamp-500 bg-sand-100 py-4 pr-4 pl-5 text-fg">
           <Rich text={block.text} />
         </p>
       );
@@ -90,23 +88,23 @@ function Block({ block }: { block: LegalBlock }) {
       return (
         // Scrolls sideways on narrow screens instead of overflowing the page.
         <div
-          className="not-prose my-6 overflow-x-auto rounded-lg border border-border"
+          className="not-prose my-6 overflow-x-auto rounded-card border border-line"
           tabIndex={0}
           role="region"
           aria-label={block.caption}
         >
           <table className="w-full min-w-[36rem] text-left text-small">
             <caption className="sr-only">{block.caption}</caption>
-            <thead className="bg-tint">
+            <thead className="bg-sand-100">
               <tr>
                 {block.head.map((cell) => (
-                  <th key={cell} scope="col" className="px-4 py-3 font-semibold text-ink">
+                  <th key={cell} scope="col" className="px-4 py-3 font-semibold text-fg">
                     {cell}
                   </th>
                 ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-border">
+            <tbody className="divide-y divide-line">
               {block.rows.map((row) => (
                 <tr key={row.join("|")}>
                   {row.map((cell, index) => (
@@ -114,8 +112,8 @@ function Block({ block }: { block: LegalBlock }) {
                       key={index}
                       className={
                         index === 0
-                          ? "px-4 py-3 font-mono text-xs text-ink"
-                          : "px-4 py-3 text-muted"
+                          ? "px-4 py-3 font-mono text-xs text-fg"
+                          : "px-4 py-3 text-fg-muted"
                       }
                     >
                       <Rich text={cell} />
@@ -131,9 +129,10 @@ function Block({ block }: { block: LegalBlock }) {
 }
 
 /**
- * Layout for legal pages: hero with breadcrumb, a sticky table of contents with scroll-spy on
- * desktop (collapsible list on mobile), a readable prose column with the last-updated date, and
- * a closing contact box. Prints as a clean document (site chrome is hidden).
+ * Layout for legal pages on ivory: a breadcrumb and serif title, a mono "Last updated" line, the
+ * table of contents in the left margin (sticky, with scroll-spy) and the document in a readable
+ * column with serif h2 headings. A collapsible contents list replaces the margin on small
+ * screens. Prints as a clean document (site chrome is hidden).
  */
 export function LegalLayout({
   doc,
@@ -143,68 +142,67 @@ export function LegalLayout({
   /** Extra content rendered at the end of a section, keyed by section id (e.g. a button). */
   extras?: Record<string, React.ReactNode>;
 }) {
-  const headings = doc.sections.map((section) => ({
-    id: section.id,
-    text: section.title,
-    level: 2 as const,
-  }));
+  const chapters = doc.sections.map((section) => ({ id: section.id, text: section.title }));
   const updated = formatDate(doc.lastUpdated);
   const email = siteConfig.email;
 
   return (
-    <>
-      <div className="print:hidden">
-        <CompactPageHero
-          breadcrumb={[{ label: "Home", href: "/" }, { label: doc.title }]}
-          eyebrow="Legal"
-          title={doc.title}
-          subtitle={doc.description}
-        />
-      </div>
-      <Section background="white" className="print:py-0">
-        <div className="grid gap-10 lg:grid-cols-[15rem_minmax(0,1fr)] lg:gap-16">
-          <aside className="hidden lg:block print:hidden">
+    <div className="tone-ivory grain bg-ivory-50 text-fg">
+      <div className="container-site pt-16 pb-24 lg:pt-24 lg:pb-32 print:p-0">
+        <div className="print:hidden">
+          <Breadcrumb items={[{ label: "Home", href: "/" }, { label: doc.title }]} />
+        </div>
+        <div className="mt-8 lg:grid lg:grid-cols-12 lg:gap-8">
+          <div className="lg:col-span-8 lg:col-start-4">
+            <h1 className="text-h1 text-fg">{doc.title}</h1>
+            <p className="mt-5 max-w-2xl text-lg text-fg-muted print:hidden">{doc.description}</p>
+            <p className="mt-6 label-mono text-accent">
+              Last updated · <time dateTime={doc.lastUpdated}>{updated}</time>
+            </p>
+          </div>
+        </div>
+
+        <div className="mt-14 lg:grid lg:grid-cols-12 lg:gap-8">
+          <aside className="hidden lg:col-span-3 lg:block print:hidden">
             <div className="sticky top-[calc(var(--header-h)+2rem)] max-h-[calc(100vh-var(--header-h)-4rem)] overflow-y-auto pb-4">
-              <TableOfContents headings={headings} label="On this page" />
+              <ChapterNav chapters={chapters} label="Contents" numbered />
             </div>
           </aside>
 
-          <article className="max-w-[760px] min-w-0">
-            {/* The hero isn't printed, so the printout gets its own title. */}
-            <p className="hidden text-h2 font-extrabold text-ink print:block">{doc.title}</p>
-            <p className="text-small text-muted">
-              Last updated: <time dateTime={doc.lastUpdated}>{updated}</time>
-            </p>
-
-            <details className="group mt-6 rounded-lg border border-border bg-tint lg:hidden print:hidden">
-              <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between px-4 font-semibold text-ink [&::-webkit-details-marker]:hidden">
-                On this page
-                <span
-                  aria-hidden="true"
-                  className="text-primary transition-transform group-open:rotate-45"
-                >
-                  +
+          <article className="min-w-0 lg:col-span-8 lg:col-start-4">
+            <details className="group mb-10 rounded-card border border-line lg:hidden print:hidden">
+              <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between px-4 font-semibold [&::-webkit-details-marker]:hidden">
+                Contents
+                <span aria-hidden="true" className="font-mono text-accent">
+                  <span className="group-open:hidden">+</span>
+                  <span className="hidden group-open:inline">−</span>
                 </span>
               </summary>
-              <ol className="px-4 pb-4">
-                {headings.map((heading, index) => (
-                  <li key={heading.id}>
+              <ol className="border-t border-line px-4 py-2">
+                {chapters.map((chapter, index) => (
+                  <li key={chapter.id}>
                     <a
-                      href={`#${heading.id}`}
-                      className="flex min-h-11 items-center text-small text-muted hover:text-primary"
+                      href={`#${chapter.id}`}
+                      className="flex min-h-11 items-center gap-3 text-small text-fg-muted hover:text-fg"
                     >
-                      {index + 1}. {heading.text}
+                      <span className="font-mono text-xs text-accent">
+                        {String(index + 1).padStart(2, "0")}
+                      </span>
+                      {chapter.text}
                     </a>
                   </li>
                 ))}
               </ol>
             </details>
 
-            <div className="legal-prose prose mt-8 max-w-none">
+            <div className="legal-prose prose max-w-[68ch]">
               {doc.sections.map((section, index) => (
                 <Fragment key={section.id}>
                   <h2 id={section.id}>
-                    {index + 1}. {section.title}
+                    <span className="mr-3 font-mono text-base font-normal text-lamp-700">
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
+                    {section.title}
                   </h2>
                   {section.blocks.map((block, blockIndex) => (
                     <Block key={blockIndex} block={block} />
@@ -216,25 +214,25 @@ export function LegalLayout({
               ))}
             </div>
 
-            <aside className="tone-light mt-12 flex flex-col gap-4 rounded-xl border border-border bg-tint p-6 sm:flex-row sm:items-center">
-              <span className="inline-flex size-11 shrink-0 items-center justify-center rounded-pill bg-primary text-white print:hidden">
-                <Mail aria-hidden="true" className="size-5" />
-              </span>
-              <p className="text-ink">
-                <strong>Questions?</strong> Contact{" "}
+            <aside className="mt-14 border-t border-line pt-6">
+              <p className="text-fg">
+                <strong>Questions about this page?</strong> Write to{" "}
                 {isPlaceholder(email) ? (
                   <PlaceholderText text={email} />
                 ) : (
-                  <a href={`mailto:${email}`} className="font-semibold text-primary underline">
+                  <a
+                    href={`mailto:${email}`}
+                    className="font-semibold text-accent underline underline-offset-4"
+                  >
                     {email}
                   </a>
                 )}{" "}
-                and I&apos;ll get back to you.
+                and I&apos;ll answer personally.
               </p>
             </aside>
           </article>
         </div>
-      </Section>
-    </>
+      </div>
+    </div>
   );
 }

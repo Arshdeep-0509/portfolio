@@ -1,14 +1,13 @@
+import { PullQuote } from "@/components/ui/PullQuote";
 import { Section } from "@/components/ui/Section";
-import { SectionHeading } from "@/components/ui/SectionHeading";
-import { TestimonialCarousel } from "@/components/ui/TestimonialCarousel";
 import { homeContent } from "@/content/home";
 import { siteConfig } from "@/content/site";
 import { testimonials } from "@/content/testimonials";
 import { isPlaceholder } from "@/lib/constants";
 
 /**
- * Renders nothing — not even an empty wrapper — while the testimonials flag is off.
- * As a second guard, placeholder entries ("[ADD REAL TESTIMONIAL]") are never shown.
+ * One large serif pull-quote at a time. Renders nothing — not even an empty wrapper — while the
+ * testimonials flag is off, and never shows placeholder entries ("[ADD REAL TESTIMONIAL]").
  */
 export function Testimonials() {
   if (!siteConfig.featureFlags.testimonials) return null;
@@ -17,10 +16,10 @@ export function Testimonials() {
 
   const copy = homeContent.testimonials;
   return (
-    <Section id={copy.id} background="white">
-      <SectionHeading title={copy.title} highlight={copy.highlight} subtitle={copy.subtitle} />
-      <div className="mt-12">
-        <TestimonialCarousel items={real} label={copy.title} />
+    <Section id={copy.id} tone="night-900" aria-label={copy.label}>
+      <p className="label-mono text-accent">{copy.label}</p>
+      <div className="mt-8">
+        <PullQuote items={real} label={copy.label} />
       </div>
     </Section>
   );

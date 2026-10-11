@@ -6,9 +6,9 @@ export const newsletterSchema = z.object({
   email: z
     .string()
     .trim()
-    .min(1, "Please enter your email address.")
-    .max(254, "That email address is too long.")
-    .email("Please enter a valid email address."),
+    .min(1, "Add your email address.")
+    .max(254, "That address is longer than email allows.")
+    .email("That email address doesn't look right."),
   /**
    * Honeypot: hidden from people, so only bots fill it in. Accepted here (not rejected) so the API
    * can answer bots with a quiet success instead of an error that reveals the trap.

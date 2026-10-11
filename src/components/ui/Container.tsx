@@ -5,7 +5,7 @@ type ContainerProps = React.ComponentProps<"div"> & {
   size?: "default" | "narrow";
 };
 
-/** Centred page column: 1200px max with 16px (mobile) / 24px (desktop) gutters. */
+/** Page column: 1240px max on a 12-column grid, with 16px (mobile) / 24px (desktop) gutters. */
 export function Container({ size = "default", className, ...props }: ContainerProps) {
   return (
     <div className={cn("container-site", size === "narrow" && "max-w-3xl", className)} {...props} />

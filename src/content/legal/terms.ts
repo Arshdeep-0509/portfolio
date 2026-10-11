@@ -27,7 +27,7 @@ export const termsAndConditions: LegalDocument = {
       blocks: [
         {
           type: "p",
-          text: 'These terms apply to this website and to the services provided by Arshdeep Singh, trading as [LEGAL_ENTITY], [ADDRESS], [CITY], [STATE], India ("I", "me"), to you as a client ("you"). They\'re written in plain English so you know exactly what to expect when we work together.',
+          text: 'These terms apply to this website and to the services provided by Arshdeep Singh, trading as [LEGAL_ENTITY], [ADDRESS], Bengaluru, [STATE], India ("I", "me"), to you as a client ("you"). They\'re written in plain English so you know exactly what to expect when we work together.',
         },
       ],
     },
@@ -240,7 +240,7 @@ export const termsAndConditions: LegalDocument = {
       blocks: [
         {
           type: "p",
-          text: "These terms are governed by the laws of India. If a dispute arises, we'll first try to resolve it in good faith by talking. If that doesn't work within [30] days, the courts of [CITY], [STATE] will have exclusive jurisdiction.",
+          text: "These terms are governed by the laws of India. If a dispute arises, we'll first try to resolve it in good faith by talking. If that doesn't work within [30] days, the courts of Bengaluru, [STATE] will have exclusive jurisdiction.",
         },
       ],
     },
@@ -250,7 +250,7 @@ export const termsAndConditions: LegalDocument = {
       blocks: [
         {
           type: "p",
-          text: "Questions about these terms? Email [EMAIL] or write to [LEGAL_ENTITY], [ADDRESS], [CITY], [STATE], India.",
+          text: "Questions about these terms? Email arshdeepsinghdev96@gmail.com or write to [LEGAL_ENTITY], [ADDRESS], Bengaluru, [STATE], India.",
         },
       ],
     },

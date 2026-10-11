@@ -6,6 +6,7 @@ export const ogSize = { width: 1200, height: 630 };
 export const ogContentType = "image/png";
 
 type OgInput = {
+  /** Short mono label, shown in parentheses: "(Services)". */
   eyebrow?: string;
   title: string;
   subtitle?: string;
@@ -16,9 +17,17 @@ type OgInput = {
 // The real domain once set in site.ts; until then the placeholder stays visible on the image.
 const host = isPlaceholder(siteConfig.url) ? "[DOMAIN]" : new URL(siteConfig.url).host;
 
+// Satori cannot read CSS variables, so the Skylamp tokens are repeated here.
+const NIGHT = "#0A0A12";
+const IVORY = "#FBF8F2";
+const MIST = "#B8B4C6";
+const STARLIGHT = "#C9D2FF";
+const LAMP = "#F5A524";
+const GLOW = "#FFC15E";
+
 /**
- * Brand Open Graph image (1200×630): the hero gradient, monogram + wordmark, an eyebrow, a large
- * title, one supporting line and the page URL. Colours mirror the design tokens (satori cannot read CSS vars).
+ * Brand Open Graph image (1200×630): the night sky with the horizon glow, the lamp mark and
+ * wordmark, a mono label, a large title, one supporting line, then the URL and the tagline.
  */
 export function renderOgImage({ eyebrow, title, subtitle, path = "/" }: OgInput) {
   return new ImageResponse(
@@ -29,64 +38,73 @@ export function renderOgImage({ eyebrow, title, subtitle, path = "/" }: OgInput)
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between",
-        padding: "64px 72px",
-        color: "#FFFFFF",
-        backgroundImage: "radial-gradient(circle at 0% 0%, #16447F 0%, #1D5FD1 55%, #0B2545 100%)",
+        padding: "60px 72px",
+        color: IVORY,
+        backgroundColor: NIGHT,
+        backgroundImage:
+          "radial-gradient(120% 80% at 50% 115%, rgba(245,165,36,0.30) 0%, rgba(46,42,79,0.55) 38%, #0A0A12 72%)",
       }}
     >
-      <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
-        <div
-          style={{
-            width: 64,
-            height: 64,
-            borderRadius: 14,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            background: "#0B2545",
-            border: "2px solid rgba(255,255,255,0.25)",
-            fontSize: 26,
-            fontWeight: 800,
-          }}
-        >
-          {siteConfig.brand.monogram}
-        </div>
+      <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
+        <svg width="56" height="56" viewBox="0 0 40 40">
+          <defs>
+            <radialGradient id="lamp">
+              <stop offset="0%" stopColor={GLOW} stopOpacity="0.95" />
+              <stop offset="45%" stopColor={LAMP} stopOpacity="0.4" />
+              <stop offset="100%" stopColor={LAMP} stopOpacity="0" />
+            </radialGradient>
+          </defs>
+          <circle cx="20" cy="6.5" r="7.5" fill="url(#lamp)" />
+          <circle cx="20" cy="6.5" r="2.6" fill={LAMP} />
+          <path d="M7.5 35 20 13.5 32.5 35" fill="none" stroke={IVORY} strokeWidth="3" />
+        </svg>
         <div style={{ display: "flex", flexDirection: "column" }}>
-          <div style={{ fontSize: 30, fontWeight: 700 }}>{siteConfig.brand.wordmark}</div>
-          <div style={{ fontSize: 16, letterSpacing: 3, color: "#B9E6FF" }}>
+          <div style={{ fontSize: 30, fontWeight: 700, letterSpacing: -0.3 }}>
+            {siteConfig.brand.wordmark}
+          </div>
+          <div style={{ fontSize: 14, letterSpacing: 2.5, color: MIST }}>
             {siteConfig.brand.microTagline}
           </div>
         </div>
       </div>
 
-      <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
         {eyebrow ? (
-          <div
-            style={{
-              display: "flex",
-              alignSelf: "flex-start",
-              padding: "8px 18px",
-              borderRadius: 999,
-              border: "1px solid rgba(255,255,255,0.3)",
-              background: "rgba(255,255,255,0.1)",
-              fontSize: 22,
-              fontWeight: 600,
-            }}
-          >
-            {eyebrow}
+          <div style={{ display: "flex", fontSize: 20, letterSpacing: 2, color: STARLIGHT }}>
+            {`(${eyebrow.toUpperCase()})`}
           </div>
         ) : null}
-        <div style={{ fontSize: title.length > 40 ? 60 : 72, fontWeight: 800, lineHeight: 1.08 }}>
+        <div
+          style={{
+            fontSize: title.length > 48 ? 58 : 70,
+            fontWeight: 700,
+            lineHeight: 1.04,
+            letterSpacing: -1.5,
+            maxWidth: 1000,
+          }}
+        >
           {title}
         </div>
         {subtitle ? (
-          <div style={{ fontSize: 28, lineHeight: 1.35, color: "#FFFFFF", maxWidth: 980 }}>
+          <div style={{ fontSize: 27, lineHeight: 1.4, color: MIST, maxWidth: 960 }}>
             {subtitle}
           </div>
         ) : null}
       </div>
-      <div style={{ display: "flex", fontSize: 22, fontWeight: 600, color: "#B9E6FF" }}>
-        {`${host}${path === "/" ? "" : path}`}
+
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          fontSize: 20,
+          color: MIST,
+          borderTop: "1px solid rgba(255,255,255,0.12)",
+          paddingTop: 22,
+        }}
+      >
+        <div style={{ display: "flex", color: GLOW }}>{`${host}${path === "/" ? "" : path}`}</div>
+        <div style={{ display: "flex" }}>{siteConfig.tagline}</div>
       </div>
     </div>,
     ogSize,

@@ -3,217 +3,143 @@ import type { IconName } from "@/content/services";
 /**
  * Copy for /about.
  * Everything in [SQUARE_BRACKETS] must be replaced by the owner with real facts before launch —
- * the page highlights these placeholders so nothing invented goes live by accident.
+ * the page marks these placeholders so nothing invented goes live by accident.
  */
 
 export const aboutContent = {
   seo: {
-    title: "About Me — Full-Stack, AI & DevOps Engineer",
+    title: "Meet a Full-Stack Developer Based in Bengaluru, India",
     description:
-      "Meet Arshdeep Singh, a full-stack developer in [CITY], India, and AI & DevOps engineer helping founders turn ideas into reliable products.",
+      "Arshdeep Singh is a full-stack developer in Bengaluru, India, and an AI and DevOps engineer who helps founders turn ideas into dependable products.",
   },
 
-  hero: {
-    eyebrow: "About",
-    title: "Hi, I'm Arshdeep Singh",
-    highlight: "Arshdeep Singh",
-    intro:
-      "I help founders and growing businesses turn ideas into fast, reliable web, mobile and AI products. I work hands-on across design, code and cloud — and I'd rather give you the honest answer than the easy one.",
-    primaryCta: { label: "Work with me", href: "/contact" },
-    cv: { label: "Download CV", href: "/cv/arshdeep-singh.pdf" },
-    currently: "Currently: building MVPs and AI features for startups",
-    photoAlt: "Portrait of Arshdeep Singh",
-  },
-
-  story: {
-    id: "story",
-    title: "My story",
-    highlight: "story",
-    // Owner fills these in. Keep each to a short paragraph, and describe real projects only.
-    paragraphs: [
-      "[WHERE I STARTED] — Two or three sentences on how you got into software: the first thing you built, what hooked you, and where you learned.",
-      "[WHAT I'VE BUILT — real projects only] — Two or three real projects you've shipped: what the product did, your role and the stack. No client names without permission, and no invented results.",
-      "[WHY I WORK WITH FOUNDERS] — Why you enjoy early-stage work: the pace, the ownership, and seeing an idea become something people use.",
-      "[EDUCATION] — Your degree or training, the institution and year, plus any certifications worth mentioning.",
-    ],
-    quote: "Build lean. Ship fast. Scale right.",
-  },
-
-  missionVision: [
-    {
-      icon: "Target",
-      label: "Mission",
-      text: "Help founders and businesses turn ideas into reliable products — quickly and affordably.",
+  opening: {
+    label: "About",
+    title: "Arsh means sky. Deep means lamp.",
+    // Shown beside the headline until the owner confirms the reading of the name.
+    titleNote: "[CONFIRM NAME MEANING]",
+    text: "It's a fair description of the job: a steady light that keeps a product moving from first idea to first users.",
+    lead: "Founders and growing companies get me in person across design, code and hosting — along with the true answer, even when it isn't the handy one.",
+    cta: { label: "Book a free call" },
+    cv: { label: "Download my CV", href: "/cv/arshdeep-singh.pdf" },
+    photoAlt: "Arshdeep Singh, photographed for this page",
+    availability: {
+      available: "Available for new projects",
+      limited: "Limited availability",
+      booked: "Booked for now",
     },
-    {
-      icon: "Telescope",
-      label: "Vision",
-      text: "Grow into a product studio known for honest engineering, practical AI and long-term partnerships.",
-    },
-  ] satisfies { icon: IconName; label: string; text: string }[],
+  },
 
   values: {
-    title: "What I value",
-    highlight: "value",
-    items: [
+    id: "values",
+    label: "Values",
+    title: "Five things I hold to",
+    lines: [
       {
-        icon: "HeartHandshake",
-        title: "Ownership",
-        text: "I treat your product like my own — if something breaks at launch, it's my problem too.",
+        word: "Ownership.",
+        text: "Your product gets treated like mine; if it breaks at launch, it's my problem too.",
       },
       {
-        icon: "Eye",
-        title: "Clarity",
-        text: "Clean code, clean design and plain-English updates, so you always know where things stand.",
+        word: "Clarity.",
+        text: "Readable code, uncluttered design and straightforward updates — you're never left wondering.",
       },
       {
-        icon: "Gauge",
-        title: "Speed with quality",
-        text: "Tests, reviews and automation let me move quickly without cutting corners.",
+        word: "Pace with care.",
+        text: "Automated checks and careful review are what let me go quickly without skipping steps.",
       },
       {
-        icon: "Scale",
-        title: "Honesty",
-        text: "Realistic timelines, open trade-offs and early warnings — no surprises at the end of a sprint.",
+        word: "Honesty.",
+        text: "Dates I can keep, trade-offs out in the open and bad news shared early.",
       },
       {
-        icon: "Sprout",
-        title: "Long-term thinking",
-        text: "Decisions are made for the product you'll have in two years, not just next week's demo.",
-      },
-    ] satisfies { icon: IconName; title: string; text: string }[],
-  },
-
-  journey: {
-    id: "journey",
-    title: "The journey so far",
-    highlight: "so far",
-    // Owner fills in the years and one real sentence for each step.
-    milestones: [
-      {
-        meta: "[YEAR]",
-        title: "Started coding",
-        text: "[ADD DETAILS] What sparked it and the first thing you built.",
-      },
-      {
-        meta: "[YEAR]",
-        title: "First production project",
-        text: "[ADD DETAILS] The first thing you shipped that real people used.",
-      },
-      {
-        meta: "[YEAR]",
-        title: "Went full-stack",
-        text: "[ADD DETAILS] When you started owning both frontend and backend.",
-      },
-      {
-        meta: "[YEAR]",
-        title: "Added DevOps",
-        text: "[ADD DETAILS] Taking on CI/CD, containers and cloud infrastructure.",
-      },
-      {
-        meta: "[YEAR]",
-        title: "Added AI engineering",
-        text: "[ADD DETAILS] Your first LLM, RAG or automation work in production.",
-      },
-      {
-        meta: "[YEAR]",
-        title: "Launched this practice",
-        text: "[ADD DETAILS] Starting to work directly with founders and businesses.",
-      },
-      {
-        meta: "Next",
-        title: "Growing into an agency",
-        text: "Building a small, senior team around the same honest way of working.",
+        word: "The long view.",
+        text: "Decisions serve the product two years from now as much as the demo next Friday.",
       },
     ],
   },
 
-  pillars: {
-    title: "What I bring",
-    highlight: "bring",
-    items: [
+  toolbox: {
+    id: "toolbox",
+    label: "Toolbox",
+    title: "Four kinds of skill, in one pair of hands",
+    emphasis: "one pair of hands",
+    pillars: [
       {
         icon: "Route",
-        title: "Product & UX thinking",
-        text: "Turning a big idea into a focused first release that users understand.",
+        title: "Product and UX judgement",
+        text: "Narrowing an ambitious idea to a first release that makes sense to users.",
         skills: ["Discovery workshops", "User flows", "Wireframes & prototypes", "MVP scoping"],
       },
       {
         icon: "Layers",
-        title: "Full-stack engineering",
-        text: "Interfaces, APIs and databases built together, with tests from day one.",
+        title: "Engineering across the stack",
+        text: "Interfaces, APIs and databases built together, tested from day one.",
         skills: ["Node.js", "Python", "React", "Next.js"],
       },
       {
         icon: "Bot",
         title: "AI engineering",
-        text: "Practical AI features that are measured, monitored and cost-aware.",
+        text: "Useful AI, with its accuracy tested, its behaviour logged and its bill kept low.",
         skills: ["LLM APIs", "RAG", "Agents", "Evaluation"],
       },
       {
         icon: "Cloud",
         title: "DevOps & cloud",
-        text: "Automated, observable infrastructure that keeps releases boring.",
+        text: "Self-running, well-instrumented hosting that makes each release a non-event.",
         skills: ["Docker", "Kubernetes", "CI/CD", "AWS / GCP"],
       },
     ] satisfies { icon: IconName; title: string; text: string; skills: string[] }[],
   },
 
-  products: {
-    id: "products",
-    eyebrow: "Beyond client work",
-    title: "Products & initiatives",
-    highlight: "initiatives",
-    subtitle: "Long-term products where I apply the same engineering I bring to client projects.",
-  },
-
-  workTogether: {
-    title: "How we'll work together",
-    highlight: "work together",
+  rhythm: {
+    id: "rhythm",
+    label: "Working rhythm",
+    title: "A typical week on your project",
+    emphasis: "typical week",
+    week: [
+      { day: "Mon", title: "Plan", text: "We agree the week's goals on the shared board." },
+      { day: "Daily", title: "Async update", text: "A short written note every working day." },
+      { day: "Fri", title: "Demo", text: "A build you can open, click and share." },
+    ],
     tools: [
-      { icon: "SquareKanban", label: "Project board", tools: "Notion, Jira or Trello" },
-      { icon: "MessageCircle", label: "Chat", tools: "Slack or WhatsApp" },
-      { icon: "Video", label: "Calls", tools: "Google Meet or Zoom" },
-      { icon: "GitBranch", label: "Code", tools: "GitHub" },
-      { icon: "PenTool", label: "Design", tools: "Figma" },
-    ] satisfies { icon: IconName; label: string; tools: string }[],
-    cadence:
-      "During sprints you get a weekly demo build and a short async update every working day — and I use whichever tools your team already prefers.",
-  },
-
-  benefits: {
-    title: "Benefits of working with me",
-    highlight: "working with me",
+      { label: "Board", tools: "Notion, Jira or Trello" },
+      { label: "Chat", tools: "Slack or WhatsApp" },
+      { label: "Calls", tools: "Google Meet or Zoom" },
+      { label: "Code", tools: "GitHub" },
+      { label: "Design", tools: "Figma" },
+    ],
+    note: "If your team has favourite tools, those are the ones we'll use.",
   },
 
   faq: {
     id: "faq",
-    title: "Questions people ask me",
-    highlight: "ask me",
+    label: "Questions",
+    title: "Things people ask me",
+    emphasis: "ask me",
     items: [
       {
-        q: "Do you work alone or with a team?",
-        a: "The core work — architecture, code and the decisions behind them — is mine, and you always deal with me directly. When a project needs extra capacity or a specialist skill, such as illustration or a second developer, I bring in trusted specialists. I always tell you upfront who is involved and what they're doing.",
+        q: "Is it just you, or a team?",
+        a: "I do the central work myself — the architecture, the code and the reasoning behind both — and you always talk to me. If a job needs more hands or a niche skill, like illustration or another developer, I call on people I trust, and you're told in advance who they are and what they'll handle.",
       },
       {
-        q: "Do you only work with startups?",
-        a: "No. Startups are a natural fit, but I also work with small and medium businesses going digital, agencies that need a white-label engineer, and established teams that want help with AI or DevOps. What matters most is a clear goal and someone on your side who can make decisions.",
+        q: "Is it only startups?",
+        a: "Not only startups, though they're a natural match. Smaller and mid-sized firms going online, agencies needing an engineer under their own name, and mature teams after AI or DevOps support all work well. What counts is a clear aim and a decision-maker on your side.",
       },
       {
-        q: "What happens after the MVP is delivered?",
-        a: "You get the code, documentation and accounts, plus a bug-fix window after launch. Then we look at the data together and decide what's next: new features, performance and scaling work, or a pause while you gather feedback. Ongoing support is available as a monthly retainer or on-demand hours, with no lock-in.",
+        q: "What happens once the MVP is delivered?",
+        a: "Code, documentation and accounts are handed to you, and bugs are fixed free for a set window after launch. Then we go through the numbers and choose: more features, performance and scaling, or a breather while feedback builds up. Further help is there monthly or hourly, and you're never tied in.",
       },
       {
-        q: "Will I own the code and IP?",
-        a: "Yes. We sign an NDA and IP assignment before work starts, the code lives in a repository you own, and design files, documentation and cloud accounts are in your name. If you ever want another developer or an in-house team to take over, they'll have everything they need.",
+        q: "Who owns the code and IP?",
+        a: "You do. An NDA and IP assignment are signed before work begins, the code lives in a repository you own, and design files, docs and cloud accounts are in your name. Another developer or in-house team could take over with everything they need.",
       },
       {
-        q: "Can we talk before I pay anything?",
-        a: "Yes. The first call is free and comes with no obligation. We'll talk through your idea, users and timeline, and you'll get a written scope and quote afterwards. If I'm not the right fit for your project, I'll tell you so and, where I can, suggest who might be.",
+        q: "Is the first conversation free?",
+        a: "It is, and there's nothing to sign. We cover the idea, the audience and the timing, and a written scope with a price follows. If someone else would serve you better, I'll tell you — and point you to them where I can.",
       },
       {
-        q: "Which time zones do you work with?",
-        a: "I'm based in India and work on IST, which suits Indian clients naturally. For clients in Europe, the Middle East, Australia or the Americas, we agree a few hours of overlap for calls, and everything else runs asynchronously through the shared board and written updates.",
+        q: "Can you work across time zones?",
+        a: "My working day is IST, convenient for clients across India. With Europe, the Gulf, Australia or the Americas we fix a few shared hours for calls and keep the rest in writing on our project board.",
       },
     ],
   },

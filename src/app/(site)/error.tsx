@@ -19,25 +19,21 @@ export default function SiteError({
   }, [error]);
 
   return (
-    <Container className="py-24 text-center">
-      <p className="font-mono text-eyebrow font-medium text-primary uppercase">
-        Something went wrong
+    <Container className="py-24">
+      <p className="label-mono text-accent">(Error) Page failed</p>
+      <h1 className="mt-4 text-h1 text-fg">The page couldn&apos;t load</h1>
+      <p className="mt-4 max-w-md text-fg-muted">
+        I&apos;ve been notified. Give it another go, or return to the home page.
       </p>
-      <h1 className="mt-4 text-h1 font-extrabold tracking-tight text-ink">
-        This page didn&apos;t load
-      </h1>
-      <p className="mx-auto mt-4 max-w-md text-muted">
-        Sorry about that — it&apos;s been reported. Please try again, or head back to the home page.
-      </p>
-      <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+      <div className="mt-8 flex flex-col gap-3 sm:flex-row">
         <Button
           onClick={() => retry()}
-          leftIcon={<RotateCcw aria-hidden="true" className="size-4" />}
+          leftIcon={<RotateCcw aria-hidden="true" strokeWidth={1.5} className="size-4" />}
         >
-          Try again
+          Load it again
         </Button>
         <Button href="/" variant="outline">
-          Back to home
+          Return home
         </Button>
       </div>
     </Container>

@@ -13,7 +13,7 @@ import { absoluteUrl } from "@/lib/utils";
  * sitemap.xml. Case studies and posts are read from content/, so a new .mdx file appears here
  * with no code change. Drafts and noindex routes (/pay, /dev/ui) are excluded.
  *
- * lastModified: legal pages use their own `lastUpdated`, /work and /insights the newest entry,
+ * lastModified: legal pages use their own `lastUpdated`, /work and /journal the newest entry,
  * everything else CONTENT_UPDATED (src/lib/routes.ts — bump it when you change page copy).
  */
 export default function sitemap(): MetadataRoute.Sitemap {
@@ -28,7 +28,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     [cookiePolicy.path]: cookiePolicy.lastUpdated,
     [refundPolicy.path]: refundPolicy.lastUpdated,
     "/work": newest(studies.map((study) => study.publishedAt)),
-    "/insights": newest(posts.map((post) => post.updated ?? post.date)),
+    "/journal": newest(posts.map((post) => post.updated ?? post.date)),
   };
 
   const priority: Record<string, number> = { "/": 1, "/services": 0.9, "/contact": 0.9 };
@@ -38,7 +38,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   const pages = staticRoutes
     .filter((route) => !route.noIndex)
-    .filter((route) => blog || route.href !== "/insights")
+    .filter((route) => blog || route.href !== "/journal")
     .map((route) => ({
       url: absoluteUrl(route.href),
       lastModified: lastModified[route.href] ?? CONTENT_UPDATED,
@@ -58,7 +58,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   }));
 
   const postPages = posts.map((post) => ({
-    url: absoluteUrl(`/insights/${post.slug}`),
+    url: absoluteUrl(`/journal/${post.slug}`),
     lastModified: post.updated ?? post.date,
     priority: 0.6,
   }));

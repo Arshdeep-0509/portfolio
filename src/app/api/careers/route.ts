@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { roleOptions } from "@/content/careers";
+import { roleOptions } from "@/content/collaborate";
 import { saveApplication, type ApplicationRecord } from "@/lib/careers/applications";
 import { siteConfig } from "@/content/site";
 import { sendEmail } from "@/lib/email";
@@ -18,7 +18,7 @@ import {
 } from "@/lib/schemas/careerApplication";
 
 /**
- * POST /api/careers — multipart/form-data from the application form on /careers.
+ * POST /api/careers — multipart/form-data from the application form on /collaborate.
  *
  * Validates with the same zod schema as the form, drops bots (honeypot, then Turnstile), rate-limits
  * per IP, checks the resume really is a PDF, stores it privately, saves the application and emails
@@ -81,7 +81,7 @@ export async function POST(request: Request) {
       const key = String(issue.path[0] ?? "form");
       fieldErrors[key] ??= issue.message;
     }
-    return fail(422, "Please check the highlighted fields.", fieldErrors);
+    return fail(422, "A few fields need another look.", fieldErrors);
   }
   const data = parsed.data;
 
@@ -89,24 +89,28 @@ export async function POST(request: Request) {
   if (data.website) return NextResponse.json({ ok: true }, { status: 200 });
 
   const ip = clientIp(request);
-  if (await rateLimited(ip)) return fail(429, "Too many applications. Please try again later.");
+  if (await rateLimited(ip))
+    return fail(
+      429,
+      "Several applications have come from your connection. Wait a while, then try again.",
+    );
 
   if (!(await verifyTurnstile(text(form, "cf-turnstile-response") ?? null, ip))) {
-    return fail(403, "We couldn't verify you're human. Please retry the check and submit again.");
+    return fail(403, "The human check didn't pass. Run it once more, then send again.");
   }
 
   const role = roleOptions.find((option) => option.id === data.role);
   if (!role) {
-    return fail(422, "Please check the highlighted fields.", {
-      role: "That role isn't open any more — please choose another or send a general application.",
+    return fail(422, "A few fields need another look.", {
+      role: "That role has closed. Pick another, or send a general application.",
     });
   }
 
   // The browser-reported type and file name can be faked; the first bytes of a PDF can't.
   const bytes = new Uint8Array(await data.resume.arrayBuffer());
   if (new TextDecoder().decode(bytes.subarray(0, 5)) !== "%PDF-") {
-    return fail(422, "Please check the highlighted fields.", {
-      resume: "Your resume must be a PDF file.",
+    return fail(422, "A few fields need another look.", {
+      resume: "The resume needs to be a PDF file.",
     });
   }
 
@@ -136,7 +140,7 @@ export async function POST(request: Request) {
     await saveApplication(record);
   } catch (error) {
     console.error("[careers] could not store application", error);
-    return fail(500, "Something went wrong saving your application. Please try again in a moment.");
+    return fail(500, "Your application didn't save on my side. Please try again shortly.");
   }
 
   // The application is safely stored; an email failure is logged but doesn't fail the request.

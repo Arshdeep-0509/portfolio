@@ -40,15 +40,15 @@ export function Textarea({
           setLength(event.target.value.length);
           onChange?.(event);
         }}
-        className={cn(controlClasses, "min-h-32 resize-y", className)}
+        className={cn(controlClasses, "min-h-36 resize-y leading-relaxed", className)}
         {...props}
       />
       {withCount ? (
         <p
           id={counterId}
           className={cn(
-            "mt-1.5 text-right font-mono text-xs",
-            nearLimit ? "text-danger" : "text-tone-muted",
+            "mt-2 text-right font-mono text-xs",
+            nearLimit ? "text-danger-fg" : "text-fg-muted",
           )}
         >
           {count} / {maxLength}

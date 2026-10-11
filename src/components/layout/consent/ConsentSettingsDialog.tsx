@@ -17,17 +17,17 @@ const categories: {
   {
     id: "necessary",
     title: "Necessary",
-    text: "Remember your cookie choice and keep forms safe from spam. Always on.",
+    text: "Remember the choice you make here and protect forms from spam. These stay on.",
   },
   {
     id: "analytics",
     title: "Analytics",
-    text: "Google Analytics and Microsoft Clarity help me see which pages are useful, plus which campaign brought you here. No ads.",
+    text: "Google Analytics and Microsoft Clarity show me which pages people find useful and which campaign led them here. No advertising.",
   },
   {
     id: "marketing",
     title: "Marketing",
-    text: "Lets Google measure ad campaigns. I don't run retargeting today; this stays off unless you allow it.",
+    text: "Allows Google to measure ad campaigns. I don't retarget visitors today, and this stays off unless you switch it on.",
   },
 ];
 
@@ -57,16 +57,16 @@ function Switch({
       disabled={disabled}
       onClick={() => onChange?.(!checked)}
       className={cn(
-        "relative inline-flex h-7 w-12 shrink-0 items-center rounded-pill border-2 transition-colors duration-200",
-        checked ? "border-primary bg-primary" : "border-subtle bg-bg",
+        "relative inline-flex h-7 w-12 shrink-0 items-center rounded-button border transition-colors duration-200",
+        checked ? "border-lamp-500 bg-lamp-500" : "border-fg-muted/60 bg-field",
         disabled && "cursor-not-allowed opacity-60",
       )}
     >
       <span
         aria-hidden="true"
         className={cn(
-          "inline-block size-5 rounded-pill bg-surface shadow-card transition-transform duration-200",
-          checked ? "translate-x-5" : "translate-x-0.5",
+          "inline-block size-5 rounded-[5px] transition-transform duration-200",
+          checked ? "translate-x-6 bg-ink-900" : "translate-x-0.5 bg-fg-muted",
         )}
       />
     </button>
@@ -87,17 +87,17 @@ function Preferences({
 
   return (
     <div>
-      <ul className="mt-6 divide-y divide-border rounded-lg border border-border">
+      <ul className="mt-6 divide-y divide-line border-y border-line">
         {categories.map((category) => {
           const necessary = category.id === "necessary";
           const checked = necessary ? true : prefs[category.id as keyof ConsentPrefs];
           return (
-            <li key={category.id} className="flex items-start justify-between gap-4 p-4">
+            <li key={category.id} className="flex items-start justify-between gap-4 py-4">
               <div>
-                <p id={`consent-${category.id}-label`} className="font-semibold text-ink">
+                <p id={`consent-${category.id}-label`} className="font-semibold text-fg">
                   {category.title}
                 </p>
-                <p id={`consent-${category.id}-text`} className="mt-1 text-small text-muted">
+                <p id={`consent-${category.id}-text`} className="mt-1 text-small text-fg-muted">
                   {category.text}
                 </p>
               </div>
@@ -115,9 +115,9 @@ function Preferences({
       </ul>
       <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
         <Button variant="outline" onClick={() => onSave(prefs)}>
-          Save choices
+          Save my choices
         </Button>
-        <Button onClick={onAcceptAll}>Accept all</Button>
+        <Button onClick={onAcceptAll}>Allow all</Button>
       </div>
     </div>
   );
@@ -142,18 +142,18 @@ export function ConsentSettingsDialog({
       open={open}
       onClose={onClose}
       title="Cookie settings"
-      description="Choose which cookies this site may use. You can change this any time from the footer."
+      description="Decide which cookies this site may set. You can come back and change this from the footer whenever you like."
       size="lg"
     >
       {open ? (
         <>
           <Preferences initial={initial} onSave={onSave} onAcceptAll={onAcceptAll} />
-          <p className="mt-5 text-small text-muted">
-            Details of every cookie are in the{" "}
+          <p className="mt-5 text-small text-fg-muted">
+            Each cookie is listed in the{" "}
             <Link
               href={POLICY_HREF}
               onClick={onClose}
-              className="font-semibold text-primary underline"
+              className="font-semibold text-accent underline underline-offset-4"
             >
               Cookie Policy
             </Link>

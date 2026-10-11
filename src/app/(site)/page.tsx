@@ -1,35 +1,33 @@
-import { Benefits } from "@/components/sections/home/Benefits";
-import { Deliverables } from "@/components/sections/home/Deliverables";
-import { Faq } from "@/components/sections/home/Faq";
+import { HandoverKit } from "@/components/sections/home/HandoverKit";
 import { HomeHero } from "@/components/sections/home/HomeHero";
-import { Overview } from "@/components/sections/home/Overview";
-import { Process } from "@/components/sections/home/Process";
-import { Products } from "@/components/sections/home/Products";
-import { Technology } from "@/components/sections/home/Technology";
-import { TechMarquee } from "@/components/sections/home/TechMarquee";
+import { Principles } from "@/components/sections/home/Principles";
+import { ProcessStory } from "@/components/sections/home/ProcessStory";
+import { Questions } from "@/components/sections/home/Questions";
+import { StackSection } from "@/components/sections/home/StackSection";
 import { Testimonials } from "@/components/sections/home/Testimonials";
-import { WhyFounders } from "@/components/sections/home/WhyFounders";
+import { WhatIBuild } from "@/components/sections/home/WhatIBuild";
 import { homeContent } from "@/content/home";
 import { buildMetadata } from "@/lib/seo";
 
 // No title: the root layout's default title is used on the home page.
 export const metadata = buildMetadata({ path: "/", description: homeContent.seo.description });
 
-// The layout's CTA band closes the page.
+/**
+ * Night hero · What I build (ivory) · Principles (sand) · How a project runs (night) ·
+ * The handover kit (ivory) · [testimonial, when enabled] · Stack map (sand) · Questions (ivory).
+ * The layout's QuickStart closes the page.
+ */
 export default function HomePage() {
   return (
     <>
       <HomeHero />
-      <TechMarquee />
-      <Overview />
-      <Benefits />
-      <WhyFounders />
-      <Technology />
-      <Process />
-      <Deliverables />
-      <Products />
+      <WhatIBuild index={1} />
+      <Principles index={2} />
+      <ProcessStory index={3} />
+      <HandoverKit index={4} />
       <Testimonials />
-      <Faq />
+      <StackSection index={5} />
+      <Questions index={6} />
     </>
   );
 }

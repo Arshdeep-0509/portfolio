@@ -17,12 +17,15 @@ export async function POST(request: Request) {
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json({ ok: false, error: "Invalid request." }, { status: 400 });
+    return NextResponse.json(
+      { ok: false, error: "That request couldn't be read." },
+      { status: 400 },
+    );
   }
 
   const parsed = newsletterSchema.safeParse(body);
   if (!parsed.success) {
-    const message = parsed.error.issues[0]?.message ?? "Please enter a valid email address.";
+    const message = parsed.error.issues[0]?.message ?? "That email address doesn't look right.";
     return NextResponse.json({ ok: false, error: message }, { status: 422 });
   }
 
@@ -31,7 +34,7 @@ export async function POST(request: Request) {
 
   if (await rateLimited(clientIp(request))) {
     return NextResponse.json(
-      { ok: false, error: "Too many attempts. Please try again later." },
+      { ok: false, error: "Several attempts came from your connection. Try again a little later." },
       { status: 429 },
     );
   }
@@ -45,7 +48,7 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error("[newsletter] could not save subscriber", error);
     return NextResponse.json(
-      { ok: false, error: "Something went wrong. Please try again in a moment." },
+      { ok: false, error: "That didn't go through. Please try again shortly." },
       { status: 500 },
     );
   }

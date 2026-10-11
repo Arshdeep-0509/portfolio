@@ -38,7 +38,7 @@ const components = {
   // frontmatter `cover` (rendered with next/image) instead.
   img: ({ alt = "", ...props }: React.ComponentProps<"img">) => (
     // eslint-disable-next-line @next/next/no-img-element
-    <img alt={alt} loading="lazy" decoding="async" className="rounded-lg" {...props} />
+    <img alt={alt} loading="lazy" decoding="async" className="rounded-card" {...props} />
   ),
   table: (props: React.ComponentProps<"table">) => (
     <div className="overflow-x-auto">
@@ -60,7 +60,7 @@ export async function MdxContent({ source }: { source: string }) {
     remarkPlugins: [remarkGfm],
     rehypePlugins: [
       rehypeSlug,
-      [rehypePrettyCode, { theme: "github-dark-default", keepBackground: true }],
+      [rehypePrettyCode, { theme: "vesper", keepBackground: true }],
       rehypeMarkPlaceholders,
     ],
   });

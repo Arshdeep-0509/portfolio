@@ -17,7 +17,7 @@ export default function CookiePolicyPage() {
       extras={{
         [COOKIE_SETTINGS_SECTION]: (
           <CookieSettingsButton
-            label="Change cookie settings"
+            label="Update my cookie choices"
             className={`${buttonVariants()} print:hidden`}
           />
         ),

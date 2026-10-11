@@ -10,7 +10,7 @@ export { caseStudyCategories, postCategories };
 export type { CaseStudyCategory, PostCategory } from "@/lib/contentTypes";
 
 /**
- * File-based content for /work (case studies) and /insights (blog posts).
+ * File-based content for /work (case studies) and /journal (posts).
  *
  * Each .mdx file in content/<collection>/ is one entry; the file name is its slug. Frontmatter is
  * validated with zod, so a typo fails the build with a clear message instead of rendering a
@@ -23,7 +23,7 @@ export type { CaseStudyCategory, PostCategory } from "@/lib/contentTypes";
  * No React in this module: the proxy, sitemap and RSS routes import it too.
  */
 
-export type MdxCollection = "work" | "insights";
+export type MdxCollection = "work" | "journal";
 
 const CONTENT_ROOT = path.join(process.cwd(), "content");
 
@@ -61,7 +61,8 @@ const caseStudySchema = z.object({
   /** A real client name only with written permission; otherwise "Personal product". */
   client: z.string().default("Personal product"),
   role: z.string(),
-  timeline: z.string(),
+  /** Optional; the facts sidebar leaves the row out when it's missing. */
+  timeline: z.string().optional(),
   stack: z.array(z.string()).default([]),
   categories: z.array(z.enum(caseStudyCategories)).default([]),
   /** Service pages show this case study when it lists their slug. */
@@ -89,7 +90,7 @@ const postSchema = z.object({
   updated: isoDate.optional(),
   category: z.enum(postCategories),
   tags: z.array(z.string()).default([]),
-  /** Rendered as "Related services" at the end of the post. List at least one. */
+  /** Linked as related services at the end of the post. List at least one. */
   services: serviceSlugs,
   cover: z.string(),
   coverAlt: z.string().optional(),
@@ -188,8 +189,8 @@ export function getCaseStudy(slug: string, { drafts = includeDrafts } = {}) {
 // ---------------------------------------------------------------------------- posts
 
 function loadPosts(): (PostMeta & { body: string })[] {
-  return readCollection("insights").map((entry) => ({
-    ...parse(postSchema, entry, "insights"),
+  return readCollection("journal").map((entry) => ({
+    ...parse(postSchema, entry, "journal"),
     slug: entry.slug,
     readingMinutes: readingMinutes(entry.body),
     body: entry.body,
