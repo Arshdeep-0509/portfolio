@@ -1,17 +1,20 @@
 import "server-only";
 import fs from "node:fs/promises";
 import path from "node:path";
+import { siteConfig } from "@/content/site";
 import { isPlaceholder } from "@/lib/constants";
 
 /**
  * Outgoing email for the contact and careers forms. The first configured provider wins:
  *
  * 1. RESEND_API_KEY + EMAIL_FROM → Resend's HTTP API (no SDK needed). EMAIL_FROM must be on a
- *    domain verified in Resend, e.g. "Arshdeep Singh <hello@yourdomain>".
+ *    domain verified in Resend, e.g. "hello@polestride.com".
  * 2. SMTP_HOST (+ SMTP_PORT, SMTP_USER, SMTP_PASS) + EMAIL_FROM → Nodemailer over SMTP
  *    (Gmail/Google Workspace app password, Zoho, Brevo, SES SMTP…).
  * 3. Otherwise → mock provider: each email is written to .data/outbox/ as an .html file you can
  *    open in a browser, and a one-line summary is logged to the server console.
+ *
+ * The sender name is always siteConfig.name; only the address is taken from EMAIL_FROM.
  */
 
 export type Email = { to: string; subject: string; html: string; text: string; replyTo?: string };
@@ -26,9 +29,15 @@ export function emailProvider(): EmailProvider {
   return "mock";
 }
 
+/** Accepts "hello@x.com" or "Any Name <hello@x.com>" and returns "Polestride <hello@x.com>". */
+export function formatSender(emailFrom: string): string {
+  const address = emailFrom.match(/<([^>]+)>/)?.[1] ?? emailFrom;
+  return `${siteConfig.name} <${address.trim()}>`;
+}
+
 export async function sendEmail(email: Email) {
   const provider = emailProvider();
-  const from = process.env.EMAIL_FROM ?? "";
+  const from = formatSender(process.env.EMAIL_FROM ?? "");
 
   if (provider !== "mock" && isPlaceholder(email.to)) {
     throw new Error(`Email recipient is a placeholder: ${email.to}`);

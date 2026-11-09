@@ -77,12 +77,12 @@ export function ScrollSnapRow({
 
   const count = Children.count(children);
   const arrow =
-    "inline-flex size-11 items-center justify-center rounded-button border border-rule text-fg transition-colors duration-200 hover:border-accent hover:text-accent disabled:pointer-events-none disabled:opacity-35";
+    "inline-flex size-11 items-center justify-center rounded-button border border-border text-ink transition-colors duration-200 hover:border-link hover:text-link disabled:pointer-events-none disabled:opacity-35";
 
   return (
     <div role="region" aria-roledescription="carousel" aria-label={label} className={className}>
       <div className="mb-6 flex items-center justify-between gap-4">
-        <p className="label-mono text-fg-muted" aria-hidden="true">
+        <p className="label-text text-ink-muted" aria-hidden="true">
           {count} {count === 1 ? "item" : "items"} · scroll or use the arrows
         </p>
         <div className="flex gap-2">
@@ -114,7 +114,7 @@ export function ScrollSnapRow({
         style={{ "--item-w": itemWidth } as React.CSSProperties}
         className={cn(
           "relative -mx-4 flex snap-x snap-mandatory scroll-px-4 gap-5 overflow-x-auto px-4 pb-4 sm:-mx-0 sm:scroll-px-0 sm:px-0",
-          "[scrollbar-width:thin] [scrollbar-color:var(--rule)_transparent]",
+          "[scrollbar-width:thin] [scrollbar-color:var(--border)_transparent]",
           "[&>li]:w-(--item-w) [&>li]:shrink-0 [&>li]:snap-start",
         )}
       >

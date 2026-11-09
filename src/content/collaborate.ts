@@ -1,3 +1,4 @@
+import { siteConfig } from "@/content/site";
 /**
  * Collaborate (/collaborate, formerly /careers). Only list roles that genuinely exist and perks
  * that are genuinely offered — never invent team size, salaries, benefits or culture claims.
@@ -203,8 +204,7 @@ export const benefits: { title: string; text: string }[] = [
 export const collaborateContent = {
   seo: {
     title: "Collaborate — Freelance, Internship & Partner Work",
-    description:
-      "Freelance, contract and internship work with Arshdeep Singh, plus partnerships for agencies: remote, project-based work on real MVPs, apps, AI and DevOps.",
+    description: `Freelance, contract and internship work with ${siteConfig.name}, plus partnerships for agencies: remote, project-based work on real MVPs, apps, AI and DevOps.`,
   },
   hero: {
     label: "Collaborate",

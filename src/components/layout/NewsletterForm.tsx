@@ -5,7 +5,9 @@ import Link from "next/link";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { ArrowRight, CircleCheck } from "lucide-react";
-import { FieldError } from "@/components/ui/form/Field";
+import { Button } from "@/components/ui/Button";
+import { FieldError, Label } from "@/components/ui/form/Field";
+import { Input } from "@/components/ui/form/Input";
 import { trackEvent } from "@/lib/analytics";
 import { newsletterSchema, type NewsletterInput } from "@/lib/schemas/newsletter";
 
@@ -20,7 +22,7 @@ export type NewsletterCopy = {
 };
 
 /**
- * Compact email sign-up for the footer: one underlined field and an arrow button, posting to
+ * Compact email sign-up for the footer: a labelled field and a secondary button, posting to
  * /api/newsletter. Validation runs in the browser and again on the server.
  */
 export function NewsletterForm({ copy, location }: { copy: NewsletterCopy; location: string }) {
@@ -61,33 +63,31 @@ export function NewsletterForm({ copy, location }: { copy: NewsletterCopy; locat
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} noValidate className="relative">
-      <p className="font-display-soft text-xl text-fg">{copy.title}</p>
-      <p className="mt-2 text-small text-fg-muted">{copy.text}</p>
-      <label htmlFor={inputId} className="mt-5 block label-mono text-fg-muted">
+      <p className="text-xl font-semibold text-ink">{copy.title}</p>
+      <p className="mt-2 text-small text-ink-muted">{copy.text}</p>
+      <Label htmlFor={inputId} className="mt-5">
         {copy.emailLabel}
-      </label>
-      <div className="mt-1 flex items-center border-b border-fg-muted/50 focus-within:border-lamp-400">
-        <input
-          id={inputId}
-          type="email"
-          autoComplete="email"
-          inputMode="email"
-          placeholder="you@company.com"
-          aria-invalid={emailError ? true : undefined}
-          aria-describedby={emailError ? `${inputId}-error` : undefined}
-          className="min-h-12 w-full bg-transparent text-body text-fg placeholder:text-fg-muted/70 focus-visible:outline-none"
-          {...register("email")}
-        />
-        <button
-          type="submit"
-          disabled={isSubmitting}
-          className="inline-flex min-h-11 shrink-0 items-center gap-2 pl-3 text-small font-semibold text-lamp-400 hover:text-lamp-500 disabled:opacity-50"
-        >
-          {copy.submit}
-          <ArrowRight aria-hidden="true" strokeWidth={1.5} className="size-4" />
-        </button>
-      </div>
+      </Label>
+      <Input
+        id={inputId}
+        type="email"
+        autoComplete="email"
+        inputMode="email"
+        placeholder="you@company.com"
+        invalid={Boolean(emailError)}
+        aria-describedby={emailError ? `${inputId}-error` : undefined}
+        {...register("email")}
+      />
       <FieldError id={`${inputId}-error`}>{emailError}</FieldError>
+      <Button
+        type="submit"
+        variant="outline"
+        loading={isSubmitting}
+        className="mt-3 w-full"
+        rightIcon={<ArrowRight aria-hidden="true" strokeWidth={1.5} className="size-4" />}
+      >
+        {copy.submit}
+      </Button>
       {/* Honeypot: hidden from people and assistive tech; bots tend to fill it in. */}
       <div aria-hidden="true" className="absolute -left-[9999px] h-px w-px overflow-hidden">
         <label htmlFor={`${inputId}-website`}>Website</label>
@@ -99,17 +99,18 @@ export function NewsletterForm({ copy, location }: { copy: NewsletterCopy; locat
           {...register("website")}
         />
       </div>
-      <div aria-live="polite" className="mt-2 min-h-6 text-small">
+      <div aria-live="polite" className="mt-3 mb-2 min-h-6 text-small">
         {status === "success" ? (
-          <p className="flex items-center gap-2 text-success-fg">
-            <CircleCheck aria-hidden="true" strokeWidth={1.5} className="size-4" /> {copy.success}
+          <p className="flex items-start gap-2 text-success">
+            <CircleCheck aria-hidden="true" strokeWidth={1.5} className="mt-0.5 size-4 shrink-0" />{" "}
+            {copy.success}
           </p>
         ) : null}
-        {status === "error" && serverError ? <p className="text-danger-fg">{serverError}</p> : null}
+        {status === "error" ? <FieldError className="mt-0">{serverError}</FieldError> : null}
       </div>
-      <p className="text-xs text-fg-muted">
+      <p className="text-xs text-ink-muted">
         Signing up means you accept the{" "}
-        <Link href={copy.privacy.href} className="underline underline-offset-2 hover:text-fg">
+        <Link href={copy.privacy.href} className="underline underline-offset-2 hover:text-ink">
           {copy.privacy.label}
         </Link>
         .

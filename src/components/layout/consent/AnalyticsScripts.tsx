@@ -1,8 +1,10 @@
 "use client";
 
 import { useEffect } from "react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { useConsent } from "@/lib/consent";
 
+const ON_VERCEL = process.env.NEXT_PUBLIC_ON_VERCEL === "1";
 const GA_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
 const CLARITY_ID = process.env.NEXT_PUBLIC_CLARITY_PROJECT_ID;
 // Optional cookieless alternative. Sets no cookies, so it doesn't wait for consent.
@@ -109,7 +111,8 @@ function revoke() {
  * Loads GA4 (NEXT_PUBLIC_GA_MEASUREMENT_ID) and Microsoft Clarity (NEXT_PUBLIC_CLARITY_PROJECT_ID)
  * only after the visitor accepts analytics cookies. Plausible (NEXT_PUBLIC_PLAUSIBLE_DOMAIN), if
  * configured instead, is cookieless and loads straight away. Until then — and after "Reject" — no request
- * goes to Google or Microsoft. Renders nothing.
+ * goes to Google or Microsoft. Vercel Speed Insights sets no cookies, but it is still measurement,
+ * so it waits for the same consent. It renders only on Vercel, where its script exists.
  */
 export function AnalyticsScripts() {
   const { decided, analytics, marketing } = useConsent();
@@ -128,5 +131,5 @@ export function AnalyticsScripts() {
     }
   }, [decided, analytics, marketing]);
 
-  return null;
+  return ON_VERCEL && decided && analytics ? <SpeedInsights /> : null;
 }

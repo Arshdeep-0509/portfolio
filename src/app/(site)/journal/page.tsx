@@ -39,11 +39,11 @@ export default function JournalPage() {
   }));
 
   return (
-    <Section tone="ivory" padding="none" className="pt-16 pb-24 lg:pt-24 lg:pb-32">
+    <Section tone="base" padding="none" className="pt-16 pb-24 lg:pt-24 lg:pb-32">
       <Breadcrumb items={[{ label: "Home", href: "/" }, { label: "Journal" }]} />
       <div className="mt-8 grid gap-6 lg:grid-cols-12 lg:items-end lg:gap-8">
-        <h1 className="text-h1 text-fg lg:col-span-7">{hero.title}</h1>
-        <p className="text-lg text-fg-muted lg:col-span-4 lg:col-start-9">{hero.text}</p>
+        <h1 className="text-h1 text-ink lg:col-span-7">{hero.title}</h1>
+        <p className="text-lg text-ink-muted lg:col-span-4 lg:col-start-9">{hero.text}</p>
       </div>
       <div className="mt-14">
         <JournalIndex posts={posts} copy={index} />

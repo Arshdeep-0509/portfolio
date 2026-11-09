@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { flushSync } from "react-dom";
 import Link from "next/link";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm, useWatch } from "react-hook-form";
@@ -118,8 +119,9 @@ export function ApplicationForm({ copy, roles }: ApplicationFormProps) {
   function showFieldErrors(fields: FieldName[]) {
     if (!fields[0]) return;
     const target = STEP_FIELDS.findIndex((group) => group.includes(fields[0]!));
-    if (target !== -1) setStep(target);
-    requestAnimationFrame(() => setFocus(fields[0]!));
+    // Commit the step first: a field inside a hidden step can't take focus.
+    if (target !== -1) flushSync(() => setStep(target));
+    setFocus(fields[0]);
   }
 
   async function onSubmit(data: CareerApplicationInput) {
@@ -174,20 +176,20 @@ export function ApplicationForm({ copy, roles }: ApplicationFormProps) {
 
   if (submitted) {
     return (
-      <div className="rounded-card border border-lamp-500/50 p-8 sm:p-10">
-        <CircleCheck aria-hidden="true" strokeWidth={1.5} className="size-9 text-success-fg" />
+      <div className="rounded-card border border-success bg-surface p-8 sm:p-10">
+        <CircleCheck aria-hidden="true" strokeWidth={1.5} className="size-9 text-success" />
         <h3
           ref={(heading) => heading?.focus()}
           tabIndex={-1}
-          className="mt-4 text-h3 text-fg outline-none"
+          className="mt-4 text-h3 text-ink outline-none"
         >
           {copy.successTitle}
         </h3>
-        <p className="mt-2 text-fg-muted">{copy.successText}</p>
-        <ol className="mt-6 border-t border-rule">
+        <p className="mt-2 text-ink-muted">{copy.successText}</p>
+        <ol className="mt-6 border-t border-border">
           {copy.nextSteps.map((line, index) => (
-            <li key={line} className="flex gap-4 border-b border-rule py-3 text-fg">
-              <span className="font-mono text-xs text-accent">0{index + 1}</span>
+            <li key={line} className="flex gap-4 border-b border-border py-3 text-ink">
+              <span className="text-xs text-ink-muted tabular-nums">0{index + 1}</span>
               {line}
             </li>
           ))}
@@ -236,8 +238,8 @@ export function ApplicationForm({ copy, roles }: ApplicationFormProps) {
           <dl className="grid gap-x-8 gap-y-3 text-small sm:grid-cols-2">
             {review.map(([term, detail]) => (
               <div key={term}>
-                <dt className="label-mono text-fg-muted">{term}</dt>
-                <dd className="mt-0.5 break-words text-fg">{detail || "—"}</dd>
+                <dt className="label-text text-ink-muted">{term}</dt>
+                <dd className="mt-0.5 break-words text-ink">{detail || "—"}</dd>
               </div>
             ))}
           </dl>
@@ -247,7 +249,7 @@ export function ApplicationForm({ copy, roles }: ApplicationFormProps) {
             {serverError ? (
               <p
                 role="alert"
-                className="flex items-start gap-2 rounded-card border border-danger/40 p-4 text-small text-danger-fg"
+                className="flex items-start gap-2 rounded-button border border-danger/40 p-4 text-small text-danger"
               >
                 <CircleAlert
                   aria-hidden="true"
@@ -400,9 +402,9 @@ export function ApplicationForm({ copy, roles }: ApplicationFormProps) {
               <div className="space-y-6">
                 <div>
                   {/* Not a <label>: FileDrop's drop zone is itself the label of the hidden file input. */}
-                  <p id="apply-resume-label" className="mb-2 text-small font-semibold text-fg">
+                  <p id="apply-resume-label" className="mb-2 text-small font-semibold text-ink">
                     {labels.resume}
-                    <span aria-hidden="true" className="ml-0.5 text-danger-fg">
+                    <span aria-hidden="true" className="ml-0.5 text-danger">
                       *
                     </span>
                     <span className="sr-only"> (required)</span>
@@ -456,12 +458,12 @@ export function ApplicationForm({ copy, roles }: ApplicationFormProps) {
                         {labels.consentBefore}{" "}
                         <Link
                           href={copy.privacy.href}
-                          className="font-semibold text-accent underline underline-offset-4"
+                          className="font-semibold text-link underline underline-offset-4"
                         >
                           {copy.privacy.label}
                         </Link>{" "}
                         {labels.consent}
-                        <span aria-hidden="true" className="ml-0.5 text-danger-fg">
+                        <span aria-hidden="true" className="ml-0.5 text-danger">
                           *
                         </span>
                         <span className="sr-only"> (required)</span>

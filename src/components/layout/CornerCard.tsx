@@ -4,7 +4,7 @@ import { useEffect, useId, useState } from "react";
 import { usePathname } from "next/navigation";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/Button";
-import type { Announcement } from "@/content/site";
+import { siteConfig, type Announcement } from "@/content/site";
 import { trackEvent } from "@/lib/analytics";
 import { useConsent } from "@/lib/consent";
 
@@ -42,7 +42,9 @@ function markSeen(id: string) {
 
 /** Today's date in IST as YYYY-MM-DD, to compare with startDate / endDate. */
 function todayIst() {
-  return new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Kolkata" }).format(new Date());
+  return new Intl.DateTimeFormat("en-CA", { timeZone: siteConfig.location.timezone }).format(
+    new Date(),
+  );
 }
 
 /**
@@ -119,27 +121,27 @@ export function CornerCard({ config, href }: { config: Announcement; href: strin
   return (
     <aside
       aria-labelledby={titleId}
-      className="tone-night fixed bottom-4 left-4 z-40 w-[min(22rem,calc(100%-2rem))] animate-corner-in rounded-card border border-lamp-500/50 bg-night-950/95 p-5 text-fg shadow-[0_24px_60px_-28px_rgb(245_165_36/0.6)] backdrop-blur-md sm:bottom-6 sm:left-6 print:hidden"
+      className="fixed bottom-4 left-4 z-40 w-[min(22rem,calc(100%-2rem))] animate-corner-in rounded-card border border-border bg-surface p-5 text-ink sm:bottom-6 sm:left-6 print:hidden"
     >
       <button
         type="button"
         onClick={() => close("dismiss")}
         aria-label="Close announcement"
-        className="absolute top-2 right-2 inline-flex size-10 items-center justify-center rounded-button text-mist-300 transition-colors hover:text-ivory-50"
+        className="absolute top-1.5 right-1.5 inline-flex size-11 items-center justify-center rounded-button text-ink-muted transition-colors hover:text-ink"
       >
         <X aria-hidden="true" strokeWidth={1.5} className="size-5" />
       </button>
-      <p className="label-mono text-accent">{config.badge}</p>
-      <h2 id={titleId} className="mt-2 pr-8 text-h3 text-fg">
+      <p className="label-text text-ink-muted">{config.badge}</p>
+      <h2 id={titleId} className="mt-2 pr-8 text-h3 text-ink">
         {config.title}
       </h2>
-      <p className="mt-2 text-small text-fg-muted">{config.description}</p>
-      <ul className="mt-4 space-y-1.5 border-t border-line-dark pt-4 text-small text-fg">
+      <p className="mt-2 text-small text-ink-muted">{config.description}</p>
+      <ul className="mt-4 space-y-1.5 border-t border-border pt-4 text-small text-ink">
         {config.bullets.map((bullet) => (
           <li key={bullet} className="flex gap-2.5">
             <span
               aria-hidden="true"
-              className="mt-[0.6em] size-1.5 shrink-0 rounded-dot bg-lamp-500"
+              className="mt-[0.6em] size-1.5 shrink-0 rounded-dot bg-ink-muted"
             />
             {bullet}
           </li>
@@ -159,12 +161,12 @@ export function CornerCard({ config, href }: { config: Announcement; href: strin
         <button
           type="button"
           onClick={() => close("secondary")}
-          className="min-h-10 link-underline text-small text-fg-muted hover:text-fg"
+          className="min-h-11 link-underline text-small text-ink-muted hover:text-ink"
         >
           {config.secondaryLabel}
         </button>
       </div>
-      <p className="mt-3 label-mono text-fg-muted">{config.footnote}</p>
+      <p className="mt-3 label-text text-ink-muted">{config.footnote}</p>
     </aside>
   );
 }

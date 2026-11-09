@@ -1,5 +1,6 @@
 import type { LegalDocument } from "@/content/legal/types";
 import { getServicesByGroup, serviceGroups } from "@/content/services";
+import { siteConfig } from "@/content/site";
 
 /**
  * Terms & Conditions. A starting template — not legal advice. Have a lawyer review it before
@@ -19,7 +20,7 @@ export const termsAndConditions: LegalDocument = {
   path: "/terms-and-conditions",
   description:
     "The terms that apply when you use this website or work with me on a project — fees, timelines, ownership, confidentiality and support.",
-  lastUpdated: "2026-10-10",
+  lastUpdated: "2026-11-07",
   sections: [
     {
       id: "introduction",
@@ -27,7 +28,7 @@ export const termsAndConditions: LegalDocument = {
       blocks: [
         {
           type: "p",
-          text: 'These terms apply to this website and to the services provided by Arshdeep Singh, trading as [LEGAL_ENTITY], [ADDRESS], Bengaluru, [STATE], India ("I", "me"), to you as a client ("you"). They\'re written in plain English so you know exactly what to expect when we work together.',
+          text: `These terms apply to this website and to the services provided by ${siteConfig.legalName}, [ADDRESS], Bengaluru, ${siteConfig.location.region}, India ("I", "me"), to you as a client ("you"). They're written in plain English so you know exactly what to expect when we work together.`,
         },
       ],
     },
@@ -240,7 +241,7 @@ export const termsAndConditions: LegalDocument = {
       blocks: [
         {
           type: "p",
-          text: "These terms are governed by the laws of India. If a dispute arises, we'll first try to resolve it in good faith by talking. If that doesn't work within [30] days, the courts of Bengaluru, [STATE] will have exclusive jurisdiction.",
+          text: `These terms are governed by the laws of India. If a dispute arises, we'll first try to resolve it in good faith by talking. If that doesn't work within [30] days, the courts of Bengaluru, ${siteConfig.location.region} will have exclusive jurisdiction.`,
         },
       ],
     },
@@ -250,7 +251,7 @@ export const termsAndConditions: LegalDocument = {
       blocks: [
         {
           type: "p",
-          text: "Questions about these terms? Email arshdeepsinghdev96@gmail.com or write to [LEGAL_ENTITY], [ADDRESS], Bengaluru, [STATE], India.",
+          text: `Questions about these terms? Email ${siteConfig.contact.email} or write to ${siteConfig.legalName}, [ADDRESS], Bengaluru, ${siteConfig.location.region}, India.`,
         },
       ],
     },

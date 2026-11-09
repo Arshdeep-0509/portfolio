@@ -30,7 +30,7 @@ export function Breadcrumb({ items, jsonLd = true, className }: BreadcrumbProps)
 
   return (
     <nav aria-label="Breadcrumb" className={className}>
-      <ol className="flex flex-wrap items-center label-mono text-fg-muted">
+      <ol className="flex label-text flex-wrap items-center text-ink-muted">
         <li aria-hidden="true">(</li>
         {items.map((item, index) => {
           const current = index === items.length - 1;
@@ -39,14 +39,14 @@ export function Breadcrumb({ items, jsonLd = true, className }: BreadcrumbProps)
               {current || !item.href ? (
                 <span
                   aria-current={current ? "page" : undefined}
-                  className={cn(current && "text-accent")}
+                  className={cn(current && "text-ink-muted")}
                 >
                   {item.label}
                 </span>
               ) : (
                 <Link
                   href={item.href}
-                  className="inline-flex min-h-6 items-center link-underline hover:text-fg"
+                  className="-my-2.5 inline-flex min-h-11 items-center link-underline hover:text-ink"
                 >
                   {item.label}
                 </Link>

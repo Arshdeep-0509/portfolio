@@ -1,7 +1,7 @@
 import "server-only";
 import { siteConfig } from "@/content/site";
 import type { StoredLead } from "@/lib/contact/leads";
-import { isPlaceholder } from "@/lib/constants";
+import { isPlaceholder, LOCALE } from "@/lib/constants";
 import {
   emailColors as colors,
   emailLayout as layout,
@@ -30,8 +30,8 @@ function labels(lead: StoredLead) {
 }
 
 function receivedAt(lead: StoredLead) {
-  const time = lead.createdAt.toLocaleString("en-IN", {
-    timeZone: "Asia/Kolkata",
+  const time = lead.createdAt.toLocaleString(LOCALE, {
+    timeZone: siteConfig.location.timezone,
     dateStyle: "medium",
     timeStyle: "short",
   });
@@ -39,7 +39,7 @@ function receivedAt(lead: StoredLead) {
 }
 
 function messageBlock(message: string) {
-  return `<p style="margin:0 0 24px;padding:12px 16px;background:${colors.bg};border-left:3px solid ${colors.lamp};white-space:pre-wrap;">${escapeHtml(message)}</p>`;
+  return `<p style="margin:0 0 24px;padding:12px 16px;background:${colors.bg};border-left:3px solid ${colors.star};white-space:pre-wrap;">${escapeHtml(message)}</p>`;
 }
 
 export function leadNotificationEmail(lead: StoredLead): RenderedEmail {
@@ -57,7 +57,7 @@ export function leadNotificationEmail(lead: StoredLead): RenderedEmail {
     subject,
     `<h1 style="margin:0 0 4px;font-size:20px;">A new enquiry has arrived</h1>
 <p style="margin:0 0 20px;color:${colors.muted};">Replying to this email goes straight to ${escapeHtml(lead.name)}.</p>
-${lead.nda ? `<p style="margin:0 0 20px;padding:10px 14px;background:#f3ede2;border-left:3px solid #f5a524;border-radius:4px;font-weight:700;">They would like an NDA before sharing details.</p>` : ""}
+${lead.nda ? `<p style="margin:0 0 20px;padding:10px 14px;background:${colors.raised};border-left:3px solid ${colors.star};border-radius:4px;font-weight:700;">They would like an NDA before sharing details.</p>` : ""}
 <table role="presentation" cellpadding="0" cellspacing="0" style="font-size:14px;margin-bottom:20px;">
 ${row("Name", lead.name)}
 ${row("Email", lead.email, `mailto:${lead.email}`)}
@@ -127,11 +127,11 @@ ${messageBlock(lead.message)}
 <ol style="margin:0 0 20px;padding-left:20px;">${steps.map((step) => `<li style="margin-bottom:6px;">${escapeHtml(step)}</li>`).join("")}</ol>
 ${
   booking
-    ? `<p style="margin:0 0 20px;"><a href="${escapeHtml(booking)}" style="display:inline-block;background:${colors.lamp};color:${colors.text};text-decoration:none;font-weight:700;padding:10px 18px;border-radius:8px;">Book a free call</a></p>`
+    ? `<p style="margin:0 0 20px;"><a href="${escapeHtml(booking)}" style="display:inline-block;background:${colors.star};color:${colors.text};text-decoration:none;font-weight:700;padding:10px 18px;border-radius:8px;">Book a free call</a></p>`
     : ""
 }
 <p style="margin:0 0 16px;">Thought of something else? Reply to this email and it reaches me.</p>
-<p style="margin:0 0 24px;">— ${escapeHtml(siteConfig.name)}</p>
+<p style="margin:0 0 24px;">— ${escapeHtml(`${siteConfig.founder.name}, ${siteConfig.name}`)}</p>
 <p style="margin:0;color:${colors.muted};font-size:13px;">This email went to you because you wrote to me through ${escapeHtml(siteConfig.url)}. Reference: ${escapeHtml(lead.id)}</p>`,
   );
 
@@ -153,7 +153,7 @@ ${
     "",
     "Thought of something else? Reply to this email and it reaches me.",
     "",
-    `— ${siteConfig.name}`,
+    `— ${siteConfig.founder.name}, ${siteConfig.name}`,
     "",
     `Reference: ${lead.id}`,
   ].join("\n");

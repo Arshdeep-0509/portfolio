@@ -53,7 +53,7 @@ export function CursorGlow({
         {
           "--glow-x": rest.x,
           "--glow-y": rest.y,
-          background: `radial-gradient(${size}px circle at var(--glow-x) var(--glow-y), rgb(255 193 94 / 0.13), rgb(245 165 36 / 0.05) 40%, transparent 70%)`,
+          background: `radial-gradient(${size}px circle at var(--glow-x) var(--glow-y), var(--glow), transparent 70%)`,
         } as React.CSSProperties
       }
     />

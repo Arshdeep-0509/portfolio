@@ -1,4 +1,5 @@
 import type { IconName } from "@/content/services";
+import { siteConfig } from "@/content/site";
 
 /**
  * Copy for /about.
@@ -9,8 +10,15 @@ import type { IconName } from "@/content/services";
 export const aboutContent = {
   seo: {
     title: "Meet a Full-Stack Developer Based in Bengaluru, India",
-    description:
-      "Arshdeep Singh is a full-stack developer in Bengaluru, India, and an AI and DevOps engineer who helps founders turn ideas into dependable products.",
+    description: `${siteConfig.founder.name} is a full-stack developer in Bengaluru, India, and an AI and DevOps engineer who helps founders turn ideas into dependable products.`,
+  },
+
+  why: {
+    title: `Why ${siteConfig.name}`,
+    paragraphs: [
+      "Polaris, the north star, is the one fixed point sailors steer by; stride is steady forward motion. Together: moving forward, guided by the north star.",
+      "It's how every project runs: a clear target (the smallest version that wins users), steady progress (a working build every one to two weeks), no detours (spend only where it pays back).",
+    ],
   },
 
   opening: {
@@ -19,10 +27,10 @@ export const aboutContent = {
     // Shown beside the headline until the owner confirms the reading of the name.
     titleNote: "[CONFIRM NAME MEANING]",
     text: "It's a fair description of the job: a steady light that keeps a product moving from first idea to first users.",
-    lead: "Founders and growing companies get me in person across design, code and hosting — along with the true answer, even when it isn't the handy one.",
+    lead: `${siteConfig.name} was founded by ${siteConfig.founder.name} to build business automation that frees you to grow. Founders and growing companies get me in person across design, code and hosting — along with the true answer, even when it isn't the handy one.`,
     cta: { label: "Book a free call" },
     cv: { label: "Download my CV", href: "/cv/arshdeep-singh.pdf" },
-    photoAlt: "Arshdeep Singh, photographed for this page",
+    photoAlt: `${siteConfig.founder.name}, photographed for this page`,
     availability: {
       available: "Available for new projects",
       limited: "Limited availability",

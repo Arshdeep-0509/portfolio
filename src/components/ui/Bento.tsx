@@ -36,7 +36,7 @@ export function Bento({ areas, columns, className, children, as: Tag = "div" }: 
     <Tag
       style={style}
       className={cn(
-        "grid gap-px overflow-hidden rounded-card border border-rule bg-rule",
+        "grid gap-5",
         "[grid-template-areas:var(--bento-areas)]",
         "md:[grid-template-columns:var(--bento-cols-md)] md:[grid-template-areas:var(--bento-areas-md)]",
         "lg:[grid-template-columns:var(--bento-cols-lg)] lg:[grid-template-areas:var(--bento-areas-lg)]",
@@ -50,12 +50,18 @@ export function Bento({ areas, columns, className, children, as: Tag = "div" }: 
 
 type BentoTileProps = {
   area: string;
-  /** Tiles default to the section's paper; "night" makes a dark tile with a lamp glow. */
-  tone?: "paper" | "night";
+  /** Hierarchy comes from the fill: raised for the lead tile, paper, then a bare outline. */
+  tone?: "raised" | "paper" | "outline";
   className?: string;
   children: React.ReactNode;
   as?: "div" | "li";
 } & Omit<React.HTMLAttributes<HTMLElement>, "className" | "children">;
+
+const tileTones = {
+  raised: "bg-surface-raised",
+  paper: "bg-surface",
+  outline: "bg-transparent",
+};
 
 export function BentoTile({
   area,
@@ -70,20 +76,12 @@ export function BentoTile({
     <Tag
       style={{ gridArea: area, ...style }}
       className={cn(
-        "relative min-w-0 p-6 sm:p-8",
-        tone === "night"
-          ? "tone-night isolate overflow-hidden bg-night-900 bg-stars text-fg"
-          : "bg-ivory-50 text-fg",
+        "relative min-w-0 rounded-card border border-border p-6 text-ink sm:p-8",
+        tileTones[tone],
         className,
       )}
       {...props}
     >
-      {tone === "night" ? (
-        <span
-          aria-hidden="true"
-          className="pointer-events-none absolute -right-24 -bottom-32 -z-10 size-96 rounded-dot bg-[radial-gradient(circle,rgb(245_165_36/0.32),rgb(46_42_79/0.35)_45%,transparent_70%)]"
-        />
-      ) : null}
       {children}
     </Tag>
   );

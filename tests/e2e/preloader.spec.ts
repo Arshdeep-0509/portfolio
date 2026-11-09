@@ -7,7 +7,7 @@ test.describe("opening preloader", () => {
     const preloader = page.locator(".preloader");
     await expect(preloader).toBeVisible();
     await expect(preloader).toHaveAttribute("aria-hidden", "true");
-    await expect(preloader.locator(".preloader-name")).toHaveText("Arshdeep Singh");
+    await expect(preloader.locator(".preloader-name")).toHaveText("Polestride");
     await expect(preloader.locator(".preloader-tagline")).toHaveText(
       "Business automation that frees you to grow.",
     );

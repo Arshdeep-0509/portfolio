@@ -24,10 +24,10 @@ function StatusIcon({ status }: { status: ComparisonStatus }) {
     <span
       aria-hidden="true"
       className={cn(
-        "inline-flex size-6 shrink-0 items-center justify-center rounded-card border",
-        status === "yes" && "border-success text-success-fg",
-        status === "partial" && "border-rule text-fg-muted",
-        status === "no" && "border-danger text-danger-fg",
+        "inline-flex size-6 shrink-0 items-center justify-center rounded-dot border",
+        status === "yes" && "border-success text-success",
+        status === "partial" && "border-border text-ink-muted",
+        status === "no" && "border-danger text-danger",
       )}
     >
       <Icon className="size-3.5" strokeWidth={2} />
@@ -69,8 +69,8 @@ export function ComparisonMatrix({
             {data.caption}
           </caption>
           <thead>
-            <tr className="border-b border-fg/40">
-              <th scope="col" className="w-[17%] py-4 pr-6 align-bottom label-mono text-fg-muted">
+            <tr className="border-b border-ink">
+              <th scope="col" className="w-[17%] label-text py-4 pr-6 align-bottom text-ink-muted">
                 {criteriaLabel}
               </th>
               {data.columns.map((column, index) => (
@@ -78,8 +78,8 @@ export function ComparisonMatrix({
                   key={column}
                   scope="col"
                   className={cn(
-                    "px-5 py-4 align-bottom font-display-soft text-xl font-medium text-fg",
-                    index === 0 && "border-t-2 border-lamp-500",
+                    "px-5 py-4 align-bottom text-xl font-semibold text-ink",
+                    index === 0 && "border-t-2 border-link",
                   )}
                 >
                   {column}
@@ -89,16 +89,16 @@ export function ComparisonMatrix({
           </thead>
           <tbody>
             {data.rows.map((row) => (
-              <tr key={row.label} className="border-b border-rule">
-                <th scope="row" className="py-5 pr-6 align-top font-semibold text-fg">
+              <tr key={row.label} className="border-b border-border">
+                <th scope="row" className="py-5 pr-6 align-top font-semibold text-ink">
                   {row.label}
                 </th>
                 {row.cells.map((cell, index) => (
                   <td
                     key={data.columns[index]}
                     className={cn(
-                      "px-5 py-5 align-top text-fg-muted",
-                      index === 0 && "bg-lamp-500/[0.07] text-fg",
+                      "px-5 py-5 align-top text-ink-muted",
+                      index === 0 && "bg-link/[0.07] text-ink",
                     )}
                   >
                     <Cell status={cell.status} text={cell.text} />
@@ -116,19 +116,19 @@ export function ComparisonMatrix({
             <li
               key={column}
               className={cn(
-                "rounded-card border bg-field p-5",
-                columnIndex === 0 ? "border-lamp-500" : "border-rule",
+                "rounded-card border bg-surface-raised p-5",
+                columnIndex === 0 ? "border-link" : "border-border",
               )}
             >
-              <h3 className="text-h3 text-fg">{column}</h3>
-              <dl className="mt-4 divide-y divide-rule text-small">
+              <h3 className="text-h3 text-ink">{column}</h3>
+              <dl className="mt-4 divide-y divide-border text-small">
                 {data.rows.map((row) => {
                   const cell = row.cells[columnIndex];
                   if (!cell) return null;
                   return (
                     <div key={row.label} className="py-3 first:pt-0 last:pb-0">
-                      <dt className="label-mono text-fg-muted">{row.label}</dt>
-                      <dd className="mt-1.5 text-fg">
+                      <dt className="label-text text-ink-muted">{row.label}</dt>
+                      <dd className="mt-1.5 text-ink">
                         <Cell status={cell.status} text={cell.text} />
                       </dd>
                     </div>
@@ -141,7 +141,7 @@ export function ComparisonMatrix({
       </div>
 
       {/* Legend: shape + word, so meaning never depends on colour. */}
-      <ul className="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-small text-fg-muted">
+      <ul className="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-small text-ink-muted">
         {(Object.keys(statusMeta) as ComparisonStatus[]).map((status) => (
           <li key={status} className="flex items-center gap-2">
             <StatusIcon status={status} />
@@ -149,7 +149,7 @@ export function ComparisonMatrix({
           </li>
         ))}
       </ul>
-      <p className="mt-3 text-small text-fg-muted">{data.note}</p>
+      <p className="mt-3 text-small text-ink-muted">{data.note}</p>
     </div>
   );
 }

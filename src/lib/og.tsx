@@ -1,112 +1,158 @@
+import { readFile } from "node:fs/promises";
+import { join } from "node:path";
 import { ImageResponse } from "next/og";
+import {
+  MARK_BODY,
+  MARK_STAR,
+  MARK_STAR_VIEW_BOX,
+  MARK_TIGHT_RATIO,
+  MARK_TIGHT_VIEW_BOX,
+  MARK_TRANSFORM,
+} from "@/components/brand/mark";
 import { siteConfig } from "@/content/site";
-import { isPlaceholder } from "@/lib/constants";
+import { brandColors } from "@/lib/brandColors";
+import { wideStars } from "@/lib/starField";
 
 export const ogSize = { width: 1200, height: 630 };
 export const ogContentType = "image/png";
 
-type OgInput = {
-  /** Short mono label, shown in parentheses: "(Services)". */
-  eyebrow?: string;
-  title: string;
-  subtitle?: string;
-  /** Site-relative path shown at the bottom, e.g. "/services/mvp-development". */
-  path?: string;
-};
+/** The alt text of a page's share image. */
+export const ogAlt = (title: string) => `${title} — ${siteConfig.name}`;
 
-// The real domain once set in site.ts; until then the placeholder stays visible on the image.
-const host = isPlaceholder(siteConfig.url) ? "[DOMAIN]" : new URL(siteConfig.url).host;
+// ImageResponse can't read woff2 or variable fonts, so these are static woff files, not next/font.
+const sora = await readFile(join(process.cwd(), "src/assets/fonts/sora-latin-600.woff"));
+const manrope = await readFile(join(process.cwd(), "src/assets/fonts/manrope-latin-500.woff"));
 
-// Satori cannot read CSS variables, so the Skylamp tokens are repeated here.
-const NIGHT = "#0A0A12";
-const IVORY = "#FBF8F2";
-const MIST = "#B8B4C6";
-const STARLIGHT = "#C9D2FF";
-const LAMP = "#F5A524";
-const GLOW = "#FFC15E";
+const footer = `${new URL(siteConfig.url).host} · ${siteConfig.location.city}, ${siteConfig.location.countryName}`;
+
+// Satori can't read CSS variables.
+const { bg: NIGHT, ink: INK, inkMuted: MUTED, accent: GOLD, border: BORDER } = brandColors.dark;
+
+/** The hero's opacity range in the dark theme (--star-min and --star-span in globals.css). */
+const starOpacity = (brightness: number) => 0.2 + brightness * 0.4;
+
+/** The hero's stars, minus any beside the logo: one right after the wordmark reads as a full stop. */
+const cardStars = wideStars.filter((star) => star.x > 36 || star.y > 26);
+
+const MARK_HEIGHT = 68;
+
+function titleSize(title: string) {
+  if (title.length <= 28) return 84;
+  if (title.length <= 48) return 72;
+  if (title.length <= 72) return 60;
+  return 50;
+}
 
 /**
- * Brand Open Graph image (1200×630): the night sky with the horizon glow, the lamp mark and
- * wordmark, a mono label, a large title, one supporting line, then the URL and the tagline.
+ * The brand share image (1200×630): Polar Night, the hero's seeded star field, a gold Polaris, the
+ * logo, the page title, the tagline and a footer strip. The field's keep-outs clear the title too.
  */
-export function renderOgImage({ eyebrow, title, subtitle, path = "/" }: OgInput) {
+export function renderOgImage({ title }: { title: string }) {
   return new ImageResponse(
     <div
       style={{
+        position: "relative",
         width: "100%",
         height: "100%",
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between",
-        padding: "60px 72px",
-        color: IVORY,
+        padding: "56px 72px 44px",
+        color: INK,
         backgroundColor: NIGHT,
-        backgroundImage:
-          "radial-gradient(120% 80% at 50% 115%, rgba(245,165,36,0.30) 0%, rgba(46,42,79,0.55) 38%, #0A0A12 72%)",
+        fontFamily: "Sora",
       }}
     >
-      <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
-        <svg width="56" height="56" viewBox="0 0 40 40">
-          <defs>
-            <radialGradient id="lamp">
-              <stop offset="0%" stopColor={GLOW} stopOpacity="0.95" />
-              <stop offset="45%" stopColor={LAMP} stopOpacity="0.4" />
-              <stop offset="100%" stopColor={LAMP} stopOpacity="0" />
-            </radialGradient>
-          </defs>
-          <circle cx="20" cy="6.5" r="7.5" fill="url(#lamp)" />
-          <circle cx="20" cy="6.5" r="2.6" fill={LAMP} />
-          <path d="M7.5 35 20 13.5 32.5 35" fill="none" stroke={IVORY} strokeWidth="3" />
+      <svg
+        width={ogSize.width}
+        height={ogSize.height}
+        viewBox={`0 0 ${ogSize.width} ${ogSize.height}`}
+        style={{ position: "absolute", top: 0, left: 0 }}
+      >
+        {cardStars.map((star) => (
+          <circle
+            key={`${star.x}-${star.y}`}
+            cx={(star.x / 100) * ogSize.width}
+            cy={(star.y / 100) * ogSize.height}
+            r={star.r}
+            fill={INK}
+            fillOpacity={starOpacity(star.brightness)}
+          />
+        ))}
+      </svg>
+
+      {/* Polaris */}
+      <div
+        style={{
+          position: "absolute",
+          top: 16,
+          right: 36,
+          width: 144,
+          height: 144,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          backgroundImage: `radial-gradient(circle, ${GOLD}40 0%, ${GOLD}00 62%)`,
+        }}
+      >
+        <svg width="46" height="46" viewBox={MARK_STAR_VIEW_BOX}>
+          <path d={MARK_STAR} fill={GOLD} />
         </svg>
-        <div style={{ display: "flex", flexDirection: "column" }}>
-          <div style={{ fontSize: 30, fontWeight: 700, letterSpacing: -0.3 }}>
-            {siteConfig.brand.wordmark}
-          </div>
-          <div style={{ fontSize: 14, letterSpacing: 2.5, color: MIST }}>
-            {siteConfig.brand.microTagline}
-          </div>
+      </div>
+
+      <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+        <svg
+          width={MARK_HEIGHT * MARK_TIGHT_RATIO}
+          height={MARK_HEIGHT}
+          viewBox={MARK_TIGHT_VIEW_BOX}
+        >
+          <g transform={MARK_TRANSFORM}>
+            <path d={MARK_BODY} fill={INK} fillRule="evenodd" />
+            <path d={MARK_STAR} fill={GOLD} />
+          </g>
+        </svg>
+        <div style={{ fontSize: 40, fontWeight: 600, letterSpacing: -0.6 }}>
+          {siteConfig.brand.wordmark}
         </div>
       </div>
 
-      <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
-        {eyebrow ? (
-          <div style={{ display: "flex", fontSize: 20, letterSpacing: 2, color: STARLIGHT }}>
-            {`(${eyebrow.toUpperCase()})`}
-          </div>
-        ) : null}
+      <div style={{ display: "flex", flexDirection: "column", gap: 22 }}>
         <div
           style={{
-            fontSize: title.length > 48 ? 58 : 70,
-            fontWeight: 700,
-            lineHeight: 1.04,
-            letterSpacing: -1.5,
-            maxWidth: 1000,
+            fontSize: titleSize(title),
+            fontWeight: 600,
+            lineHeight: 1.08,
+            letterSpacing: -1.6,
+            maxWidth: 1040,
           }}
         >
           {title}
         </div>
-        {subtitle ? (
-          <div style={{ fontSize: 27, lineHeight: 1.4, color: MIST, maxWidth: 960 }}>
-            {subtitle}
-          </div>
-        ) : null}
+        <div style={{ fontFamily: "Manrope", fontSize: 30, fontWeight: 500, color: MUTED }}>
+          {siteConfig.tagline}
+        </div>
       </div>
 
       <div
         style={{
           display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          fontSize: 20,
-          color: MIST,
-          borderTop: "1px solid rgba(255,255,255,0.12)",
-          paddingTop: 22,
+          fontFamily: "Manrope",
+          fontSize: 22,
+          fontWeight: 500,
+          color: MUTED,
+          borderTop: `1px solid ${BORDER}`,
+          paddingTop: 20,
         }}
       >
-        <div style={{ display: "flex", color: GLOW }}>{`${host}${path === "/" ? "" : path}`}</div>
-        <div style={{ display: "flex" }}>{siteConfig.tagline}</div>
+        {footer}
       </div>
     </div>,
-    ogSize,
+    {
+      ...ogSize,
+      fonts: [
+        { name: "Sora", data: sora, weight: 600, style: "normal" },
+        { name: "Manrope", data: manrope, weight: 500, style: "normal" },
+      ],
+    },
   );
 }

@@ -1,4 +1,4 @@
-import { expect, test } from "./fixtures";
+import { expect, hydrated, test } from "./fixtures";
 
 test.describe("contact wizard", () => {
   test("validates each step and focuses the first problem", async ({ page }) => {
@@ -8,6 +8,7 @@ test.describe("contact wizard", () => {
       return route.fulfill({ json: { ok: true } });
     });
     await page.goto("/contact");
+    await hydrated(page, "#contact-service-0");
     const form = page.getByRole("form", { name: "Project enquiry" });
 
     // Step 1 needs at least one service.
@@ -47,6 +48,7 @@ test.describe("contact wizard", () => {
       await route.fulfill({ json: { ok: true } });
     });
     await page.goto("/contact?bundle=ai-upgrade");
+    await hydrated(page, "#contact-service-0");
     const form = page.getByRole("form", { name: "Project enquiry" });
     await expect(page.locator("#contact-service-4")).toBeChecked(); // AI features
     await expect(page.locator("#contact-service-5")).toBeChecked(); // DevOps
@@ -67,7 +69,9 @@ test.describe("contact wizard", () => {
     await expect(form.getByText("Your answers")).toBeVisible();
     await form.getByRole("button", { name: "Send it over" }).click();
 
-    await expect(page.getByRole("heading", { name: /Thank you, Priya/ })).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "Sent. You'll hear back within one business day." }),
+    ).toBeVisible();
     expect(body).toMatchObject({
       name: "Priya Sharma",
       service: "ai",
@@ -88,19 +92,22 @@ test.describe("quick start", () => {
       await route.fulfill({ json: { ok: true } });
     });
     await page.goto("/services");
+    await page.locator("#quick-start-title").scrollIntoViewIfNeeded();
     const form = page.getByRole("form", { name: "Quick enquiry" });
-    await form.scrollIntoViewIfNeeded();
     await form.getByLabel(/Your name/).fill("Ravi Kumar");
     await form.getByLabel(/^Email/).fill("ravi@example.com");
     await form.getByLabel(/The idea, in one line/).fill("A delivery tracker for our shop");
     await form.getByRole("checkbox").check();
     await form.getByRole("button", { name: "Send it over" }).click();
-    await expect(page.getByRole("heading", { name: /Thank you, Ravi/ })).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "Sent. You'll hear back within one business day." }),
+    ).toBeVisible();
     expect(body).toMatchObject({ service: "quick", phone: "", name: "Ravi Kumar" });
   });
 
   test("is not shown on /contact", async ({ page }) => {
     await page.goto("/contact");
+    await hydrated(page, "#contact-service-0");
     await expect(page.getByRole("form", { name: "Quick enquiry" })).toHaveCount(0);
   });
 });
@@ -108,6 +115,7 @@ test.describe("quick start", () => {
 test.describe("collaborate application", () => {
   test("rejects non-PDF and oversized resumes in the browser", async ({ page }) => {
     await page.goto("/collaborate#apply");
+    await hydrated(page, "#apply-name");
     const input = page.locator("#apply-resume");
     await input.setInputFiles({
       name: "resume.txt",
@@ -131,10 +139,50 @@ test.describe("collaborate application", () => {
 
   test("stops on step one until the required fields are valid", async ({ page }) => {
     await page.goto("/collaborate#apply");
+    await hydrated(page, "#apply-name");
     const form = page.getByRole("form", { name: "Application" });
     await form.getByRole("button", { name: "Next" }).click();
     await expect(page.locator("#apply-name-error")).toBeVisible();
     await expect(page.locator("#apply-name")).toBeFocused();
     await expect(form.getByText("Step 01 of 03")).toBeVisible();
+  });
+});
+
+test.describe("honeypots", () => {
+  const message =
+    "I have shipped two React apps to real users and would like to work on client products with careful review from someone experienced.";
+
+  test("a bot filling the hidden field on the application gets a quiet success", async ({
+    request,
+  }) => {
+    const response = await request.post("/api/careers", {
+      multipart: {
+        name: "Bot Person",
+        email: "bot@example.com",
+        phone: "+91 98765 43210",
+        role: "General application",
+        portfolio: "https://example.com/portfolio",
+        message,
+        consent: "true",
+        website: "https://spam.example",
+        resume: {
+          name: "cv.pdf",
+          mimeType: "application/pdf",
+          buffer: Buffer.from("%PDF-1.4\n1 0 obj<<>>endobj\ntrailer<<>>\n%%EOF\n"),
+        },
+      },
+    });
+    // A real application answers 201 with an id; the honeypot stops before anything is stored.
+    expect(response.status()).toBe(200);
+    expect(await response.json()).toEqual({ ok: true });
+  });
+
+  test("a bot filling the hidden field on the newsletter gets a quiet success", async ({
+    request,
+  }) => {
+    const response = await request.post("/api/newsletter", {
+      data: { email: "bot@example.com", website: "https://spam.example" },
+    });
+    expect(response.ok()).toBe(true);
   });
 });

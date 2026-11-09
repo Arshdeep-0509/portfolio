@@ -57,16 +57,16 @@ function Switch({
       disabled={disabled}
       onClick={() => onChange?.(!checked)}
       className={cn(
-        "relative inline-flex h-7 w-12 shrink-0 items-center rounded-button border transition-colors duration-200",
-        checked ? "border-lamp-500 bg-lamp-500" : "border-fg-muted/60 bg-field",
+        "relative inline-flex h-7 w-12 shrink-0 items-center rounded-dot border transition-colors duration-200",
+        checked ? "border-link bg-link" : "border-ink-muted bg-surface-raised",
         disabled && "cursor-not-allowed opacity-60",
       )}
     >
       <span
         aria-hidden="true"
         className={cn(
-          "inline-block size-5 rounded-[5px] transition-transform duration-200",
-          checked ? "translate-x-6 bg-ink-900" : "translate-x-0.5 bg-fg-muted",
+          "inline-block size-5 rounded-dot transition-transform duration-200",
+          checked ? "translate-x-6 bg-bg" : "translate-x-0.5 bg-ink-muted",
         )}
       />
     </button>
@@ -87,17 +87,17 @@ function Preferences({
 
   return (
     <div>
-      <ul className="mt-6 divide-y divide-line border-y border-line">
+      <ul className="mt-6 divide-y divide-border border-y border-border">
         {categories.map((category) => {
           const necessary = category.id === "necessary";
           const checked = necessary ? true : prefs[category.id as keyof ConsentPrefs];
           return (
             <li key={category.id} className="flex items-start justify-between gap-4 py-4">
               <div>
-                <p id={`consent-${category.id}-label`} className="font-semibold text-fg">
+                <p id={`consent-${category.id}-label`} className="font-semibold text-ink">
                   {category.title}
                 </p>
-                <p id={`consent-${category.id}-text`} className="mt-1 text-small text-fg-muted">
+                <p id={`consent-${category.id}-text`} className="mt-1 text-small text-ink-muted">
                   {category.text}
                 </p>
               </div>
@@ -148,12 +148,12 @@ export function ConsentSettingsDialog({
       {open ? (
         <>
           <Preferences initial={initial} onSave={onSave} onAcceptAll={onAcceptAll} />
-          <p className="mt-5 text-small text-fg-muted">
+          <p className="mt-5 text-small text-ink-muted">
             Each cookie is listed in the{" "}
             <Link
               href={POLICY_HREF}
               onClick={onClose}
-              className="font-semibold text-accent underline underline-offset-4"
+              className="font-semibold text-link underline underline-offset-4"
             >
               Cookie Policy
             </Link>

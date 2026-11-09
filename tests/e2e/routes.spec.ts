@@ -58,7 +58,7 @@ test("robots, sitemap, feed, manifest and health endpoints", async ({ request })
   expect(feed.status()).toBe(200);
   expect(await feed.text()).toContain("<rss");
   const manifest = await (await request.get("/manifest.webmanifest")).json();
-  expect(manifest.theme_color).toBe("#0A0A12");
+  expect(manifest.theme_color).toBe("#0B1630");
   const health = await request.get("/api/health");
   expect(health.status()).toBe(200);
   expect((await health.json()).status).toBe("ok");

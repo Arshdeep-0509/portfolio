@@ -1,4 +1,4 @@
-import { test as base, expect, type APIRequestContext } from "@playwright/test";
+import { test as base, expect, type APIRequestContext, type Page } from "@playwright/test";
 
 /**
  * `test` with the cookie banner already answered (analytics rejected), and the announcement popup
@@ -30,6 +30,14 @@ export const test = base.extend({
 });
 
 export { expect };
+
+/** The contact and application forms hydrate after the page, so wait before touching them. */
+export async function hydrated(page: Page, selector: string) {
+  await page.waitForFunction((target) => {
+    const element = document.querySelector(target);
+    return Boolean(element) && Object.keys(element!).some((key) => key.startsWith("__reactProps"));
+  }, selector);
+}
 
 /** Every indexable path from the sitemap, plus noindex routes worth checking. */
 export async function siteRoutes(request: APIRequestContext) {

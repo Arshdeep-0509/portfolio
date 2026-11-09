@@ -1,4 +1,5 @@
 import type { LegalDocument } from "@/content/legal/types";
+import { siteConfig } from "@/content/site";
 
 /**
  * Privacy Policy. A starting template written for this site's actual data flows — not legal
@@ -9,7 +10,7 @@ export const privacyPolicy: LegalDocument = {
   path: "/privacy-policy",
   description:
     "How I collect, use, share and protect your personal data when you visit this site, contact me or apply to work with me — in plain English.",
-  lastUpdated: "2026-10-10",
+  lastUpdated: "2026-11-07",
   sections: [
     {
       id: "introduction",
@@ -17,7 +18,7 @@ export const privacyPolicy: LegalDocument = {
       blocks: [
         {
           type: "p",
-          text: 'This website is run by Arshdeep Singh, trading as [LEGAL_ENTITY], an IT services business based in Bengaluru, [STATE], India ("I", "me"). I build MVPs, web and mobile apps, AI features and cloud infrastructure, and offer design and growth marketing services.',
+          text: `This website is run by ${siteConfig.legalName}, an IT services business based in Bengaluru, ${siteConfig.location.region}, India ("I", "me"). I build MVPs, web and mobile apps, AI features and cloud infrastructure, and offer design and growth marketing services.`,
         },
         {
           type: "p",
@@ -42,7 +43,7 @@ export const privacyPolicy: LegalDocument = {
           items: [
             "**Personal data** — any information about an identifiable person, such as your name, email address, phone number or IP address.",
             "**Processing** — anything done with personal data: collecting, storing, using, sharing or deleting it.",
-            "**Data Fiduciary** (DPDP Act) or **controller** (GDPR) — the person who decides why and how personal data is processed. For this website, that's me, [LEGAL_ENTITY].",
+            `**Data Fiduciary** (DPDP Act) or **controller** (GDPR) — the person who decides why and how personal data is processed. For this website, that's me, ${siteConfig.legalName}.`,
             "**Data Principal** (DPDP Act) or **data subject** (GDPR) — the person the data is about: you.",
             "**Data Processor** — a service provider that processes personal data on my behalf, such as my email or hosting provider.",
             '**Consent** — your free, specific, informed and unambiguous agreement, given by a clear action such as ticking a box or clicking "Accept".',
@@ -126,7 +127,7 @@ export const privacyPolicy: LegalDocument = {
           items: [
             '**Cookies:** use "Cookie settings" in the footer of any page, or on the [Cookie Policy](/cookie-policy) page.',
             "**Newsletter:** use the unsubscribe link in any email, or write to me.",
-            "**Forms and applications:** email arshdeepsinghdev96@gmail.com and ask me to stop using or to delete your data.",
+            `**Forms and applications:** email ${siteConfig.contact.email} and ask me to stop using or to delete your data.`,
           ],
         },
         {
@@ -259,7 +260,7 @@ export const privacyPolicy: LegalDocument = {
         },
         {
           type: "p",
-          text: "**How to exercise them:** email arshdeepsinghdev96@gmail.com with the subject \"Privacy request\" and tell me what you'd like. I may ask you to confirm your identity before acting on the request. There's no charge, and I'll respond within [X] days.",
+          text: `**How to exercise them:** email ${siteConfig.contact.email} with the subject "Privacy request" and tell me what you'd like. I may ask you to confirm your identity before acting on the request. There's no charge, and I'll respond within [X] days.`,
         },
       ],
     },
@@ -269,7 +270,7 @@ export const privacyPolicy: LegalDocument = {
       blocks: [
         {
           type: "p",
-          text: "This website and my services are meant for adults and businesses. I don't knowingly collect personal data from anyone under 18. If you believe a child has sent me their data, email arshdeepsinghdev96@gmail.com and I'll delete it. Applicants for internships must be 18 or older.",
+          text: `This website and my services are meant for adults and businesses. I don't knowingly collect personal data from anyone under 18. If you believe a child has sent me their data, email ${siteConfig.contact.email} and I'll delete it. Applicants for internships must be 18 or older.`,
         },
       ],
     },
@@ -319,8 +320,8 @@ export const privacyPolicy: LegalDocument = {
           type: "ul",
           items: [
             "**Name:** [NAME]",
-            "**Email:** arshdeepsinghdev96@gmail.com",
-            "**Address:** [LEGAL_ENTITY], [ADDRESS], Bengaluru, [STATE], India",
+            `**Email:** ${siteConfig.contact.email}`,
+            `**Address:** ${siteConfig.legalName}, [ADDRESS], Bengaluru, ${siteConfig.location.region}, India`,
           ],
         },
         {

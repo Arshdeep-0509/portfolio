@@ -3,8 +3,9 @@
 import { useId, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ArrowRight, Mail, MessageCircle, X } from "lucide-react";
-import { Logo } from "@/components/layout/Logo";
+import { ArrowRight, ChevronDown, Mail, MessageCircle, X } from "lucide-react";
+import { Logo } from "@/components/brand/Logo";
+import { Star } from "@/components/brand/Star";
 import { isActivePath, type HeaderNav } from "@/components/layout/navTypes";
 import { Button } from "@/components/ui/Button";
 import { PlaceholderText } from "@/components/ui/PlaceholderText";
@@ -33,24 +34,24 @@ export function MobileMenu({
   const [servicesOpen, setServicesOpen] = useState(() => pathname.startsWith("/services"));
   const { copy, contact } = nav;
 
-  const linkClass = "flex min-h-14 items-center font-display-soft text-[2rem] leading-none";
+  const linkClass = "flex min-h-14 items-center font-semibold text-[2rem] leading-none";
 
   return (
     <dialog
       {...dialogProps}
       id="mobile-menu"
       aria-label={copy.menu.dialogLabel}
-      className="tone-night fixed inset-0 m-0 h-dvh max-h-none w-full max-w-none bg-night-950 bg-stars p-0 text-fg backdrop:bg-transparent open:animate-overlay-in"
+      className="fixed inset-0 m-0 h-dvh max-h-none w-full max-w-none bg-bg p-0 text-ink backdrop:bg-transparent open:animate-overlay-in"
     >
       {/* Contents mount only while open, keeping them out of every page's DOM. */}
       {open ? (
         <div className="flex h-full flex-col">
           <div className="container-site flex h-(--bar-h) shrink-0 items-center justify-between">
-            <Logo tone="dark" onClick={onClose} />
+            <Logo onClick={onClose} />
             <button
               type="button"
               onClick={onClose}
-              className="inline-flex min-h-11 items-center gap-2 rounded-button px-1 label-mono text-ivory-50"
+              className="inline-flex min-h-11 label-text items-center gap-2 rounded-button px-1 text-ink"
             >
               <X aria-hidden="true" strokeWidth={1.5} className="size-5" />
               {copy.menu.close}
@@ -61,27 +62,31 @@ export function MobileMenu({
             <StatusDot status={nav.availability} label={copy.availability[nav.availability]} />
 
             <nav aria-label="Mobile" className="mt-8">
-              <ul className="border-t border-line-dark">
+              <ul className="border-t border-border">
                 {nav.main.map((item) => {
                   const active = isActivePath(pathname, item.href);
                   if (item.hasMenu) {
                     return (
-                      <li key={item.href} className="border-b border-line-dark">
+                      <li key={item.href} className="border-b border-border">
                         <button
                           type="button"
                           aria-expanded={servicesOpen}
                           aria-controls={servicesPanelId}
                           onClick={() => setServicesOpen((value) => !value)}
-                          className={cn(
-                            linkClass,
-                            "w-full justify-between text-left",
-                            active ? "text-lamp-400" : "text-ivory-50",
-                          )}
+                          className={cn(linkClass, "w-full justify-between text-left", "text-ink")}
                         >
-                          {item.label}
-                          <span aria-hidden="true" className="font-mono text-2xl text-lamp-400">
-                            {servicesOpen ? "−" : "+"}
+                          <span className="flex items-center gap-3">
+                            {active ? <Star className="size-3.5 shrink-0 text-accent" /> : null}
+                            {item.label}
                           </span>
+                          <ChevronDown
+                            aria-hidden="true"
+                            strokeWidth={1.5}
+                            className={cn(
+                              "size-6 text-ink-muted transition-transform duration-200",
+                              servicesOpen && "rotate-180",
+                            )}
+                          />
                         </button>
                         <div
                           id={servicesPanelId}
@@ -97,7 +102,7 @@ export function MobileMenu({
                                 <div key={group.id}>
                                   <p
                                     id={`mobile-group-${group.id}`}
-                                    className="label-mono text-lamp-400"
+                                    className="label-text text-ink-muted"
                                   >
                                     {group.label}
                                   </p>
@@ -110,8 +115,11 @@ export function MobileMenu({
                                           aria-current={
                                             pathname === service.href ? "page" : undefined
                                           }
-                                          className="flex min-h-11 items-center text-body text-mist-300 hover:text-ivory-50 aria-[current=page]:text-lamp-400"
+                                          className="flex min-h-11 items-center gap-2.5 text-body text-ink-muted hover:text-ink aria-[current=page]:text-ink"
                                         >
+                                          {pathname === service.href ? (
+                                            <Star className="size-2.5 shrink-0 text-accent" />
+                                          ) : null}
                                           {service.label}
                                         </Link>
                                       </li>
@@ -122,7 +130,7 @@ export function MobileMenu({
                               <Link
                                 href={copy.menu.servicesOverview.href}
                                 onClick={onClose}
-                                className="inline-flex min-h-11 items-center gap-2 text-small font-semibold text-lamp-400"
+                                className="inline-flex min-h-11 items-center gap-2 text-small font-semibold text-link"
                               >
                                 {copy.menu.servicesOverview.label}
                                 <ArrowRight
@@ -138,13 +146,14 @@ export function MobileMenu({
                     );
                   }
                   return (
-                    <li key={item.href} className="border-b border-line-dark">
+                    <li key={item.href} className="border-b border-border">
                       <Link
                         href={item.href}
                         onClick={onClose}
                         aria-current={active ? "page" : undefined}
-                        className={cn(linkClass, active ? "text-lamp-400" : "text-ivory-50")}
+                        className={cn(linkClass, "gap-3 text-ink")}
                       >
+                        {active ? <Star className="size-3.5 shrink-0 text-accent" /> : null}
                         {item.label}
                       </Link>
                     </li>
@@ -162,11 +171,11 @@ export function MobileMenu({
               </Button>
             </div>
 
-            <ul className="mt-8 space-y-1 text-small text-mist-300">
+            <ul className="mt-8 space-y-1 text-small text-ink-muted">
               <li className="flex min-h-11 items-center gap-3">
-                <Mail aria-hidden="true" strokeWidth={1.5} className="size-5 text-lamp-400" />
+                <Mail aria-hidden="true" strokeWidth={1.5} className="size-5 text-ink-muted" />
                 {contact.email.href ? (
-                  <a href={contact.email.href} className="link-underline hover:text-ivory-50">
+                  <a href={contact.email.href} className="link-underline hover:text-ink">
                     {contact.email.label}
                   </a>
                 ) : (
@@ -177,7 +186,7 @@ export function MobileMenu({
                 <MessageCircle
                   aria-hidden="true"
                   strokeWidth={1.5}
-                  className="size-5 text-lamp-400"
+                  className="size-5 text-ink-muted"
                 />
                 {contact.whatsapp.href ? (
                   <a
@@ -185,7 +194,7 @@ export function MobileMenu({
                     target="_blank"
                     rel="noopener noreferrer"
                     data-cta="mobile-menu"
-                    className="link-underline hover:text-ivory-50"
+                    className="link-underline hover:text-ink"
                   >
                     WhatsApp {contact.whatsapp.label}
                     <span className="sr-only"> (opens in a new tab)</span>
@@ -207,7 +216,7 @@ export function MobileMenu({
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label={`${social.label} (opens in a new tab)`}
-                      className="inline-flex size-11 items-center justify-center rounded-button border border-line-dark text-ivory-50 hover:border-lamp-500"
+                      className="inline-flex size-11 items-center justify-center rounded-button border border-border text-ink hover:border-link"
                     >
                       <SocialIcon name={social.key} className="size-5" />
                     </a>

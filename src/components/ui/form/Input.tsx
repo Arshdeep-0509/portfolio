@@ -46,7 +46,7 @@ export function Select({ invalid, placeholder, className, children, ...props }: 
       <ChevronDown
         aria-hidden="true"
         strokeWidth={1.5}
-        className="pointer-events-none absolute top-1/2 right-4 size-4 -translate-y-1/2 text-fg-muted"
+        className="pointer-events-none absolute top-1/2 right-4 size-4 -translate-y-1/2 text-ink-muted"
       />
     </div>
   );

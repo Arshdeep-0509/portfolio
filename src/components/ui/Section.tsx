@@ -5,14 +5,14 @@ import { cn } from "@/lib/utils";
 const sectionVariants = cva("relative", {
   variants: {
     tone: {
-      /** Deepest sky, with the star field. Heroes and closing sections. */
-      night: "tone-night bg-night-950 bg-stars text-fg",
-      /** Dark sections between paper ones. */
-      "night-900": "tone-night bg-night-900 bg-stars text-fg",
-      /** Warm paper with a faint grain: the main light surface. */
-      ivory: "tone-ivory grain bg-ivory-50 text-fg",
-      /** Alternate light surface. */
-      sand: "tone-sand bg-sand-100 text-fg",
+      /** The page colour with the star field. Heroes and closing sections. */
+      sky: "bg-bg bg-stars text-ink",
+      /** The same sky between hairlines, for when the section above shares its colour. */
+      "sky-ruled": "border-y border-border bg-bg bg-stars text-ink",
+      /** The plain page colour. */
+      base: "bg-bg text-ink",
+      /** One step up from the page, so sections alternate. */
+      surface: "bg-surface text-ink",
     },
     padding: {
       none: "",
@@ -20,7 +20,7 @@ const sectionVariants = cva("relative", {
       default: "section-y",
     },
   },
-  defaultVariants: { tone: "ivory", padding: "default" },
+  defaultVariants: { tone: "base", padding: "default" },
 });
 
 export type SectionTone = NonNullable<VariantProps<typeof sectionVariants>["tone"]>;
@@ -31,15 +31,15 @@ type SectionProps = Omit<React.ComponentProps<"section">, "id"> &
     /** Wrap children in a <Container>. Default true. */
     contained?: boolean;
     /**
-     * First section of a page that should sit under a transparent header (night heroes).
+     * First section of a page that should sit under a transparent header (heroes).
      * The section must add the header height to its own top padding.
      */
     underHeader?: boolean;
   };
 
 /**
- * Page section. Sections alternate night and paper down every page; the tone class switches text,
- * hairline, accent and focus colours inside so components never pick colours themselves.
+ * Page section. Sections alternate the page and surface colours down every page. Colours come from
+ * the theme tokens, so they follow the light or dark theme by themselves.
  */
 export function Section({
   id,

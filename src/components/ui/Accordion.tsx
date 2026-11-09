@@ -1,6 +1,7 @@
 "use client";
 
 import { useId, useRef, useState } from "react";
+import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export type AccordionItem = {
@@ -18,9 +19,9 @@ type AccordionProps = {
 };
 
 /**
- * Question rows separated by hairlines — no boxes. One item open at a time; "+" turns into "−".
- * ↑/↓/Home/End move between questions. Collapsed panels are `inert`, so their links are skipped
- * by Tab and screen readers. Colours follow the section tone.
+ * Question rows separated by hairlines, no boxes. One item open at a time; the chevron turns over.
+ * Height animates only once someone has used it, never on load. ↑/↓/Home/End move between
+ * questions. Collapsed panels are `inert`, so their links are skipped by Tab and screen readers.
  */
 export function Accordion({
   items,
@@ -29,6 +30,7 @@ export function Accordion({
   className,
 }: AccordionProps) {
   const [openIndex, setOpenIndex] = useState<number | null>(defaultOpen);
+  const [used, setUsed] = useState(false);
   const baseId = useId();
   const triggers = useRef<(HTMLButtonElement | null)[]>([]);
 
@@ -50,14 +52,14 @@ export function Accordion({
   }
 
   return (
-    <div className={cn("border-y border-rule", className)}>
+    <div className={cn("border-y border-border", className)}>
       {items.map((item, index) => {
         const open = openIndex === index;
         const triggerId = `${baseId}-trigger-${index}`;
         const panelId = `${baseId}-panel-${index}`;
 
         return (
-          <div key={item.question} className="border-b border-rule last:border-b-0">
+          <div key={item.question} className="border-b border-border last:border-b-0">
             <Heading className="font-sans text-body">
               <button
                 ref={(node) => {
@@ -67,19 +69,24 @@ export function Accordion({
                 type="button"
                 aria-expanded={open}
                 aria-controls={panelId}
-                onClick={() => setOpenIndex(open ? null : index)}
+                onClick={() => {
+                  setUsed(true);
+                  setOpenIndex(open ? null : index);
+                }}
                 onKeyDown={(event) => onKeyDown(event, index)}
                 className="group flex min-h-11 w-full items-start justify-between gap-6 py-6 text-left"
               >
-                <span className="font-semibold text-fg transition-colors duration-200 group-hover:text-accent">
+                <span className="font-semibold text-ink transition-colors duration-200 group-hover:text-link">
                   {item.question}
                 </span>
-                <span
+                <ChevronDown
                   aria-hidden="true"
-                  className="mt-[-2px] w-5 shrink-0 text-center font-mono text-xl leading-none text-accent"
-                >
-                  {open ? "−" : "+"}
-                </span>
+                  strokeWidth={1.5}
+                  className={cn(
+                    "mt-1 size-5 shrink-0 text-ink-muted motion-safe:transition-transform motion-safe:duration-300",
+                    open && "rotate-180",
+                  )}
+                />
               </button>
             </Heading>
             <div
@@ -88,12 +95,14 @@ export function Accordion({
               aria-labelledby={triggerId}
               inert={!open}
               className={cn(
-                "grid transition-[grid-template-rows] duration-300 ease-out",
+                "grid",
+                used &&
+                  "motion-safe:transition-[grid-template-rows] motion-safe:duration-300 motion-safe:ease-out",
                 open ? "grid-rows-[1fr]" : "grid-rows-[0fr]",
               )}
             >
               <div className="overflow-hidden">
-                <div className="max-w-[68ch] pr-10 pb-7 text-fg-muted">{item.answer}</div>
+                <div className="max-w-[68ch] pr-10 pb-7 text-ink-muted">{item.answer}</div>
               </div>
             </div>
           </div>

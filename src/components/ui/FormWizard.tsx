@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { cn, pad2 } from "@/lib/utils";
@@ -61,14 +61,23 @@ export function FormWizard({
   const current = step ?? internal;
   const [checking, setChecking] = useState(false);
   const headings = useRef<(HTMLHeadingElement | null)[]>([]);
+  const moved = useRef(false);
   const baseId = useId();
   const last = current === steps.length - 1;
 
   function goTo(index: number) {
+    moved.current = true;
     setInternal(index);
     onStepChange?.(index);
-    requestAnimationFrame(() => headings.current[index]?.focus());
   }
+
+  // After the commit, not on the next frame: a heading inside a step that's still `hidden` can't
+  // take focus, and keyboard and screen reader users would be left behind on the old step.
+  useEffect(() => {
+    if (!moved.current) return;
+    moved.current = false;
+    headings.current[current]?.focus();
+  }, [current]);
 
   async function next() {
     setChecking(true);
@@ -81,7 +90,7 @@ export function FormWizard({
     <div className={className}>
       {/* Progress */}
       <div>
-        <p className="flex items-center justify-between label-mono text-fg-muted">
+        <p className="flex label-text items-center justify-between text-ink-muted">
           <span>
             {labels.step} {pad2(current + 1)} {labels.of} {pad2(steps.length)}
           </span>
@@ -93,10 +102,10 @@ export function FormWizard({
           aria-valuemin={1}
           aria-valuemax={steps.length}
           aria-valuenow={current + 1}
-          className="mt-3 h-0.5 w-full bg-rule"
+          className="mt-3 h-0.5 w-full bg-border"
         >
           <div
-            className="h-full origin-left bg-grad-flame transition-transform duration-500 ease-out"
+            className="h-full origin-left bg-link transition-transform duration-500 ease-out"
             style={{ transform: `scaleX(${(current + 1) / steps.length})` }}
           />
         </div>
@@ -107,14 +116,14 @@ export function FormWizard({
               aria-current={index === current ? "step" : undefined}
               className={cn(
                 "flex items-center gap-2 text-small",
-                index === current ? "font-semibold text-fg" : "text-fg-muted",
+                index === current ? "font-semibold text-ink" : "text-ink-muted",
               )}
             >
               <span
                 aria-hidden="true"
                 className={cn(
                   "size-2 rounded-dot",
-                  index < current ? "bg-success" : index === current ? "bg-lamp-500" : "bg-rule",
+                  index < current ? "bg-success" : index === current ? "bg-link" : "bg-border",
                 )}
               />
               {step.title}
@@ -137,15 +146,15 @@ export function FormWizard({
               headings.current[index] = node;
             }}
             tabIndex={-1}
-            className="text-h3 text-fg outline-none"
+            className="text-h3 text-ink outline-none"
           >
             {step.title}
           </h3>
-          {step.description ? <p className="mt-1.5 text-fg-muted">{step.description}</p> : null}
+          {step.description ? <p className="mt-1.5 text-ink-muted">{step.description}</p> : null}
           <div className="mt-7">{step.content}</div>
           {index === steps.length - 1 && review ? (
-            <div className="mt-10 border-t border-rule pt-8">
-              <p className="label-mono text-accent">{reviewTitle}</p>
+            <div className="mt-10 border-t border-border pt-8">
+              <p className="label-text text-ink-muted">{reviewTitle}</p>
               <div className="mt-4">{review}</div>
             </div>
           ) : null}
@@ -153,7 +162,7 @@ export function FormWizard({
       ))}
 
       {/* Controls */}
-      <div className="mt-10 flex flex-wrap items-center gap-3 border-t border-rule pt-6">
+      <div className="mt-10 flex flex-wrap items-center gap-3 border-t border-border pt-6">
         {current > 0 ? (
           <Button
             variant="outline"

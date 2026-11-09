@@ -2,6 +2,7 @@
 
 import { useId, useRef, useState } from "react";
 import { FileText, UploadCloud, X } from "lucide-react";
+import { FieldError } from "@/components/ui/form/Field";
 import { cn } from "@/lib/utils";
 
 type FileDropProps = {
@@ -80,22 +81,22 @@ export function FileDrop({
           commit(Array.from(event.dataTransfer.files));
         }}
         className={cn(
-          "flex min-h-32 cursor-pointer flex-col items-center justify-center gap-2 rounded-card border border-dashed bg-field px-6 py-8 text-center transition-colors duration-200",
+          "flex min-h-32 cursor-pointer flex-col items-center justify-center gap-2 rounded-button border border-dashed bg-surface px-6 py-8 text-center transition-colors duration-200",
           "has-[input:focus-visible]:outline-2 has-[input:focus-visible]:outline-offset-2 has-[input:focus-visible]:outline-[var(--focus)]",
           dragging
-            ? "border-lamp-500 bg-lamp-500/10"
+            ? "border-link bg-link/10"
             : invalid
               ? "border-danger"
-              : "border-fg-muted/60 hover:border-accent",
+              : "border-ink-muted hover:border-link",
         )}
       >
-        <UploadCloud aria-hidden="true" strokeWidth={1.5} className="size-7 text-accent" />
-        <span className="text-small font-semibold text-fg">
+        <UploadCloud aria-hidden="true" strokeWidth={1.5} className="size-7 text-ink-muted" />
+        <span className="text-small font-semibold text-ink">
           Drag &amp; drop {multiple ? "files" : "a file"}, or{" "}
-          <span className="text-accent underline underline-offset-4">browse</span>
+          <span className="text-link underline underline-offset-4">browse</span>
         </span>
         {accept || maxSizeMB ? (
-          <span className="font-mono text-xs text-fg-muted">
+          <span className="text-xs text-ink-muted tabular-nums">
             {[accept?.replaceAll(",", ", "), maxSizeMB ? `max ${maxSizeMB} MB` : null]
               .filter(Boolean)
               .join(" · ")}
@@ -116,26 +117,26 @@ export function FileDrop({
       </label>
 
       <div id={statusId} aria-live="polite">
-        {rejected ? <p className="mt-2 text-small text-danger-fg">{rejected}</p> : null}
+        <FieldError>{rejected}</FieldError>
         {files.length > 0 ? (
           <ul className="mt-3 space-y-2">
             {files.map((file) => (
               <li
                 key={`${file.name}-${file.size}`}
-                className="flex items-center gap-3 rounded-card border border-rule bg-field px-3 py-2 text-small"
+                className="flex items-center gap-3 rounded-button border border-border bg-surface px-3 py-2 text-small"
               >
                 <FileText
                   aria-hidden="true"
                   strokeWidth={1.5}
-                  className="size-4 shrink-0 text-accent"
+                  className="size-4 shrink-0 text-ink-muted"
                 />
-                <span className="min-w-0 flex-1 truncate text-fg">{file.name}</span>
-                <span className="font-mono text-xs text-fg-muted">{formatSize(file.size)}</span>
+                <span className="min-w-0 flex-1 truncate text-ink">{file.name}</span>
+                <span className="text-xs text-ink-muted tabular-nums">{formatSize(file.size)}</span>
                 <button
                   type="button"
                   onClick={() => commit(files.filter((f) => f !== file))}
                   aria-label={`Remove ${file.name}`}
-                  className="inline-flex size-8 items-center justify-center rounded-card text-fg-muted hover:text-fg"
+                  className="inline-flex size-11 items-center justify-center rounded-button text-ink-muted hover:text-ink"
                 >
                   <X aria-hidden="true" className="size-4" />
                 </button>

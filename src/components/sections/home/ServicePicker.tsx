@@ -32,15 +32,15 @@ export function ServicePicker({ questions, titles, copy }: ServicePickerProps) {
 
   return (
     <div>
-      <p className="font-display-soft text-2xl text-fg">{copy.title}</p>
-      <p className="mt-2 text-small text-fg-muted">{copy.text}</p>
+      <p className="text-2xl font-semibold text-ink">{copy.title}</p>
+      <p className="mt-2 text-small text-ink-muted">{copy.text}</p>
       <div className="mt-6 space-y-5">
         {questions.map((question, index) => {
           const legendId = `${baseId}-${question.id}`;
           return (
             <div key={question.id} role="group" aria-labelledby={legendId}>
-              <p id={legendId} className="text-small font-semibold text-fg">
-                <span className="mr-2 font-mono text-xs text-fg-muted">{pad2(index + 1)}</span>
+              <p id={legendId} className="text-small font-semibold text-ink">
+                <span className="mr-2 text-xs text-ink-muted tabular-nums">{pad2(index + 1)}</span>
                 {question.question}
               </p>
               <div className="mt-2.5 flex flex-wrap gap-2">
@@ -55,10 +55,10 @@ export function ServicePicker({ questions, titles, copy }: ServicePickerProps) {
                         setAnswers((current) => ({ ...current, [question.id]: option.id }))
                       }
                       className={cn(
-                        "inline-flex min-h-10 items-center rounded-card border px-3 font-mono text-xs tracking-wide uppercase transition-colors duration-200",
+                        "inline-flex min-h-11 items-center rounded-dot border px-3 text-xs tabular-nums transition-colors duration-200",
                         pressed
-                          ? "border-lamp-500 bg-lamp-500 text-ink-900"
-                          : "border-rule text-fg-muted hover:border-fg-muted hover:text-fg",
+                          ? "border-link bg-link text-bg"
+                          : "border-border text-ink-muted hover:border-ink-muted hover:text-ink",
                       )}
                     >
                       {option.label}
@@ -73,14 +73,14 @@ export function ServicePicker({ questions, titles, copy }: ServicePickerProps) {
 
       <div aria-live="polite">
         {complete ? (
-          <div className="mt-7 animate-fade-in border-t border-rule pt-5">
-            <p className="label-mono text-accent">{copy.resultsTitle}</p>
+          <div className="mt-7 animate-fade-in border-t border-border pt-5">
+            <p className="label-text text-ink-muted">{copy.resultsTitle}</p>
             <ul className="mt-3">
               {matches.map((slug) => (
                 <li key={slug}>
                   <Link
                     href={`/services/${slug}`}
-                    className="group flex min-h-11 items-center justify-between gap-3 border-b border-rule font-semibold text-fg hover:text-accent"
+                    className="group flex min-h-11 items-center justify-between gap-3 border-b border-border font-semibold text-ink hover:text-link"
                   >
                     {titles[slug] ?? slug}
                     <ArrowRight
@@ -99,7 +99,7 @@ export function ServicePicker({ questions, titles, copy }: ServicePickerProps) {
               <button
                 type="button"
                 onClick={() => setAnswers({})}
-                className="min-h-10 link-underline text-small text-fg-muted hover:text-fg"
+                className="min-h-11 link-underline text-small text-ink-muted hover:text-ink"
               >
                 {copy.reset}
               </button>

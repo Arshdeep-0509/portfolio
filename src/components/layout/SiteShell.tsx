@@ -9,8 +9,12 @@ import { siteConfig } from "@/content/site";
 import { bookingHref } from "@/lib/booking";
 import { isPlaceholder } from "@/lib/constants";
 
-const emailHref = isPlaceholder(siteConfig.email) ? null : `mailto:${siteConfig.email}`;
-const whatsappHref = isPlaceholder(siteConfig.whatsappUrl) ? null : siteConfig.whatsappUrl;
+const emailHref = isPlaceholder(siteConfig.contact.email)
+  ? null
+  : `mailto:${siteConfig.contact.email}`;
+const whatsappHref = isPlaceholder(siteConfig.contact.whatsapp)
+  ? null
+  : siteConfig.contact.whatsapp;
 
 const dockLabels = {
   toggle: "Contact",

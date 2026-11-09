@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { LogoMark, Logo } from "@/components/layout/Logo";
+import { LogoMark, Logo } from "@/components/brand/Logo";
 import { Accordion } from "@/components/ui/Accordion";
 import { ArchFrame } from "@/components/ui/ArchFrame";
 import { Bento, BentoTile } from "@/components/ui/Bento";
@@ -32,22 +32,16 @@ export const metadata = buildMetadata({ title: "UI Showcase", path: "/dev/ui", n
 
 // Class names are listed literally so Tailwind can see them.
 const swatches = [
-  { token: "--night-950", className: "bg-night-950" },
-  { token: "--night-900", className: "bg-night-900" },
-  { token: "--night-800", className: "bg-night-800" },
-  { token: "--dusk-700", className: "bg-dusk-700" },
-  { token: "--lamp-500", className: "bg-lamp-500" },
-  { token: "--lamp-400", className: "bg-lamp-400" },
-  { token: "--lamp-700", className: "bg-lamp-700" },
-  { token: "--lamp-800", className: "bg-lamp-800" },
-  { token: "--ember-500", className: "bg-ember-500" },
-  { token: "--starlight", className: "bg-starlight" },
-  { token: "--ivory-50", className: "bg-ivory-50" },
-  { token: "--sand-100", className: "bg-sand-100" },
-  { token: "--ink-900", className: "bg-ink-900" },
-  { token: "--ink-600", className: "bg-ink-600" },
-  { token: "--mist-300", className: "bg-mist-300" },
-  { token: "--line", className: "bg-line" },
+  { token: "--bg", className: "bg-bg" },
+  { token: "--surface", className: "bg-surface" },
+  { token: "--surface-raised", className: "bg-surface-raised" },
+  { token: "--ink", className: "bg-ink" },
+  { token: "--ink-muted", className: "bg-ink-muted" },
+  { token: "--border", className: "bg-border" },
+  { token: "--accent", className: "bg-accent" },
+  { token: "--accent-ink", className: "bg-accent-ink" },
+  { token: "--link", className: "bg-link" },
+  { token: "--focus", className: "bg-focus" },
   { token: "--success", className: "bg-success" },
   { token: "--danger", className: "bg-danger" },
 ];
@@ -63,8 +57,8 @@ const statuses: StatusKind[] = [
 
 function Demo({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="border-t border-rule pt-8">
-      <p className="label-mono text-accent">{title}</p>
+    <div className="border-t border-border pt-8">
+      <p className="label-text text-ink-muted">{title}</p>
       <div className="mt-6">{children}</div>
     </div>
   );
@@ -76,20 +70,20 @@ export default function UiShowcasePage() {
 
   return (
     <>
-      <Section tone="night" underHeader className="overflow-hidden pt-[calc(var(--header-h)+4rem)]">
+      <Section tone="sky" underHeader className="overflow-hidden pt-[calc(var(--header-h)+4rem)]">
         <CursorGlow />
         <SectionHeader
           as="h1"
-          label="Skylamp UI"
+          label="Polestride UI"
           title="Every part of the kit, in one place"
           emphasis="one place"
           intro="Night and paper tones, lamp accents, hairlines."
         />
         <div className="mt-10 flex flex-wrap items-center gap-8">
-          <LogoMark tone="dark" className="size-16" />
-          <Logo tone="dark" />
-          <Logo tone="dark" subline={false} />
-          <Logo tone="dark" variant="mark" />
+          <LogoMark size={56} />
+          <Logo />
+          <Logo showTagline />
+          <Logo variant="mark" />
         </div>
         <div className="mt-10 flex flex-wrap gap-3">
           <Button>Flame</Button>
@@ -100,29 +94,29 @@ export default function UiShowcasePage() {
         </div>
       </Section>
 
-      <Section tone="ivory">
+      <Section tone="base">
         <div className="space-y-14">
           <Demo title="Colour tokens">
             <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
               {swatches.map((swatch) => (
                 <li key={swatch.token}>
                   <span
-                    className={`block h-14 rounded-card border border-rule ${swatch.className}`}
+                    className={`block h-14 rounded-card border border-border ${swatch.className}`}
                   />
-                  <span className="mt-1.5 block font-mono text-xs">{swatch.token}</span>
+                  <span className="mt-1.5 block text-xs tabular-nums">{swatch.token}</span>
                 </li>
               ))}
             </ul>
           </Demo>
 
           <Demo title="Type scale">
-            <p className="font-display-soft text-h1">
+            <p className="font-display text-h1 font-semibold">
               Heading one <em className="headline">italic</em>
             </p>
-            <p className="mt-4 font-display-soft text-h2">Heading two</p>
-            <p className="mt-4 font-display-soft text-h3">Heading three</p>
+            <p className="mt-4 font-display text-h2 font-semibold">Heading two</p>
+            <p className="mt-4 font-display text-h3 font-semibold">Heading three</p>
             <p className="mt-4 text-body">Body copy in Manrope, 17px over 1.7 line height.</p>
-            <p className="mt-2 label-mono text-accent">(01) Mono label</p>
+            <p className="mt-2 label-text text-ink-muted">(01) Mono label</p>
           </Demo>
 
           <Demo title="Buttons on ivory">
@@ -236,7 +230,7 @@ export default function UiShowcasePage() {
               <BentoTile area="a">
                 <p className="text-h3">Tile A</p>
               </BentoTile>
-              <BentoTile area="b" tone="night">
+              <BentoTile area="b" tone="raised">
                 <p className="text-h3">Night tile</p>
               </BentoTile>
               <BentoTile area="c">
@@ -289,7 +283,7 @@ export default function UiShowcasePage() {
         </div>
       </Section>
 
-      <Section tone="sand">
+      <Section tone="surface">
         <div className="space-y-14">
           <Demo title="Stack map">
             <StackMap
@@ -340,7 +334,7 @@ export default function UiShowcasePage() {
         </div>
       </Section>
 
-      <Section tone="night">
+      <Section tone="sky">
         <div className="space-y-14">
           <Demo title="Build log and file tree">
             <div className="grid gap-8 md:grid-cols-2">
@@ -362,7 +356,7 @@ export default function UiShowcasePage() {
           <Demo title="Scroll-snap row">
             <ScrollSnapRow label="Demo row">
               {[1, 2, 3, 4].map((n) => (
-                <li key={n} className="rounded-card border border-rule p-6">
+                <li key={n} className="rounded-card border border-border p-6">
                   Card {n}
                 </li>
               ))}
@@ -375,11 +369,11 @@ export default function UiShowcasePage() {
               steps={[1, 2, 3].map((n) => ({
                 id: `demo-step-${n}`,
                 title: `Step ${n}`,
-                content: <p className="text-fg-muted">Panel {n}.</p>,
+                content: <p className="text-ink-muted">Panel {n}.</p>,
               }))}
             />
           </Demo>
-          <p className="text-small text-fg-muted">
+          <p className="text-small text-ink-muted">
             ScrollProgressRing, ContactDock and CornerCard are site-wide: see the bottom corners.
           </p>
         </div>

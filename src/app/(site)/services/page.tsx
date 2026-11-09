@@ -43,14 +43,14 @@ export default function ServicesPage() {
 
   return (
     <>
-      <Section tone="ivory" padding="none" className="pt-16 pb-16 lg:pt-24 lg:pb-20">
+      <Section tone="base" padding="none" className="pt-16 pb-16 lg:pt-24 lg:pb-20">
         <Breadcrumb items={[{ label: "Home", href: "/" }, { label: "Services" }]} />
         <div className="mt-8 grid gap-10 lg:grid-cols-12 lg:items-end lg:gap-8">
-          <h1 className="max-w-[18ch] text-h1 text-fg lg:col-span-8">
+          <h1 className="max-w-[18ch] text-h1 text-ink lg:col-span-8">
             <Emphasis text={hero.title} emphasis={hero.emphasis} />
           </h1>
           <div className="lg:col-span-4">
-            <p className="text-lg text-fg-muted">{hero.text}</p>
+            <p className="text-lg text-ink-muted">{hero.text}</p>
             <Button
               href={hero.cta.href}
               size="lg"
@@ -66,7 +66,7 @@ export default function ServicesPage() {
 
       <Section
         id={index.id}
-        tone="ivory"
+        tone="base"
         padding="none"
         className="pb-(--section-y) lg:pb-(--section-y-desktop)"
         aria-labelledby="index-title"
@@ -84,7 +84,7 @@ export default function ServicesPage() {
         </div>
       </Section>
 
-      <Section id={models.id} tone="night" aria-labelledby="models-title">
+      <Section id={models.id} tone="sky" aria-labelledby="models-title">
         <SectionHeader
           id="models-title"
           index={2}
@@ -93,10 +93,10 @@ export default function ServicesPage() {
           emphasis={models.emphasis}
           intro={<p>{models.intro}</p>}
         />
-        <ul className="mt-14 grid gap-px overflow-hidden rounded-card border border-line-dark bg-line-dark md:grid-cols-3">
+        <ul className="mt-14 grid gap-px overflow-hidden rounded-card border border-border bg-border md:grid-cols-3">
           {models.items.map((model) => (
-            <li key={model.name} className="bg-night-950 p-7 lg:p-9">
-              <h3 className="text-h3 text-fg">{model.name}</h3>
+            <li key={model.name} className="bg-bg p-7 lg:p-9">
+              <h3 className="text-h3 text-ink">{model.name}</h3>
               <dl className="mt-6 space-y-5 text-small">
                 {[
                   [models.includedLabel, model.included],
@@ -104,8 +104,8 @@ export default function ServicesPage() {
                   [models.billingLabel, model.billing],
                 ].map(([term, detail]) => (
                   <div key={term}>
-                    <dt className="label-mono text-accent">{term}</dt>
-                    <dd className="mt-1.5 text-fg-muted">{detail}</dd>
+                    <dt className="label-text text-ink-muted">{term}</dt>
+                    <dd className="mt-1.5 text-ink-muted">{detail}</dd>
                   </div>
                 ))}
               </dl>
@@ -114,7 +114,7 @@ export default function ServicesPage() {
         </ul>
       </Section>
 
-      <Section id={bundles.id} tone="sand" aria-labelledby="bundles-title">
+      <Section id={bundles.id} tone="surface" aria-labelledby="bundles-title">
         <SectionHeader
           id="bundles-title"
           index={3}
@@ -127,25 +127,25 @@ export default function ServicesPage() {
           {bundles.items.map((bundle) => (
             <li
               key={bundle.id}
-              className="tone-ivory flex flex-col rounded-card border border-rule bg-ivory-50 p-7 transition-[border-color,box-shadow] duration-300 hover:border-lamp-500 hover:shadow-glow"
+              className="flex flex-col rounded-card border border-border bg-surface p-7 transition-colors duration-300 hover:border-link"
             >
-              <h3 className="text-h3 text-fg">{bundle.name}</h3>
-              <p className="mt-3 text-small text-fg-muted">{bundle.text}</p>
-              <ul className="mt-5 border-t border-rule">
+              <h3 className="text-h3 text-ink">{bundle.name}</h3>
+              <p className="mt-3 text-small text-ink-muted">{bundle.text}</p>
+              <ul className="mt-5 border-t border-border">
                 {bundle.services.map((slug) => {
                   const service = getService(slug);
                   if (!service) return null;
                   return (
-                    <li key={slug} className="border-b border-rule">
+                    <li key={slug} className="border-b border-border">
                       <Link
                         href={`/services/${slug}`}
-                        className="group flex min-h-11 items-center justify-between gap-2 text-small font-semibold text-fg hover:text-accent"
+                        className="group flex min-h-11 items-center justify-between gap-2 text-small font-semibold text-ink hover:text-link"
                       >
                         {service.title}
                         <ArrowRight
                           aria-hidden="true"
                           strokeWidth={1.5}
-                          className="size-4 text-accent transition-transform group-hover:translate-x-1"
+                          className="size-4 text-link transition-transform group-hover:translate-x-1"
                         />
                       </Link>
                     </li>

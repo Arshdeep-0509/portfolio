@@ -123,7 +123,7 @@ export async function POST(request: Request) {
   }
 
   // The lead is stored, so delivery problems are reported but don't fail the request.
-  const inbox = process.env.CONTACT_TO_EMAIL || siteConfig.email;
+  const inbox = process.env.CONTACT_TO_EMAIL || siteConfig.contact.email;
   const results = await Promise.allSettled([
     sendEmail({ to: inbox, replyTo: lead.email, ...leadNotificationEmail(lead) }),
     sendEmail({

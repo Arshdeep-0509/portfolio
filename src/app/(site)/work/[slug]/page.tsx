@@ -35,8 +35,8 @@ export async function generateMetadata({ params }: PageProps<"/work/[slug]">): P
     title: study.title,
     description: study.summary,
     path: `/work/${study.slug}`,
-    // Real cover images become the share image; otherwise ./opengraph-image.tsx renders one.
-    image: isUnoptimized(study.cover) ? false : study.cover,
+    // The OG image comes from ./opengraph-image.tsx, rendered per case study at build time.
+    image: false,
     type: "article",
   });
 }
@@ -58,9 +58,9 @@ function ChapterBlock({
   children: React.ReactNode;
 }) {
   return (
-    <section aria-labelledby={id} className="border-t border-rule pt-8">
-      <p className="font-mono text-sm text-accent">{pad2(number)}</p>
-      <h2 id={id} className="mt-2 text-h2 text-fg">
+    <section aria-labelledby={id} className="border-t border-border pt-8">
+      <p className="text-sm text-ink-muted tabular-nums">{pad2(number)}</p>
+      <h2 id={id} className="mt-2 text-h2 text-ink">
         {title}
       </h2>
       <div className="mt-8">{children}</div>
@@ -107,7 +107,7 @@ export default async function CaseStudyPage({ params }: PageProps<"/work/[slug]"
       <section
         data-under-header=""
         aria-labelledby="case-title"
-        className="tone-night relative isolate overflow-hidden bg-night-950 bg-stars text-fg"
+        className="relative isolate overflow-hidden bg-bg bg-stars text-ink"
       >
         <div className="container-site pt-[calc(var(--header-h)+3.5rem)] pb-14 lg:pt-[calc(var(--header-h)+5rem)]">
           <Breadcrumb
@@ -119,17 +119,17 @@ export default async function CaseStudyPage({ params }: PageProps<"/work/[slug]"
           />
           <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-2">
             <StatusDot status={study.status} label={workContent.status[study.status]} />
-            <span className="label-mono text-mist-300">{study.publishedAt.slice(0, 4)}</span>
+            <span className="label-text text-ink-muted">{study.publishedAt.slice(0, 4)}</span>
           </div>
-          <h1 id="case-title" className="mt-6 max-w-[20ch] animate-rise text-h1 text-fg">
+          <h1 id="case-title" className="mt-6 max-w-[20ch] animate-rise text-h1 text-ink">
             {study.title}
           </h1>
-          <p className="mt-6 max-w-2xl text-lg text-fg-muted">{study.summary}</p>
+          <p className="mt-6 max-w-2xl text-lg text-ink-muted">{study.summary}</p>
         </div>
         {/* The whole cover, never cropped: screenshots read better complete than full-bleed. */}
         <div className="container-site pb-16 lg:pb-24">
           <div
-            className="relative w-full overflow-hidden rounded-card border border-line-dark bg-night-900"
+            className="relative w-full overflow-hidden rounded-card border border-border bg-surface-raised"
             style={{ aspectRatio: study.coverAspect }}
           >
             <Image
@@ -145,13 +145,13 @@ export default async function CaseStudyPage({ params }: PageProps<"/work/[slug]"
         </div>
       </section>
 
-      <div className="tone-ivory grain bg-ivory-50 text-fg">
+      <div className="bg-bg text-ink">
         <div className="container-site py-20 lg:py-28">
           <div className="lg:grid lg:grid-cols-12 lg:gap-8">
             <aside className="lg:col-span-3">
               <div className="lg:sticky lg:top-[calc(var(--header-h)+2rem)]">
-                <p className="label-mono text-accent">{copy.factsTitle}</p>
-                <dl className="mt-3 border-t border-rule text-small">
+                <p className="label-text text-ink-muted">{copy.factsTitle}</p>
+                <dl className="mt-3 border-t border-border text-small">
                   {(
                     [
                       [copy.facts.client, study.client],
@@ -159,15 +159,15 @@ export default async function CaseStudyPage({ params }: PageProps<"/work/[slug]"
                       [copy.facts.timeline, study.timeline],
                     ].filter(([, detail]) => detail) as [string, string][]
                   ).map(([term, detail]) => (
-                    <div key={term} className="border-b border-rule py-3">
-                      <dt className="text-fg-muted">{term}</dt>
-                      <dd className="mt-0.5 font-semibold text-fg">
+                    <div key={term} className="border-b border-border py-3">
+                      <dt className="text-ink-muted">{term}</dt>
+                      <dd className="mt-0.5 font-semibold text-ink">
                         <PlaceholderText text={detail} />
                       </dd>
                     </div>
                   ))}
                   <div className="py-3">
-                    <dt className="text-fg-muted">{copy.facts.stack}</dt>
+                    <dt className="text-ink-muted">{copy.facts.stack}</dt>
                     <dd className="mt-2">
                       <ChipList items={study.stack} />
                     </dd>
@@ -181,7 +181,7 @@ export default async function CaseStudyPage({ params }: PageProps<"/work/[slug]"
                           href={live}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex min-h-10 items-center gap-1.5 link-underline text-accent"
+                          className="inline-flex min-h-11 items-center gap-1.5 link-underline text-link"
                         >
                           {copy.links.live}{" "}
                           <ExternalLink aria-hidden="true" strokeWidth={1.5} className="size-4" />
@@ -194,7 +194,7 @@ export default async function CaseStudyPage({ params }: PageProps<"/work/[slug]"
                           href={github}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex min-h-10 items-center gap-1.5 link-underline text-accent"
+                          className="inline-flex min-h-11 items-center gap-1.5 link-underline text-link"
                         >
                           {copy.links.github}{" "}
                           <ExternalLink aria-hidden="true" strokeWidth={1.5} className="size-4" />
@@ -214,22 +214,22 @@ export default async function CaseStudyPage({ params }: PageProps<"/work/[slug]"
 
             <article className="mt-14 space-y-20 lg:col-span-8 lg:col-start-5 lg:mt-0">
               <ChapterBlock id="problem" number={number("problem")} title={copy.sections.problem}>
-                <p className="max-w-[68ch] text-xl leading-relaxed text-fg">
+                <p className="max-w-[68ch] text-xl leading-relaxed text-ink">
                   <PlaceholderText text={study.problem} />
                 </p>
               </ChapterBlock>
 
               {study.goals.length > 0 ? (
                 <ChapterBlock id="goals" number={number("goals")} title={copy.sections.goals}>
-                  <ul className="border-t border-rule">
+                  <ul className="border-t border-border">
                     {study.goals.map((goal) => (
                       <li
                         key={goal}
-                        className="flex min-h-12 items-center gap-3 border-b border-rule py-2 text-fg"
+                        className="flex min-h-12 items-center gap-3 border-b border-border py-2 text-ink"
                       >
                         <span
                           aria-hidden="true"
-                          className="size-1.5 shrink-0 rounded-dot bg-lamp-500"
+                          className="size-1.5 shrink-0 rounded-dot bg-ink-muted"
                         />
                         <PlaceholderText text={goal} />
                       </li>
@@ -255,7 +255,7 @@ export default async function CaseStudyPage({ params }: PageProps<"/work/[slug]"
                   title={copy.sections.architecture}
                 >
                   <figure>
-                    <div className="relative aspect-[16/10] overflow-hidden rounded-card border border-rule bg-night-900">
+                    <div className="relative aspect-[16/10] overflow-hidden rounded-card border border-border bg-surface-raised">
                       <Image
                         src={study.architecture.src}
                         alt={study.architecture.alt}
@@ -266,7 +266,7 @@ export default async function CaseStudyPage({ params }: PageProps<"/work/[slug]"
                       />
                     </div>
                     {study.architecture.caption ? (
-                      <figcaption className="mt-3 text-small text-fg-muted">
+                      <figcaption className="mt-3 text-small text-ink-muted">
                         <PlaceholderText text={study.architecture.caption} />
                       </figcaption>
                     ) : null}
@@ -282,9 +282,9 @@ export default async function CaseStudyPage({ params }: PageProps<"/work/[slug]"
                 >
                   <dl className="grid gap-x-10 gap-y-8 sm:grid-cols-2">
                     {study.features.map((feature) => (
-                      <div key={feature.title} className="border-t border-rule pt-4">
-                        <dt className="font-semibold text-fg">{feature.title}</dt>
-                        <dd className="mt-1.5 text-fg-muted">
+                      <div key={feature.title} className="border-t border-border pt-4">
+                        <dt className="font-semibold text-ink">{feature.title}</dt>
+                        <dd className="mt-1.5 text-ink-muted">
                           <PlaceholderText text={feature.text} />
                         </dd>
                       </div>
@@ -295,7 +295,7 @@ export default async function CaseStudyPage({ params }: PageProps<"/work/[slug]"
 
               {study.screens.length > 0 ? (
                 <ChapterBlock id="screens" number={number("screens")} title={copy.sections.screens}>
-                  <p className="mb-6 text-small text-fg-muted">{copy.screensHint}</p>
+                  <p className="mb-6 text-small text-ink-muted">{copy.screensHint}</p>
                   <Gallery images={study.screens} label={study.title} />
                 </ChapterBlock>
               ) : null}
@@ -303,13 +303,13 @@ export default async function CaseStudyPage({ params }: PageProps<"/work/[slug]"
               {/* Rendered only when the frontmatter lists real, verifiable results. */}
               {study.results.length > 0 ? (
                 <ChapterBlock id="results" number={number("results")} title={copy.sections.results}>
-                  <ul className="border-t border-rule">
+                  <ul className="border-t border-border">
                     {study.results.map((result) => (
                       <li
                         key={result}
-                        className="flex min-h-14 items-center gap-3 border-b border-rule py-3 font-semibold text-fg"
+                        className="flex min-h-14 items-center gap-3 border-b border-border py-3 font-semibold text-ink"
                       >
-                        <span aria-hidden="true" className="font-mono text-success-fg">
+                        <span aria-hidden="true" className="text-success tabular-nums">
                           ✓
                         </span>
                         {result}
@@ -321,7 +321,7 @@ export default async function CaseStudyPage({ params }: PageProps<"/work/[slug]"
 
               {study.nextSteps.length > 0 ? (
                 <ChapterBlock id="next" number={number("next")} title={copy.sections.next}>
-                  <ul className="max-w-[68ch] list-disc space-y-2 pl-5 text-lg text-fg-muted marker:text-lamp-700">
+                  <ul className="max-w-[68ch] list-disc space-y-2 pl-5 text-lg text-ink-muted marker:text-ink-muted">
                     {study.nextSteps.map((step) => (
                       <li key={step}>
                         <PlaceholderText text={step} />
@@ -336,18 +336,18 @@ export default async function CaseStudyPage({ params }: PageProps<"/work/[slug]"
           {older || newer ? (
             <nav
               aria-label="More case studies"
-              className="mt-24 grid border-t border-rule sm:grid-cols-2"
+              className="mt-24 grid border-t border-border sm:grid-cols-2"
             >
               {older ? (
                 <Link
                   href={`/work/${older.slug}`}
-                  className="group flex min-h-24 flex-col justify-center gap-1 border-b border-rule py-5 sm:border-r sm:pr-6"
+                  className="group flex min-h-24 flex-col justify-center gap-1 border-b border-border py-5 sm:border-r sm:pr-6"
                 >
-                  <span className="inline-flex items-center gap-2 label-mono text-accent">
+                  <span className="inline-flex label-text items-center gap-2 text-ink-muted">
                     <ArrowLeft aria-hidden="true" strokeWidth={1.5} className="size-4" />{" "}
                     {copy.pager.previous}
                   </span>
-                  <span className="font-display-soft text-xl text-fg group-hover:text-accent">
+                  <span className="text-xl font-semibold text-ink group-hover:text-link">
                     {older.title}
                   </span>
                 </Link>
@@ -357,13 +357,13 @@ export default async function CaseStudyPage({ params }: PageProps<"/work/[slug]"
               {newer ? (
                 <Link
                   href={`/work/${newer.slug}`}
-                  className="group flex min-h-24 flex-col justify-center gap-1 border-b border-rule py-5 sm:items-end sm:pl-6 sm:text-right"
+                  className="group flex min-h-24 flex-col justify-center gap-1 border-b border-border py-5 sm:items-end sm:pl-6 sm:text-right"
                 >
-                  <span className="inline-flex items-center gap-2 label-mono text-accent">
+                  <span className="inline-flex label-text items-center gap-2 text-ink-muted">
                     {copy.pager.next}{" "}
                     <ArrowRight aria-hidden="true" strokeWidth={1.5} className="size-4" />
                   </span>
-                  <span className="font-display-soft text-xl text-fg group-hover:text-accent">
+                  <span className="text-xl font-semibold text-ink group-hover:text-link">
                     {newer.title}
                   </span>
                 </Link>

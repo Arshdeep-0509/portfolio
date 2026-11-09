@@ -8,7 +8,7 @@ type SectionHeaderProps = {
   label: string;
   /** The big serif title. */
   title: string;
-  /** Part of `title` set in Fraunces italic with the flame underline. */
+  /** Part of `title` set in Sora 700 with the gold underline. */
   emphasis?: string;
   /** Optional intro, placed in a narrower right-hand column on desktop. */
   intro?: React.ReactNode;
@@ -23,7 +23,7 @@ type SectionHeaderProps = {
 
 /**
  * Left-aligned section opening: a mono index label with a hairline running to the right edge,
- * then a large Fraunces title and — on desktop — the intro in its own narrower column.
+ * then a large Sora title and — on desktop — the intro in its own narrower column.
  * The title is wiped in line by line as it scrolls into view (instant under reduced motion).
  */
 export function SectionHeader({
@@ -39,19 +39,19 @@ export function SectionHeader({
 }: SectionHeaderProps) {
   return (
     <div className={className}>
-      <p className="flex items-center gap-4 label-mono text-accent">
+      <p className="flex label-text items-center gap-4 text-ink-muted">
         <span className="shrink-0">
           {index !== undefined ? `(${pad2(index)}) ` : ""}
           {label}
         </span>
-        <span aria-hidden="true" className="h-px flex-1 bg-rule" />
+        <span aria-hidden="true" className="h-px flex-1 bg-border" />
       </p>
       <div className="mt-8 grid gap-6 lg:grid-cols-12 lg:items-end lg:gap-8">
         <Tag
           id={id}
           data-reveal={Tag === "h2" ? "mask" : undefined}
           className={cn(
-            "max-w-[22ch] text-fg lg:col-span-7",
+            "max-w-[22ch] text-ink lg:col-span-7",
             Tag === "h1" ? "text-h1" : "text-h2",
             !intro && !children && "lg:col-span-10",
           )}
@@ -59,7 +59,7 @@ export function SectionHeader({
           <Emphasis text={title} emphasis={emphasis} />
         </Tag>
         {intro || children ? (
-          <div className="text-fg-muted lg:col-span-4 lg:col-start-9">
+          <div className="text-ink-muted lg:col-span-4 lg:col-start-9">
             {intro ? <div className="space-y-4">{intro}</div> : null}
             {children ? <div className={cn(intro && "mt-5")}>{children}</div> : null}
           </div>

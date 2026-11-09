@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 type TurnstileApi = {
   render: (element: HTMLElement, options: Record<string, unknown>) => string;
@@ -45,6 +46,7 @@ export function Turnstile({
 }) {
   const container = useRef<HTMLDivElement>(null);
   const onTokenRef = useRef(onToken);
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
     onTokenRef.current = onToken;
@@ -63,13 +65,23 @@ export function Turnstile({
           "expired-callback": () => onTokenRef.current(null),
           "error-callback": () => onTokenRef.current(null),
         });
+        setReady(true);
       })
-      .catch(() => onTokenRef.current(null));
+      .catch(() => {
+        onTokenRef.current(null);
+        setReady(true);
+      });
     return () => {
       cancelled = true;
       if (widgetId && window.turnstile) window.turnstile.remove(widgetId);
     };
   }, [siteKey]);
 
-  return <div ref={container} className="min-h-[65px]" />;
+  return (
+    <div className="relative min-h-[65px] max-w-[300px]">
+      {/* The contact form sits on --surface, so the block steps up one to stay visible. */}
+      {ready ? null : <Skeleton className="absolute inset-0 bg-surface-raised" />}
+      <div ref={container} className="relative" />
+    </div>
+  );
 }

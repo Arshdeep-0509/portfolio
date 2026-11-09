@@ -16,8 +16,8 @@ export function Testimonials() {
 
   const copy = homeContent.testimonials;
   return (
-    <Section id={copy.id} tone="night-900" aria-label={copy.label}>
-      <p className="label-mono text-accent">{copy.label}</p>
+    <Section id={copy.id} tone="sky-ruled" aria-label={copy.label}>
+      <p className="label-text text-ink-muted">{copy.label}</p>
       <div className="mt-8">
         <PullQuote items={real} label={copy.label} />
       </div>

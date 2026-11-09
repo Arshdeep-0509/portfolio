@@ -6,25 +6,37 @@
 
 export type Availability = "available" | "limited" | "booked";
 
-export type SocialKey = "linkedin" | "github" | "x" | "instagram" | "youtube";
+export type SocialKey = "linkedin" | "github" | "x" | "instagram" | "clutch";
 
 export type SiteConfig = {
   name: string;
   legalName: string;
   tagline: string;
+  /** What the name stands for. */
+  meaning: string;
   description: string;
   positioning: string;
+  /** Public origin with no trailing slash. */
   url: string;
-  email: string;
-  phone: string;
-  whatsappUrl: string;
-  location: { city: string; state: string; country: string };
+  contact: { email: string; whatsapp: string; phone: string };
+  location: {
+    city: string;
+    region: string;
+    /** ISO 3166-1 code, for structured data. */
+    country: string;
+    /** The name shown on the page. */
+    countryName: string;
+    timezone: string;
+  };
+  /** Open Graph form (en_IN). LOCALE in lib/constants.ts is the BCP 47 form (en-IN). */
+  locale: string;
+  /** Empty means no profile yet: the link and its icon stay hidden. */
   social: Record<SocialKey, string>;
   calendlyUrl: string;
   /** Optional. Only shown once a real GSTIN exists. */
   gstin?: string;
   availability: Availability;
-  brand: { wordmark: string; microTagline: string };
+  brand: { wordmark: string };
   founder: { name: string; role: string; photo: string; education: string };
   featureFlags: {
     testimonials: boolean;
@@ -70,36 +82,52 @@ function buildWhatsappUrl(rawPhone: string): string {
   return digits ? `https://wa.me/${digits}` : "[WHATSAPP_URL]";
 }
 
+const name = "Polestride";
+
 export const siteConfig: SiteConfig = {
-  name: "Arshdeep Singh",
-  legalName: "[LEGAL_ENTITY]",
+  name,
+  // TODO: confirm the registered entity name. It appears in the footer, legal pages and JSON-LD.
+  legalName: "Polestride",
   tagline: "Business automation that frees you to grow.",
+  meaning: "Moving forward, guided by the north star.",
   description:
-    "Arshdeep Singh, a full-stack, AI and DevOps engineer in India, builds web apps, mobile apps and AI features for founders and small teams — tidy code, steady releases.",
+    "One engineer for the whole build: MVP development and full product builds in India, web and mobile apps and AI integration for startups, from Polestride — full-stack, AI and DevOps.",
   positioning:
     "One engineer for the whole build: I plan, design, code and run web, mobile and AI products for founders and growing teams.",
-  url: "https://[DOMAIN]",
-  email: "arshdeepsinghdev96@gmail.com",
-  phone,
-  whatsappUrl: buildWhatsappUrl(phone),
-  location: { city: "Bengaluru", state: "[STATE]", country: "India" },
+  // Production sets NEXT_PUBLIC_SITE_URL; next.config.ts fills it in with VERCEL_URL on previews
+  // (src/lib/deployUrl.ts). `||`, not `??`: an unset build arg arrives as an empty string.
+  url: (process.env.NEXT_PUBLIC_SITE_URL || "https://polestride.com").replace(/\/+$/, ""),
+  contact: {
+    // TODO: moving to hello@polestride.com? Set up the mailbox, then SPF, DKIM and DMARC for
+    // polestride.com first (LAUNCH_CHECKLIST.md, section 4), and only then change this address.
+    email: "arshdeepsinghdev96@gmail.com",
+    whatsapp: buildWhatsappUrl(phone),
+    phone,
+  },
+  location: {
+    city: "Bengaluru",
+    region: "Karnataka",
+    country: "IN",
+    countryName: "India",
+    timezone: "Asia/Kolkata",
+  },
+  locale: "en_IN",
   social: {
-    linkedin: "[LINKEDIN_URL]",
-    github: "[GITHUB_URL]",
-    x: "[X_URL]",
-    instagram: "[INSTAGRAM_URL]",
-    youtube: "[YOUTUBE_URL]",
+    linkedin: "",
+    github: "",
+    x: "",
+    instagram: "",
+    clutch: "",
   },
   calendlyUrl: "[CALENDLY_URL]",
   // gstin: "[GSTIN]",
   availability: "available",
   brand: {
-    wordmark: "Arshdeep Singh",
-    microTagline: "ENGINEER · BUILDER · AI & CLOUD",
+    wordmark: name,
   },
   founder: {
     name: "Arshdeep Singh",
-    role: "Full-Stack, AI & DevOps Engineer",
+    role: "Founder & lead engineer",
     photo: "/images/arshdeep-singh.jpg",
     education: "[EDUCATION]",
   },

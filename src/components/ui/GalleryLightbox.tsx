@@ -43,24 +43,24 @@ export function GalleryLightbox({
         if (event.key === "ArrowRight") go(1);
         if (event.key === "ArrowLeft") go(-1);
       }}
-      className="m-auto w-[min(72rem,calc(100%-2rem))] max-w-none bg-transparent p-0 backdrop:bg-night-950/90 backdrop:backdrop-blur-sm open:animate-panel-in"
+      className="m-auto w-[min(72rem,calc(100%-2rem))] max-w-none bg-transparent p-0 backdrop:bg-scrim backdrop:backdrop-blur-sm open:animate-panel-in"
     >
       {current ? (
-        <div className="tone-night text-ivory-50">
+        <div data-theme="dark" className="text-ink">
           <div className="mb-3 flex items-center justify-between gap-4">
-            <h2 id={titleId} className="label-mono text-ivory-50">
+            <h2 id={titleId} className="label-text text-ink">
               {label} · {index! + 1} of {count}
             </h2>
             <button
               type="button"
               onClick={close}
               aria-label="Close"
-              className="inline-flex size-11 items-center justify-center rounded-button border border-line-dark text-ivory-50 hover:border-lamp-500"
+              className="inline-flex size-11 items-center justify-center rounded-button border border-border text-ink hover:border-link"
             >
               <X aria-hidden="true" strokeWidth={1.5} className="size-5" />
             </button>
           </div>
-          <div className="relative aspect-[16/10] w-full overflow-hidden rounded-card bg-night-900">
+          <div className="relative aspect-[16/10] w-full overflow-hidden rounded-card bg-surface-raised">
             <Image
               src={current.src}
               alt={current.alt}
@@ -75,18 +75,18 @@ export function GalleryLightbox({
               type="button"
               onClick={() => go(-1)}
               aria-label="Previous screen"
-              className="inline-flex size-11 shrink-0 items-center justify-center rounded-button border border-line-dark text-ivory-50 hover:border-lamp-500"
+              className="inline-flex size-11 shrink-0 items-center justify-center rounded-button border border-border text-ink hover:border-link"
             >
               <ChevronLeft aria-hidden="true" strokeWidth={1.5} className="size-5" />
             </button>
-            <p aria-live="polite" className="text-center text-small text-mist-300">
+            <p aria-live="polite" className="text-center text-small text-ink-muted">
               {current.caption ? <PlaceholderText text={current.caption} /> : current.alt}
             </p>
             <button
               type="button"
               onClick={() => go(1)}
               aria-label="Next screen"
-              className="inline-flex size-11 shrink-0 items-center justify-center rounded-button border border-line-dark text-ivory-50 hover:border-lamp-500"
+              className="inline-flex size-11 shrink-0 items-center justify-center rounded-button border border-border text-ink hover:border-link"
             >
               <ChevronRight aria-hidden="true" strokeWidth={1.5} className="size-5" />
             </button>

@@ -26,45 +26,45 @@ export default function PayPage() {
   const hasLink = !isPlaceholder(link);
 
   return (
-    <Section tone="ivory" padding="none" className="pt-16 pb-24 lg:pt-24 lg:pb-32">
+    <Section tone="base" padding="none" className="pt-16 pb-24 lg:pt-24 lg:pb-32">
       <Breadcrumb items={[{ label: "Home", href: "/" }, { label: "Pay" }]} />
-      <p className="mt-8 label-mono text-accent">{hero.label}</p>
-      <h1 className="mt-4 max-w-[18ch] text-h1 text-fg">{hero.title}</h1>
-      <p className="mt-6 max-w-2xl text-lg text-fg-muted">{hero.text}</p>
+      <p className="mt-8 label-text text-ink-muted">{hero.label}</p>
+      <h1 className="mt-4 max-w-[18ch] text-h1 text-ink">{hero.title}</h1>
+      <p className="mt-6 max-w-2xl text-lg text-ink-muted">{hero.text}</p>
 
       <div className="mt-16 grid grid-cols-[minmax(0,1fr)] items-start gap-12 lg:grid-cols-12 lg:gap-8">
         <div className="lg:col-span-7">
-          <h2 className="text-h3 text-fg">{steps.title}</h2>
-          <ol className="mt-5 border-t border-rule">
+          <h2 className="text-h3 text-ink">{steps.title}</h2>
+          <ol className="mt-5 border-t border-border">
             {steps.items.map((step, index) => (
-              <li key={step} className="flex gap-4 border-b border-rule py-4">
-                <span className="font-mono text-sm text-accent">{pad2(index + 1)}</span>
-                <span className="text-fg">{step}</span>
+              <li key={step} className="flex gap-4 border-b border-border py-4">
+                <span className="text-sm text-ink-muted tabular-nums">{pad2(index + 1)}</span>
+                <span className="text-ink">{step}</span>
               </li>
             ))}
           </ol>
-          <h2 className="mt-12 text-h3 text-fg">{methods.title}</h2>
-          <ul className="mt-4 flex flex-wrap gap-x-8 gap-y-2 text-fg">
+          <h2 className="mt-12 text-h3 text-ink">{methods.title}</h2>
+          <ul className="mt-4 flex flex-wrap gap-x-8 gap-y-2 text-ink">
             {methods.items.map((method) => (
               <li key={method} className="flex items-center gap-2.5">
-                <span aria-hidden="true" className="size-1.5 rounded-dot bg-lamp-500" />
+                <span aria-hidden="true" className="size-1.5 rounded-dot bg-ink-muted" />
                 {method}
               </li>
             ))}
           </ul>
-          <p className="mt-8 flex gap-3 border-l-2 border-lamp-500 bg-sand-100 py-4 pr-4 pl-5 text-small text-fg">
+          <p className="mt-8 flex gap-3 rounded-r-button border-l-2 border-link bg-surface-raised py-4 pr-4 pl-5 text-small text-ink">
             <ShieldCheck
               aria-hidden="true"
               strokeWidth={1.5}
-              className="mt-0.5 size-5 shrink-0 text-accent"
+              className="mt-0.5 size-5 shrink-0 text-ink-muted"
             />
             {security}
           </p>
         </div>
 
-        <div className="rounded-card border border-lamp-500/60 p-7 lg:sticky lg:top-[calc(var(--header-h)+2rem)] lg:col-span-5">
-          <h2 className="text-h3 text-fg">{card.title}</h2>
-          <p className="mt-2 text-fg-muted">{card.text}</p>
+        <div className="rounded-card border border-border p-7 lg:sticky lg:top-[calc(var(--header-h)+2rem)] lg:col-span-5">
+          <h2 className="text-h3 text-ink">{card.title}</h2>
+          <p className="mt-2 text-ink-muted">{card.text}</p>
           <div className="mt-6">
             {hasButton ? (
               <RazorpayButton buttonId={buttonId} />
@@ -81,24 +81,24 @@ export default function PayPage() {
                 <span className="sr-only"> (opens in a new tab)</span>
               </Button>
             ) : (
-              <p className="rounded-card border border-dashed border-fg-muted/50 p-4 text-small break-words text-fg">
+              <p className="rounded-button border border-dashed border-ink-muted p-4 text-small break-words text-ink">
                 {card.placeholder} <PlaceholderText text={buttonId} />
               </p>
             )}
           </div>
-          <p className="mt-5 text-small text-fg-muted">{card.other}</p>
-          <p className="mt-5 border-t border-rule pt-5 text-small text-fg-muted">
+          <p className="mt-5 text-small text-ink-muted">{card.other}</p>
+          <p className="mt-5 border-t border-border pt-5 text-small text-ink-muted">
             {policies.text}{" "}
             <Link
               href={policies.terms.href}
-              className="font-semibold text-accent underline underline-offset-4"
+              className="font-semibold text-link underline underline-offset-4"
             >
               {policies.terms.label}
             </Link>{" "}
             and the{" "}
             <Link
               href={policies.refund.href}
-              className="font-semibold text-accent underline underline-offset-4"
+              className="font-semibold text-link underline underline-offset-4"
             >
               {policies.refund.label}
             </Link>

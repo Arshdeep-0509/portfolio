@@ -36,22 +36,26 @@ export function Gallery({ images, label }: { images: GalleryImage[]; label: stri
                   setIndex(i);
                 }}
                 aria-label={`Enlarge screen ${i + 1} of ${count}: ${image.alt}`}
-                className="group relative block aspect-[16/10] w-full overflow-hidden rounded-card border border-rule bg-night-900"
+                className="group relative block aspect-[16/10] w-full overflow-hidden rounded-card border border-border bg-surface-raised"
               >
+                {/* The button's aria-label is its accessible name, so this alt is for image search. */}
                 <Image
                   src={image.src}
-                  alt=""
+                  alt={image.alt}
                   fill
                   sizes="(min-width: 1024px) 608px, 88vw"
                   unoptimized={isUnoptimized(image.src)}
                   className="object-cover transition-transform duration-700 group-hover:scale-[1.02]"
                 />
-                <span className="absolute right-3 bottom-3 inline-flex size-9 items-center justify-center rounded-button bg-night-950/85 text-ivory-50">
+                <span
+                  data-theme="dark"
+                  className="absolute right-3 bottom-3 inline-flex size-9 items-center justify-center rounded-button bg-bg/85 text-ink"
+                >
                   <Expand aria-hidden="true" strokeWidth={1.5} className="size-4" />
                 </span>
               </button>
               {image.caption ? (
-                <figcaption className="mt-3 text-small text-fg-muted">
+                <figcaption className="mt-3 text-small text-ink-muted">
                   <PlaceholderText text={image.caption} />
                 </figcaption>
               ) : null}

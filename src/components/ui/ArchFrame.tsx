@@ -29,7 +29,7 @@ export function ArchFrame({
 }) {
   return (
     <figure className={cn("relative", className)}>
-      <div className="relative overflow-hidden rounded-[999px_999px_4px_4px] border border-lamp-500/50 bg-night-800 shadow-[0_0_0_6px_rgb(245_165_36/0.06),0_0_60px_-10px_rgb(245_165_36/0.45)]">
+      <div className="relative overflow-hidden rounded-[999px_999px_16px_16px] border border-border bg-surface-raised">
         <Image
           src={src}
           alt={alt}
@@ -42,7 +42,7 @@ export function ArchFrame({
         />
         <span
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 rounded-[999px_999px_4px_4px] bg-[radial-gradient(80%_50%_at_50%_0%,rgb(255_193_94/0.18),transparent_70%)]"
+          className="pointer-events-none absolute inset-0 rounded-[999px_999px_4px_4px] bg-[radial-gradient(80%_50%_at_50%_0%,var(--glow),transparent_70%)]"
         />
       </div>
       {children ? <figcaption className="mt-4">{children}</figcaption> : null}

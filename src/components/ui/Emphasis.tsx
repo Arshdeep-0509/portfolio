@@ -1,6 +1,6 @@
 /**
  * Renders `text` with its `emphasis` substring wrapped in <em>. Inside headlines globals.css
- * sets <em> in Fraunces italic over a thin flame underline. Unknown substrings render plain.
+ * sets <em> in Sora 700 over a thin gold underline. Unknown substrings render plain.
  */
 export function Emphasis({ text, emphasis }: { text: string; emphasis?: string }) {
   const index = emphasis ? text.indexOf(emphasis) : -1;

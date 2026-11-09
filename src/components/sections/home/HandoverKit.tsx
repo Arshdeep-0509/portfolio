@@ -6,7 +6,7 @@ import { handoverKit } from "@/content/deliverables";
 /** "The handover kit" on ivory: ownership on the left, the delivered files as a tree on the right. */
 export function HandoverKit({ index, id = "handover" }: { index: number; id?: string }) {
   return (
-    <Section id={id} tone="ivory" aria-labelledby="handover-title">
+    <Section id={id} tone="base" aria-labelledby="handover-title">
       <SectionHeader
         id="handover-title"
         index={index}
@@ -16,18 +16,18 @@ export function HandoverKit({ index, id = "handover" }: { index: number; id?: st
       />
       <div className="mt-14 grid items-start gap-12 lg:grid-cols-12 lg:gap-8">
         <div className="lg:col-span-5">
-          <div className="space-y-4 text-lg text-fg-muted">
+          <div className="space-y-4 text-lg text-ink-muted">
             {handoverKit.ownership.map((paragraph) => (
               <p key={paragraph}>{paragraph}</p>
             ))}
           </div>
-          <ul className="mt-8 border-t border-rule">
+          <ul className="mt-8 border-t border-border">
             {handoverKit.points.map((point) => (
               <li
                 key={point}
-                className="flex min-h-12 items-center gap-3 border-b border-rule font-semibold text-fg"
+                className="flex min-h-12 items-center gap-3 border-b border-border font-semibold text-ink"
               >
-                <span aria-hidden="true" className="size-1.5 rounded-dot bg-lamp-500" />
+                <span aria-hidden="true" className="size-1.5 rounded-dot bg-ink-muted" />
                 {point}
               </li>
             ))}

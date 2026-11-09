@@ -1,14 +1,14 @@
 import { cn } from "@/lib/utils";
 
 /**
- * Mono chip for technologies and short facts ("Next.js", "2–6 weeks"). Hairline border, 4px
- * corners — never a pill. Colours follow the section tone.
+ * Mono chip for technologies and short facts ("Next.js", "2–6 weeks"). Hairline border, full
+ * rounding. Colours follow the section tone.
  */
 export function Chip({ className, ...props }: React.ComponentProps<"span">) {
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-card border border-rule px-2.5 py-1 font-mono text-xs leading-none text-fg",
+        "inline-flex items-center rounded-dot border border-border px-2.5 py-1 text-xs leading-none text-ink tabular-nums",
         className,
       )}
       {...props}

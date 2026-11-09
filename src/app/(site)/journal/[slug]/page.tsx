@@ -87,7 +87,7 @@ export default async function PostPage({ params }: PageProps<"/journal/[slug]">)
   }));
 
   return (
-    <div className="tone-ivory grain bg-ivory-50 text-fg">
+    <div className="bg-bg text-ink">
       <ReadingProgress targetId="article-body" />
 
       <header className="container-site pt-16 lg:pt-24">
@@ -100,8 +100,8 @@ export default async function PostPage({ params }: PageProps<"/journal/[slug]">)
         />
         <div className="mt-8 lg:grid lg:grid-cols-12 lg:gap-8">
           <div className="lg:col-span-9 lg:col-start-4">
-            <p className="flex flex-wrap items-center gap-x-4 gap-y-1 label-mono text-fg-muted">
-              <span className="text-accent">{post.category}</span>
+            <p className="flex label-text flex-wrap items-center gap-x-4 gap-y-1 text-ink-muted">
+              <span className="text-ink-muted">{post.category}</span>
               <time dateTime={post.date}>{formatDate(post.date)}</time>
               {post.updated ? (
                 <span>
@@ -109,13 +109,13 @@ export default async function PostPage({ params }: PageProps<"/journal/[slug]">)
                 </span>
               ) : null}
               <span>{post.readingMinutes} min</span>
-              {post.draft ? <span className="text-danger-fg">{copy.draft}</span> : null}
+              {post.draft ? <span className="text-danger">{copy.draft}</span> : null}
             </p>
-            <h1 className="mt-6 max-w-[22ch] animate-rise text-h1 text-fg">{post.title}</h1>
-            <p className="mt-6 max-w-2xl text-xl text-fg-muted">{post.description}</p>
+            <h1 className="mt-6 max-w-[22ch] animate-rise text-h1 text-ink">{post.title}</h1>
+            <p className="mt-6 max-w-2xl text-xl text-ink-muted">{post.description}</p>
           </div>
         </div>
-        <div className="relative mt-12 aspect-[16/9] overflow-hidden rounded-card border border-rule bg-night-900 lg:aspect-[21/9]">
+        <div className="relative mt-12 aspect-[16/9] overflow-hidden rounded-card border border-border bg-surface-raised lg:aspect-[21/9]">
           <Image
             src={post.cover}
             alt={post.coverAlt ?? ""}
@@ -135,7 +135,7 @@ export default async function PostPage({ params }: PageProps<"/journal/[slug]">)
               <div className="hidden lg:sticky lg:top-[calc(var(--header-h)+2rem)] lg:block">
                 <ChapterNav chapters={chapters} label={copy.toc} />
               </div>
-              <details className="group mb-10 rounded-card border border-rule lg:hidden">
+              <details className="group mb-10 rounded-card border border-border lg:hidden">
                 <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between px-4 font-semibold [&::-webkit-details-marker]:hidden">
                   {copy.toc}
                   <ChevronDown
@@ -144,12 +144,12 @@ export default async function PostPage({ params }: PageProps<"/journal/[slug]">)
                     className="size-4 transition-transform group-open:rotate-180"
                   />
                 </summary>
-                <ol className="border-t border-rule px-4 py-2">
+                <ol className="border-t border-border px-4 py-2">
                   {headings.map((heading) => (
                     <li key={heading.id}>
                       <a
                         href={`#${heading.id}`}
-                        className={`flex min-h-11 items-center text-small text-fg-muted hover:text-fg ${heading.level === 3 ? "pl-4" : ""}`}
+                        className={`flex min-h-11 items-center text-small text-ink-muted hover:text-ink ${heading.level === 3 ? "pl-4" : ""}`}
                       >
                         {heading.text}
                       </a>
@@ -167,26 +167,26 @@ export default async function PostPage({ params }: PageProps<"/journal/[slug]">)
 
             {relatedServices.length > 0 ? (
               <section aria-labelledby="related-services-title" className="mt-16">
-                <h2 id="related-services-title" className="label-mono text-accent">
+                <h2 id="related-services-title" className="label-text text-ink-muted">
                   {copy.relatedServices}
                 </h2>
-                <ul className="mt-3 border-t border-rule">
+                <ul className="mt-3 border-t border-border">
                   {relatedServices.map((service) => (
-                    <li key={service.slug} className="border-b border-rule">
+                    <li key={service.slug} className="border-b border-border">
                       <Link
                         href={`/services/${service.slug}`}
                         className="group flex min-h-16 items-center justify-between gap-4 py-3"
                       >
                         <span>
-                          <span className="block font-display-soft text-xl text-fg group-hover:text-accent">
+                          <span className="block text-xl font-semibold text-ink group-hover:text-link">
                             {service.title}
                           </span>
-                          <span className="block text-small text-fg-muted">{service.tagline}</span>
+                          <span className="block text-small text-ink-muted">{service.tagline}</span>
                         </span>
                         <ArrowRight
                           aria-hidden="true"
                           strokeWidth={1.5}
-                          className="size-5 shrink-0 text-accent"
+                          className="size-5 shrink-0 text-ink-muted"
                         />
                       </Link>
                     </li>
@@ -195,7 +195,7 @@ export default async function PostPage({ params }: PageProps<"/journal/[slug]">)
               </section>
             ) : null}
 
-            <div className="mt-12 border-t border-rule pt-6">
+            <div className="mt-12 border-t border-border pt-6">
               <ShareButtons
                 url={url}
                 title={post.title}
@@ -207,7 +207,7 @@ export default async function PostPage({ params }: PageProps<"/journal/[slug]">)
 
             <aside
               aria-label="Who wrote this"
-              className="mt-10 flex flex-col gap-5 border-t border-rule pt-8 sm:flex-row"
+              className="mt-10 flex flex-col gap-5 border-t border-border pt-8 sm:flex-row"
             >
               <Image
                 src={hasPhoto ? founder.photo : "/images/founder-placeholder.svg"}
@@ -222,15 +222,15 @@ export default async function PostPage({ params }: PageProps<"/journal/[slug]">)
                 className="h-24 w-20 shrink-0 rounded-[999px_999px_4px_4px] object-cover"
               />
               <div>
-                <p className="font-display-soft text-xl text-fg">{founder.name}</p>
-                <p className="label-mono text-accent">{founder.role}</p>
-                <p className="mt-2 text-small text-fg-muted">{copy.author.bio}</p>
+                <p className="text-xl font-semibold text-ink">{founder.name}</p>
+                <p className="label-text text-ink-muted">{founder.role}</p>
+                <p className="mt-2 text-small text-ink-muted">{copy.author.bio}</p>
                 <ul className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-2 text-small font-semibold">
                   {copy.author.links.map((link) => (
                     <li key={link.href}>
                       <Link
                         href={link.href}
-                        className="inline-flex min-h-10 items-center link-underline text-fg hover:text-accent"
+                        className="inline-flex min-h-11 items-center link-underline text-ink hover:text-link"
                       >
                         {link.label}
                       </Link>
@@ -243,7 +243,7 @@ export default async function PostPage({ params }: PageProps<"/journal/[slug]">)
                         target="_blank"
                         rel="noopener noreferrer"
                         aria-label={`${social.label} (opens in a new tab)`}
-                        className="inline-flex size-11 items-center justify-center rounded-button border border-rule text-fg hover:border-lamp-500"
+                        className="inline-flex size-11 items-center justify-center rounded-button border border-border text-ink hover:border-link"
                       >
                         <SocialIcon name={social.key} className="size-4" />
                       </a>
@@ -257,26 +257,26 @@ export default async function PostPage({ params }: PageProps<"/journal/[slug]">)
 
         {related.length > 0 ? (
           <section aria-labelledby="related-posts-title" className="mt-24">
-            <h2 id="related-posts-title" className="label-mono text-accent">
+            <h2 id="related-posts-title" className="label-text text-ink-muted">
               {copy.related}
             </h2>
-            <ul className="mt-3 border-t border-rule">
+            <ul className="mt-3 border-t border-border">
               {related.map((item) => (
-                <li key={item.slug} className="border-b border-rule">
+                <li key={item.slug} className="border-b border-border">
                   <Link
                     href={`/journal/${item.slug}`}
                     className="group grid gap-1 py-5 md:grid-cols-12 md:items-baseline md:gap-6"
                   >
                     <time
                       dateTime={item.date}
-                      className="font-mono text-xs text-fg-muted md:col-span-2"
+                      className="text-xs text-ink-muted tabular-nums md:col-span-2"
                     >
                       {formatDate(item.date, { day: "2-digit", month: "short", year: "numeric" })}
                     </time>
-                    <span className="font-display-soft text-xl text-fg group-hover:text-accent md:col-span-8">
+                    <span className="text-xl font-semibold text-ink group-hover:text-link md:col-span-8">
                       {item.title}
                     </span>
-                    <span className="label-mono text-accent md:col-span-2">{item.category}</span>
+                    <span className="label-text text-ink-muted md:col-span-2">{item.category}</span>
                   </Link>
                 </li>
               ))}

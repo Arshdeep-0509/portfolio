@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { flushSync } from "react-dom";
 import Link from "next/link";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, useWatch } from "react-hook-form";
-import { CircleCheck } from "lucide-react";
+import { CircleAlert, CircleCheck } from "lucide-react";
 import { CalendlyButton } from "@/components/sections/contact/CalendlyButton";
 import { Button } from "@/components/ui/Button";
 import { Checkbox } from "@/components/ui/form/Checkbox";
@@ -82,7 +83,7 @@ export function ContactForm({
 }: ContactFormProps) {
   const toast = useToast();
   const [startedAt, setStartedAt] = useState(0);
-  const [sentName, setSentName] = useState<string | null>(null);
+  const [sent, setSent] = useState(false);
   const [summary, setSummary] = useState("");
   const [token, setToken] = useState<string | null>(null);
   const [widgetKey, setWidgetKey] = useState(0);
@@ -157,8 +158,9 @@ export function ContactForm({
   function goToFirstError(fields: FieldName[]) {
     const first = [...fields].sort((a, b) => stepOf(a) - stepOf(b))[0];
     if (!first) return;
-    setStep(Math.max(0, stepOf(first)));
-    requestAnimationFrame(() => setFocus(first));
+    // Commit the step first: a field inside a hidden step can't take focus.
+    flushSync(() => setStep(Math.max(0, stepOf(first))));
+    setFocus(first);
   }
 
   async function validateStep(index: number) {
@@ -212,7 +214,7 @@ export function ContactForm({
           service: payload.service,
           budget: data.budget ? `${data.budget} (${data.budgetCurrency})` : "not_given",
         });
-        setSentName(data.name.trim().split(/\s+/)[0] ?? data.name);
+        setSent(true);
         return;
       }
       if (result && !result.ok && result.fieldErrors) {
@@ -237,18 +239,18 @@ export function ContactForm({
     goToFirstError(fields);
   }
 
-  if (sentName) {
+  if (sent) {
     return (
-      <div className="rounded-card border border-lamp-500/60 p-8 sm:p-12">
-        <CircleCheck aria-hidden="true" strokeWidth={1.5} className="size-10 text-success-fg" />
-        <h2
+      <div className="rounded-card border border-success bg-surface p-8 sm:p-12">
+        <CircleCheck aria-hidden="true" strokeWidth={1.5} className="size-10 text-success" />
+        <h3
           ref={(heading) => heading?.focus()}
           tabIndex={-1}
-          className="mt-4 text-h3 text-fg outline-none"
+          className="mt-4 text-h3 text-ink outline-none"
         >
-          {copy.success.title.replace("{firstName}", sentName)}
-        </h2>
-        <p className="mt-3 max-w-md text-fg-muted">{copy.success.text}</p>
+          {copy.success.title}
+        </h3>
+        <p className="mt-3 max-w-md text-ink-muted">{copy.success.text}</p>
         <div className="mt-8 flex flex-col gap-3 sm:flex-row">
           {calendlyUrl ? (
             <CalendlyButton
@@ -300,13 +302,13 @@ export function ContactForm({
               [copy.review.nda, values.nda ? copy.review.yes : copy.review.no],
             ].map(([term, detail]) => (
               <div key={term}>
-                <dt className="label-mono text-fg-muted">{term}</dt>
-                <dd className="mt-0.5 text-fg">{detail || "—"}</dd>
+                <dt className="label-text text-ink-muted">{term}</dt>
+                <dd className="mt-0.5 text-ink">{detail || "—"}</dd>
               </div>
             ))}
             <div className="sm:col-span-2">
-              <dt className="label-mono text-fg-muted">{copy.message}</dt>
-              <dd className="mt-0.5 line-clamp-3 text-fg">{message || "—"}</dd>
+              <dt className="label-text text-ink-muted">{copy.message}</dt>
+              <dd className="mt-0.5 line-clamp-3 text-ink">{message || "—"}</dd>
             </div>
           </dl>
         }
@@ -314,14 +316,20 @@ export function ContactForm({
           <>
             <p
               aria-live="assertive"
-              className={cn("mb-4 text-small font-semibold text-danger-fg", !summary && "sr-only")}
+              className={cn(
+                "mb-4 flex items-center gap-1.5 text-small font-semibold text-danger",
+                !summary && "sr-only",
+              )}
             >
+              {summary ? (
+                <CircleAlert aria-hidden="true" strokeWidth={1.5} className="size-4 shrink-0" />
+              ) : null}
               {summary}
             </p>
-            <ul className="flex flex-col gap-1.5 text-small text-fg-muted sm:flex-row sm:gap-6">
+            <ul className="flex flex-col gap-1.5 text-small text-ink-muted sm:flex-row sm:gap-6">
               {copy.reassurance.map((line) => (
                 <li key={line} className="flex items-center gap-2">
-                  <span aria-hidden="true" className="size-1.5 rounded-dot bg-lamp-500" />
+                  <span aria-hidden="true" className="size-1.5 rounded-dot bg-ink-muted" />
                   {line}
                 </li>
               ))}
@@ -356,7 +364,7 @@ export function ContactForm({
                         }
                         leading={
                           order === 0 ? (
-                            <span className="font-mono text-[10px] tracking-wider text-accent uppercase">
+                            <span className="text-[10px] text-ink-muted tabular-nums">
                               {pad2(1)}
                             </span>
                           ) : undefined
@@ -379,7 +387,7 @@ export function ContactForm({
               <div className="space-y-8">
                 <div>
                   <div className="mb-2 flex flex-wrap items-center justify-between gap-3">
-                    <p id="contact-budget-label" className="text-small font-semibold text-fg">
+                    <p id="contact-budget-label" className="text-small font-semibold text-ink">
                       {copy.budget}
                     </p>
                     <SegmentedControl
@@ -439,8 +447,8 @@ export function ContactForm({
                   <p
                     id="contact-message-count"
                     className={cn(
-                      "mt-2 flex justify-between gap-3 font-mono text-xs",
-                      remaining > 0 ? "text-fg-muted" : "text-success-fg",
+                      "mt-2 flex justify-between gap-3 text-xs tabular-nums",
+                      remaining > 0 ? "text-ink-muted" : "text-success",
                     )}
                   >
                     <span>
@@ -457,9 +465,9 @@ export function ContactForm({
                   <FieldError id="contact-message-error">{errors.message?.message}</FieldError>
                   <div
                     id="contact-message-tips"
-                    className="mt-4 border-l-2 border-lamp-500 pl-4 text-small text-fg-muted"
+                    className="mt-4 border-l-2 border-link pl-4 text-small text-ink-muted"
                   >
-                    <p className="font-semibold text-fg">{copy.tipsTitle}</p>
+                    <p className="font-semibold text-ink">{copy.tipsTitle}</p>
                     <p className="mt-1">{copy.tips.join(" · ")}</p>
                   </div>
                 </div>
@@ -575,11 +583,11 @@ export function ContactForm({
                         {copy.consentBefore}{" "}
                         <Link
                           href={privacyHref}
-                          className="font-semibold text-accent underline underline-offset-4"
+                          className="font-semibold text-link underline underline-offset-4"
                         >
                           {copy.consentLink}
                         </Link>
-                        <span aria-hidden="true" className="ml-0.5 text-danger-fg">
+                        <span aria-hidden="true" className="ml-0.5 text-danger">
                           *
                         </span>
                         <span className="sr-only"> (required)</span>

@@ -43,8 +43,8 @@ export function Modal({
       aria-labelledby={titleId}
       aria-describedby={description ? descriptionId : undefined}
       className={cn(
-        "tone-ivory m-auto w-[calc(100%-2rem)] rounded-card border border-line bg-ivory-50 p-0 text-fg",
-        "backdrop:bg-night-950/70 backdrop:backdrop-blur-sm open:animate-panel-in open:backdrop:animate-fade-in",
+        "m-auto w-[calc(100%-2rem)] rounded-card border border-border bg-surface p-0 text-ink",
+        "backdrop:bg-scrim backdrop:backdrop-blur-sm open:animate-panel-in open:backdrop:animate-fade-in",
         sizes[size],
         className,
       )}
@@ -54,7 +54,7 @@ export function Modal({
           type="button"
           onClick={onClose}
           aria-label="Close dialog"
-          className="absolute top-4 right-4 inline-flex size-11 items-center justify-center rounded-button text-fg-muted transition-colors duration-200 hover:text-fg"
+          className="absolute top-4 right-4 inline-flex size-11 items-center justify-center rounded-button text-ink-muted transition-colors duration-200 hover:text-ink"
         >
           <X aria-hidden="true" strokeWidth={1.5} className="size-5" />
         </button>
@@ -63,7 +63,7 @@ export function Modal({
           {title}
         </h2>
         {description ? (
-          <p id={descriptionId} className="mt-2 text-fg-muted">
+          <p id={descriptionId} className="mt-2 text-ink-muted">
             {description}
           </p>
         ) : null}

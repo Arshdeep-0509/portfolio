@@ -83,13 +83,13 @@ export function ContactDock({
   if (pathname === "/contact") return null;
   const external = /^https?:\/\//.test(bookingHref);
   const item =
-    "flex min-h-12 items-center gap-3 rounded-card px-3 text-small font-semibold text-ivory-50 transition-colors duration-200 hover:bg-ivory-50/[0.06] hover:text-lamp-400";
+    "flex min-h-12 items-center gap-3 rounded-button px-3 text-small font-semibold text-ink transition-colors duration-200 hover:bg-ink/[0.06] hover:text-link";
 
   return (
     <div
       ref={rootRef}
       className={cn(
-        "tone-night fixed right-4 bottom-4 z-40 flex flex-col items-end gap-2 sm:right-6 sm:bottom-6 print:hidden",
+        "fixed right-4 bottom-4 z-40 flex flex-col items-end gap-2 sm:right-6 sm:bottom-6 print:hidden",
         "transition-[opacity,transform] duration-300",
         typing && "pointer-events-none translate-y-2 opacity-0",
       )}
@@ -98,7 +98,7 @@ export function ContactDock({
       <ul
         id={panelId}
         hidden={!open}
-        className="w-60 animate-panel-in rounded-card border border-line-dark bg-night-950/95 p-1.5 backdrop-blur-md"
+        className="w-60 animate-panel-in rounded-card border border-border bg-bg/95 p-1.5 backdrop-blur-md"
       >
         {whatsappHref ? (
           <li>
@@ -116,7 +116,7 @@ export function ContactDock({
               <MessageCircle
                 aria-hidden="true"
                 strokeWidth={1.5}
-                className="size-5 text-lamp-400"
+                className="size-5 text-ink-muted"
               />
               {labels.whatsapp}
               <span className="sr-only"> (opens in a new tab)</span>
@@ -126,7 +126,7 @@ export function ContactDock({
         {emailHref ? (
           <li>
             <a href={emailHref} data-cta="contact-dock" className={item}>
-              <Mail aria-hidden="true" strokeWidth={1.5} className="size-5 text-lamp-400" />
+              <Mail aria-hidden="true" strokeWidth={1.5} className="size-5 text-ink-muted" />
               {labels.email}
             </a>
           </li>
@@ -138,7 +138,7 @@ export function ContactDock({
             className={item}
             {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
           >
-            <CalendarClock aria-hidden="true" strokeWidth={1.5} className="size-5 text-lamp-400" />
+            <CalendarClock aria-hidden="true" strokeWidth={1.5} className="size-5 text-ink-muted" />
             {labels.book}
             {external ? <span className="sr-only"> (opens in a new tab)</span> : null}
           </a>
@@ -151,12 +151,12 @@ export function ContactDock({
         aria-controls={panelId}
         tabIndex={typing ? -1 : undefined}
         onClick={() => setOpen((value) => !value)}
-        className="inline-flex h-12 items-center gap-2 rounded-button border border-lamp-500/60 bg-night-950/90 px-4 text-small font-semibold text-ivory-50 backdrop-blur-md transition-[border-color,box-shadow] duration-200 hover:border-lamp-500 hover:shadow-glow"
+        className="inline-flex h-12 items-center gap-2 rounded-button border border-border bg-bg/90 px-4 text-small font-semibold text-ink backdrop-blur-md transition-colors duration-200 hover:border-link"
       >
         {open ? (
-          <X aria-hidden="true" strokeWidth={1.5} className="size-5 text-lamp-400" />
+          <X aria-hidden="true" strokeWidth={1.5} className="size-5 text-ink-muted" />
         ) : (
-          <MessagesSquare aria-hidden="true" strokeWidth={1.5} className="size-5 text-lamp-400" />
+          <MessagesSquare aria-hidden="true" strokeWidth={1.5} className="size-5 text-ink-muted" />
         )}
         {open ? labels.close : labels.toggle}
       </button>

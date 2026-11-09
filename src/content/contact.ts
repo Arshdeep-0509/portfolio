@@ -89,8 +89,8 @@ export const contactContent = {
     servicesError: "Pick at least one option to continue.",
     botCheck: "Finish the quick human check above the button first.",
     success: {
-      title: "Thank you, {firstName}. Your message is with me.",
-      text: "A copy is on its way to your inbox, and you'll hear from me within one business day. If it doesn't arrive, check the spam folder.",
+      title: "Sent. You'll hear back within one business day.",
+      text: "A copy is on its way to your inbox. If it doesn't arrive, check the spam folder.",
       book: "Pick a time to talk",
       home: "Back to the home page",
     },

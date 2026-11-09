@@ -23,7 +23,7 @@ export function FaqSection({
   emphasis,
   intro,
   items,
-  tone = "ivory",
+  tone = "base",
 }: FaqSectionProps) {
   return (
     <Section id={id} tone={tone} aria-labelledby={`${id}-title`}>

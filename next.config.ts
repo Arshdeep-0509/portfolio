@@ -1,7 +1,14 @@
 import type { NextConfig } from "next";
+import { deployUrl } from "./src/lib/deployUrl";
 
 const isDev = process.env.NODE_ENV === "development";
-const httpsSite = !isDev && (process.env.NEXT_PUBLIC_SITE_URL ?? "").startsWith("https://");
+// Previews get their own URL; see deployUrl. Baked in through `env` below.
+const { NEXT_PUBLIC_SITE_URL, VERCEL_ENV, VERCEL_URL } = process.env;
+const siteUrl = deployUrl({ NEXT_PUBLIC_SITE_URL, VERCEL_ENV, VERCEL_URL });
+const httpsSite = !isDev && (siteUrl ?? "").startsWith("https://");
+const isPreview = VERCEL_ENV === "preview";
+// Speed Insights only exists on Vercel; Docker and local builds would request a missing script.
+const onVercel = Boolean(process.env.VERCEL);
 // Docker / self-hosted builds set BUILD_STANDALONE=true (see Dockerfile).
 const standalone = process.env.BUILD_STANDALONE === "true";
 
@@ -17,6 +24,8 @@ function originOf(url: string | undefined) {
  * Content-Security-Policy listing only the third parties this site actually uses:
  * Google Analytics 4 + Microsoft Clarity (after consent), Cloudflare Turnstile (forms),
  * Calendly + Google Maps (embeds opened on click), Razorpay (/pay), Sentry and Plausible (if set).
+ * Vercel Speed Insights is served from this origin, so 'self' covers it. Resend, Slack, Telegram,
+ * Upstash, Supabase and S3 are called from the server only, so they don't appear here.
  *
  * 'unsafe-inline' for scripts is required by Next.js's inline bootstrap scripts on statically
  * generated pages; nonces would force every page to render dynamically. JSON-LD blocks are data,
@@ -104,10 +113,25 @@ const securityHeaders = [
   },
 ];
 
+/** The one public address. Keep in step with the fallback in src/content/site.ts. */
+const CANONICAL_ORIGIN = "https://polestride.com";
+
+/**
+ * Hosts that move to the canonical origin, with a 301. Matched exactly, so preview deployments
+ * (other *.vercel.app hosts) carry on working. No regex escapes: a literal is safe on every host.
+ */
+const OLD_HOSTS = ["www.polestride.com", "portfolio-4xrz.vercel.app"];
+
 // Files in /public aren't content-hashed, so they get a long but not immutable lifetime.
 const publicAssetCache = "public, max-age=2592000, stale-while-revalidate=86400";
 
 const nextConfig: NextConfig = {
+  env: {
+    ...(siteUrl ? { NEXT_PUBLIC_SITE_URL: siteUrl } : {}),
+    NEXT_PUBLIC_ON_VERCEL: onVercel ? "1" : "",
+  },
+  // The policy: no trailing slashes. Next.js redirects /about/ to /about with a 308.
+  trailingSlash: false,
   cacheComponents: true,
   partialPrefetching: true,
   ...(standalone ? { output: "standalone" as const } : {}),
@@ -125,9 +149,15 @@ const nextConfig: NextConfig = {
       },
     },
   },
-  // Routes renamed in the Skylamp rebrand (src/lib/routes.ts › renamedRoutes). Permanent: 308.
+  // Routes renamed in the rebrand (src/lib/routes.ts › renamedRoutes). Permanent: 308.
   async redirects() {
     return [
+      ...OLD_HOSTS.map((host) => ({
+        source: "/:path*",
+        has: [{ type: "host" as const, value: host }],
+        destination: `${CANONICAL_ORIGIN}/:path*`,
+        statusCode: 301 as const,
+      })),
       { source: "/why-me", destination: "/approach", permanent: true },
       { source: "/insights", destination: "/journal", permanent: true },
       { source: "/insights/:slug", destination: "/journal/:slug", permanent: true },
@@ -138,8 +168,13 @@ const nextConfig: NextConfig = {
   async headers() {
     return [
       { source: "/:path*", headers: securityHeaders },
+      // Previews share the production code; only this keeps them out of search results.
+      ...(isPreview
+        ? [{ source: "/:path*", headers: [{ key: "X-Robots-Tag", value: "noindex" }] }]
+        : []),
       { source: "/images/:path*", headers: [{ key: "Cache-Control", value: publicAssetCache }] },
       { source: "/icons/:path*", headers: [{ key: "Cache-Control", value: publicAssetCache }] },
+      { source: "/brand/:path*", headers: [{ key: "Cache-Control", value: publicAssetCache }] },
       { source: "/favicon.ico", headers: [{ key: "Cache-Control", value: publicAssetCache }] },
     ];
   },

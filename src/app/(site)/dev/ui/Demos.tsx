@@ -67,7 +67,7 @@ export function WizardDemo() {
   });
   const [done, setDone] = useState(false);
   const values = useWatch({ control });
-  if (done) return <p className="text-fg">Submitted (demo only).</p>;
+  if (done) return <p className="text-ink">Submitted (demo only).</p>;
 
   return (
     <form onSubmit={handleSubmit(() => setDone(true))} noValidate>
@@ -78,9 +78,9 @@ export function WizardDemo() {
         }
         review={
           <dl className="grid gap-2 text-small sm:grid-cols-2">
-            <dt className="label-mono text-fg-muted">Name</dt>
+            <dt className="label-text text-ink-muted">Name</dt>
             <dd>{values.name || "—"}</dd>
-            <dt className="label-mono text-fg-muted">Picked</dt>
+            <dt className="label-text text-ink-muted">Picked</dt>
             <dd>{values.kind?.join(", ") || "—"}</dd>
           </dl>
         }

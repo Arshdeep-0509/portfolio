@@ -14,8 +14,6 @@ type ServicesMenuProps = {
   label: string;
   groups: HeaderNav["services"];
   copy: HeaderNav["copy"]["menu"];
-  /** The current page is /services or a service page. */
-  active: boolean;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 };
@@ -27,14 +25,7 @@ type ServicesMenuProps = {
  * a "Read more" link. Opens on hover after a short intent delay, on click, or with Enter/Space/↓.
  * Inside, ↑/↓ move through the services, Home/End jump, Esc returns focus to the button.
  */
-export function ServicesMenu({
-  label,
-  groups,
-  copy,
-  active,
-  open,
-  onOpenChange,
-}: ServicesMenuProps) {
+export function ServicesMenu({ label, groups, copy, open, onOpenChange }: ServicesMenuProps) {
   const pathname = usePathname();
   const rootRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -126,8 +117,8 @@ export function ServicesMenu({
           onOpenChange(event.detail === 0 ? !open : true);
         }}
         className={cn(
-          "inline-flex min-h-11 items-center gap-1 text-small font-semibold transition-colors duration-200 hover:text-accent",
-          active || open ? "text-accent" : "text-fg",
+          "inline-flex min-h-11 items-center gap-1 text-small font-semibold transition-colors duration-200 hover:text-link",
+          open ? "text-link" : "text-ink",
         )}
       >
         {label}
@@ -145,7 +136,7 @@ export function ServicesMenu({
         className="pointer-events-none fixed inset-x-0 top-(--header-h) max-h-[calc(100dvh-var(--header-h))] animate-panel-in overflow-y-auto pb-8"
       >
         <div className="container-site">
-          <div className="tone-ivory pointer-events-auto grid overflow-hidden rounded-b-card border border-t-0 border-line bg-ivory-50 text-fg shadow-[0_30px_60px_-30px_rgb(10_10_18/0.35)] lg:grid-cols-12">
+          <div className="pointer-events-auto grid overflow-hidden rounded-b-card border border-t-0 border-border bg-surface text-ink lg:grid-cols-12">
             <div
               ref={listRef}
               onKeyDown={onListKeyDown}
@@ -155,10 +146,10 @@ export function ServicesMenu({
                 <div key={group.id}>
                   <p
                     id={`menu-group-${group.id}`}
-                    className="flex items-center gap-3 label-mono text-accent"
+                    className="flex label-text items-center gap-3 text-ink-muted"
                   >
                     {group.label}
-                    <span aria-hidden="true" className="h-px flex-1 bg-rule" />
+                    <span aria-hidden="true" className="h-px flex-1 bg-border" />
                   </p>
                   <ul aria-labelledby={`menu-group-${group.id}`} className="mt-3">
                     {group.items.map((item) => {
@@ -173,11 +164,11 @@ export function ServicesMenu({
                             onPointerEnter={() => setPreviewSlug(item.slug)}
                             onFocus={() => setPreviewSlug(item.slug)}
                             className={cn(
-                              "group/item flex min-h-10 items-center gap-3 text-small transition-colors duration-200",
-                              previewing ? "text-accent" : "text-fg hover:text-accent",
+                              "group/item flex min-h-11 items-center gap-3 text-small transition-colors duration-200",
+                              previewing ? "text-link" : "text-ink hover:text-link",
                             )}
                           >
-                            <span className="w-6 font-mono text-xs text-fg-muted">
+                            <span className="w-6 text-xs text-ink-muted tabular-nums">
                               {pad2(items.indexOf(item) + 1)}
                             </span>
                             <span className="font-medium">{item.label}</span>
@@ -208,21 +199,17 @@ export function ServicesMenu({
             </div>
 
             {preview ? (
-              <div className="tone-night relative isolate overflow-hidden bg-night-950 bg-stars p-8 text-fg lg:col-span-4">
-                <span
-                  aria-hidden="true"
-                  className="absolute -right-20 -bottom-24 -z-10 size-72 rounded-dot bg-[radial-gradient(circle,rgb(245_165_36/0.3),transparent_65%)]"
-                />
-                <p className="label-mono text-mist-300">{copy.previewHint}</p>
-                <p className="mt-6 font-display-soft text-2xl text-ivory-50">{preview.label}</p>
-                <p className="mt-3 text-small text-mist-300">{preview.tagline}</p>
-                <p className="mt-6 label-mono text-accent">{copy.deliverablesLabel}</p>
-                <ul className="mt-3 space-y-2 text-small text-ivory-50">
+              <div className="bg-surface-raised p-8 text-ink lg:col-span-4">
+                <p className="label-text text-ink-muted">{copy.previewHint}</p>
+                <p className="mt-6 text-2xl font-semibold text-ink">{preview.label}</p>
+                <p className="mt-3 text-small text-ink-muted">{preview.tagline}</p>
+                <p className="mt-6 label-text text-ink-muted">{copy.deliverablesLabel}</p>
+                <ul className="mt-3 space-y-2 text-small text-ink">
                   {preview.deliverables.map((deliverable) => (
                     <li key={deliverable} className="flex gap-2.5">
                       <span
                         aria-hidden="true"
-                        className="mt-[0.6em] size-1.5 shrink-0 rounded-dot bg-lamp-500"
+                        className="mt-[0.6em] size-1.5 shrink-0 rounded-dot bg-ink-muted"
                       />
                       {deliverable}
                     </li>
@@ -230,7 +217,7 @@ export function ServicesMenu({
                 </ul>
                 <Link
                   href={preview.href}
-                  className="mt-8 inline-flex min-h-11 items-center gap-2 link-underline text-small font-semibold text-lamp-400"
+                  className="mt-8 inline-flex min-h-11 items-center gap-2 link-underline text-small font-semibold text-link"
                 >
                   {copy.previewCta}
                   <span className="sr-only">: {preview.label}</span>

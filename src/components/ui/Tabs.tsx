@@ -51,7 +51,7 @@ export function Tabs({ items, label, defaultTab, className }: TabsProps) {
       <div
         role="tablist"
         aria-label={label}
-        className="flex max-w-full gap-6 overflow-x-auto border-b border-rule sm:gap-10"
+        className="flex max-w-full gap-6 overflow-x-auto border-b border-border sm:gap-10"
       >
         {items.map((item, index) => {
           const selected = item.id === active;
@@ -70,10 +70,10 @@ export function Tabs({ items, label, defaultTab, className }: TabsProps) {
               onClick={() => setActive(item.id)}
               onKeyDown={(event) => onKeyDown(event, index)}
               className={cn(
-                "relative -mb-px min-h-12 shrink-0 border-b-2 pb-3 text-left font-display-soft text-xl whitespace-nowrap transition-colors duration-200 sm:text-2xl",
+                "relative -mb-px min-h-12 shrink-0 border-b-2 pb-3 text-left text-xl font-semibold whitespace-nowrap transition-colors duration-200 sm:text-2xl",
                 selected
-                  ? "border-lamp-500 text-fg"
-                  : "border-transparent text-fg-muted hover:text-fg",
+                  ? "border-link text-ink"
+                  : "border-transparent text-ink-muted hover:text-ink",
               )}
             >
               {item.label}

@@ -1,28 +1,28 @@
 import Link from "next/link";
 import { cva, type VariantProps } from "class-variance-authority";
-import { ArrowRight, LoaderCircle } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export const buttonVariants = cva(
   [
     "group/button inline-flex shrink-0 items-center justify-center gap-2 font-semibold whitespace-nowrap",
-    "transition-[background-color,color,border-color,box-shadow,filter] duration-200 ease-out",
+    "transition-[background-color,color,border-color,filter] duration-200 ease-out",
     "disabled:pointer-events-none disabled:opacity-55 aria-disabled:pointer-events-none aria-disabled:opacity-55",
   ],
   {
     variants: {
       variant: {
-        /** Primary: the flame gradient with ink text (8.9:1 on --lamp-500, 5.9:1 on --ember-500). */
-        flame: "rounded-button bg-grad-flame text-ink-900 hover:shadow-glow hover:brightness-105",
-        "solid-ink": "rounded-button bg-ink-900 text-ivory-50 hover:bg-night-800",
-        /** Ink on light sections, ivory on night: the colour follows the section tone. */
+        /** Primary: the gold fill, one of the few places gold appears. */
+        flame: "rounded-button bg-accent font-display text-accent-ink hover:brightness-105",
+        "solid-ink": "rounded-button bg-ink font-display text-bg hover:bg-ink/85",
+        /** Secondary: transparent with a hairline, so it never competes with the gold. */
         outline:
-          "rounded-button border border-fg/70 bg-transparent text-fg hover:border-accent hover:text-accent",
+          "rounded-button border border-border bg-transparent font-display text-ink hover:border-link hover:text-link",
         /** Inline text action with an animated underline and a trailing arrow. */
-        "text-link": "link-underline rounded-[2px] text-fg hover:text-accent",
+        "text-link": "link-underline rounded-[2px] text-ink hover:text-link",
       },
       size: {
-        sm: "min-h-10 px-4 text-small",
+        sm: "min-h-11 px-4 text-small",
         md: "min-h-12 px-6 text-small",
         lg: "min-h-13 px-7 text-body",
       },
@@ -36,7 +36,7 @@ export const buttonVariants = cva(
 type ButtonOwnProps = VariantProps<typeof buttonVariants> & {
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
-  /** Shows a spinner, disables the button and sets aria-busy. */
+  /** Disables the button and sets aria-busy. The label says what's happening. */
   loading?: boolean;
   className?: string;
   children?: React.ReactNode;
@@ -50,7 +50,7 @@ type ButtonAsLink = ButtonOwnProps &
 
 export type ButtonProps = ButtonAsButton | ButtonAsLink;
 
-/** Renders a Next.js <Link> when `href` is given, otherwise a <button>. 8px radius, never a pill. */
+/** Renders a Next.js <Link> when `href` is given, otherwise a <button>. 10px radius, never a pill. */
 export function Button({
   variant,
   size,
@@ -74,7 +74,7 @@ export function Button({
 
   const content = (
     <>
-      {loading ? <LoaderCircle aria-hidden="true" className="size-4 animate-spin" /> : leftIcon}
+      {leftIcon}
       {children}
       {trailing}
     </>

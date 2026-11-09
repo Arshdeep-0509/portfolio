@@ -20,7 +20,7 @@ export function Lab({ index, id = "lab" }: { index: number; id?: string }) {
   const featured = getCaseStudies().slice(0, 2);
 
   return (
-    <Section id={id} tone="night" aria-labelledby={`${id}-title`}>
+    <Section id={id} tone="sky" aria-labelledby={`${id}-title`}>
       <SectionHeader
         id={`${id}-title`}
         index={index}
@@ -36,22 +36,22 @@ export function Lab({ index, id = "lab" }: { index: number; id?: string }) {
             <li
               key={item.slug}
               className={cn(
-                "flex flex-col rounded-card border p-7 transition-[border-color,box-shadow] duration-300 hover:border-lamp-500 hover:shadow-glow",
+                "flex flex-col rounded-card border p-7 transition-colors duration-300 hover:border-link",
                 item.kind === "offer"
-                  ? "border-lamp-500/50 bg-night-800"
-                  : "border-line-dark bg-night-800/60",
+                  ? "border-border bg-surface-raised"
+                  : "border-border bg-surface-raised/60",
               )}
             >
               <StatusDot status={item.status.kind} label={item.status.label} />
-              <h3 className="mt-5 text-h3 text-fg">{item.name}</h3>
-              <p className="mt-3 text-small text-fg-muted">{item.description}</p>
+              <h3 className="mt-5 text-h3 text-ink">{item.name}</h3>
+              <p className="mt-3 text-small text-ink-muted">{item.description}</p>
               {item.bullets ? (
-                <ul className="mt-4 space-y-2 text-small text-fg">
+                <ul className="mt-4 space-y-2 text-small text-ink">
                   {item.bullets.map((bullet) => (
                     <li key={bullet} className="flex gap-2.5">
                       <span
                         aria-hidden="true"
-                        className="mt-[0.6em] size-1.5 shrink-0 rounded-dot bg-lamp-500"
+                        className="mt-[0.6em] size-1.5 shrink-0 rounded-dot bg-ink-muted"
                       />
                       {bullet}
                     </li>
@@ -59,9 +59,7 @@ export function Lab({ index, id = "lab" }: { index: number; id?: string }) {
                 </ul>
               ) : null}
               <ChipList items={item.facts} className="mt-5" />
-              {item.note ? (
-                <p className="mt-4 text-small text-mist-300 italic">{item.note}</p>
-              ) : null}
+              {item.note ? <p className="mt-4 text-small text-ink-muted">{item.note}</p> : null}
               <div className="mt-auto pt-6">
                 <Button
                   href={item.cta.href}
@@ -81,23 +79,23 @@ export function Lab({ index, id = "lab" }: { index: number; id?: string }) {
 
       {featured.length > 0 ? (
         <div className="mt-16">
-          <p className="label-mono text-mist-300">{lab.caseStudiesTitle}</p>
-          <ul className="mt-4 border-t border-line-dark">
+          <p className="label-text text-ink-muted">{lab.caseStudiesTitle}</p>
+          <ul className="mt-4 border-t border-border">
             {featured.map((study) => (
-              <li key={study.slug} className="border-b border-line-dark">
+              <li key={study.slug} className="border-b border-border">
                 <Link
                   href={`/work/${study.slug}`}
                   className="group flex min-h-20 flex-col justify-center gap-1 py-4 sm:flex-row sm:items-center sm:justify-between sm:gap-6"
                 >
-                  <span className="font-display-soft text-2xl text-fg transition-colors group-hover:text-lamp-400">
+                  <span className="text-2xl font-semibold text-ink transition-colors group-hover:text-link">
                     {study.title}
                   </span>
-                  <span className="flex items-center gap-3 text-small text-fg-muted">
+                  <span className="flex items-center gap-3 text-small text-ink-muted">
                     <span className="max-w-md">{study.summary}</span>
                     <ArrowRight
                       aria-hidden="true"
                       strokeWidth={1.5}
-                      className="size-5 shrink-0 text-lamp-400 transition-transform group-hover:translate-x-1"
+                      className="size-5 shrink-0 text-link transition-transform group-hover:translate-x-1"
                     />
                   </span>
                 </Link>

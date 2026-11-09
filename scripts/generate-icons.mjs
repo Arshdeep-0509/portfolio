@@ -1,58 +1,62 @@
 #!/usr/bin/env node
 /**
- * Regenerates the icon set from the Skylamp mark: public/icons/icon.svg plus the PNG sizes,
- * the maskable icon, the Apple touch icon and src/app/favicon.ico (16/32/48 in one ICO).
+ * Regenerates every icon from the brand files in public/brand: `pnpm icons`.
  *
- * Rendering uses Playwright's Chromium (already a dev dependency for the E2E tests):
- *   pnpm exec playwright install chromium   # once
- *   node scripts/generate-icons.mjs
+ *   src/app/icon.svg             a copy of polestride-icon.svg
+ *   src/app/favicon.ico          16 and 32 in one ICO
+ *   src/app/apple-icon.png       180, full-bleed: iOS shows transparent corners as black
+ *   public/icons/icon-*.png      192 and 512, for the manifest
+ *   public/icons/icon-maskable-* 192 and 512, full-bleed with the mark inside the safe zone
  *
- * The geometry mirrors <LogoMark> in src/components/layout/Logo.tsx (a 40-unit grid).
+ * Uses Playwright's Chromium, already installed for the E2E tests.
  */
 import fs from "node:fs";
 import path from "node:path";
 import { chromium } from "@playwright/test";
 
-const NIGHT = "#0A0A12";
-const DUSK = "#2E2A4F";
-const IVORY = "#FBF8F2";
-const LAMP = "#F5A524";
-const GLOW = "#FFC15E";
+const root = process.cwd();
+const brand = path.join(root, "public", "brand");
+const iconSource = fs.readFileSync(path.join(brand, "polestride-icon.svg"), "utf8").trim();
+const markSource = fs.readFileSync(path.join(brand, "polestride-mark.svg"), "utf8").trim();
+
+const NIGHT = "#0B1630";
+const GLACIER = "#EAF1FB";
+
+/** The icon with square corners, for platforms that apply their own mask. */
+const squareIcon = iconSource.replace(' rx="24"', "");
 
 /**
- * The mark on a night square. `scale` sizes the 40-unit mark inside a 512 canvas; the maskable
- * variant uses a smaller scale so everything sits inside the 80% safe zone.
+ * The mark's extreme points in its own 104-unit box. A maskable icon can be cut to a circle whose
+ * radius is 40% of the icon, so the mark has to fit inside that, not just inside a square margin.
  */
-function iconSvg({ size = 512, scale = 11, title = true, small = false } = {}) {
-  // Tiny sizes get a bolder mark: thicker strokes and a larger lamp, or the dot vanishes at 16px.
-  const stroke = small ? 4.2 : 3;
-  const dot = small ? 4.4 : 2.6;
-  const tx = 256 - 20 * scale;
-  const ty = 256 - 17 * scale;
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="${size}" height="${size}">${
-    title ? "<title>Arshdeep Singh</title>" : ""
-  }
-  <defs>
-    <radialGradient id="sky" cx="50%" cy="105%" r="80%">
-      <stop offset="0%" stop-color="${LAMP}" stop-opacity="0.22"/>
-      <stop offset="45%" stop-color="${DUSK}" stop-opacity="0.6"/>
-      <stop offset="100%" stop-color="${NIGHT}" stop-opacity="0"/>
-    </radialGradient>
-    <radialGradient id="lamp">
-      <stop offset="0%" stop-color="${GLOW}" stop-opacity="0.95"/>
-      <stop offset="45%" stop-color="${LAMP}" stop-opacity="0.4"/>
-      <stop offset="100%" stop-color="${LAMP}" stop-opacity="0"/>
-    </radialGradient>
-  </defs>
-  <rect width="512" height="512" fill="${NIGHT}"/>
-  <rect width="512" height="512" fill="url(#sky)"/>
-  <g transform="translate(${tx} ${ty}) scale(${scale})">
-    <circle cx="20" cy="6.5" r="7.5" fill="url(#lamp)"/>
-    <circle cx="20" cy="6.5" r="${dot}" fill="${LAMP}"/>
-    <path d="M7.5 35 20 13.5 32.5 35" fill="none" stroke="${IVORY}" stroke-width="${stroke}" stroke-linejoin="miter" stroke-miterlimit="10"/>
-  </g>
-</svg>`;
+const MARK_CENTRE = { x: 52, y: 54 };
+const MARK_POINTS = [
+  [21, 8],
+  [21, 100],
+  [83, 36],
+];
+const SAFE_RADIUS = 0.4;
+/** The brief's minimum padding on each side. */
+const MIN_PADDING = 0.12;
+
+function maskableSvg() {
+  const reach = Math.max(
+    ...MARK_POINTS.map(([x, y]) => Math.hypot(x - MARK_CENTRE.x, y - MARK_CENTRE.y)),
+  );
+  const scale = (SAFE_RADIUS * 104) / reach;
+  const height = (92 * scale) / 104;
+  if ((1 - height) / 2 < MIN_PADDING) throw new Error("Maskable icon has too little padding");
+
+  const inner = markSource
+    .replace(/^<svg[^>]*>/, "")
+    .replace(/<\/svg>$/, "")
+    .replace('fill="currentColor"', `fill="${GLACIER}"`);
+  const tx = 52 - MARK_CENTRE.x * scale;
+  const ty = 52 - MARK_CENTRE.y * scale;
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 104 104"><rect width="104" height="104" fill="${NIGHT}"/><g transform="translate(${tx} ${ty}) scale(${scale})">${inner}</g></svg>`;
 }
+
+const sized = (svg, size) => svg.replace("<svg ", `<svg width="${size}" height="${size}" `);
 
 /**
  * A 32-bit BMP (DIB) icon entry from raw RGBA pixels: bottom-up BGRA rows plus an empty AND
@@ -89,8 +93,8 @@ function toIco(images) {
   let offset = 6 + 16 * images.length;
   const entries = images.map(({ size, data }) => {
     const entry = Buffer.alloc(16);
-    entry.writeUInt8(size >= 256 ? 0 : size, 0);
-    entry.writeUInt8(size >= 256 ? 0 : size, 1);
+    entry.writeUInt8(size, 0);
+    entry.writeUInt8(size, 1);
     entry.writeUInt16LE(1, 4);
     entry.writeUInt16LE(32, 6);
     entry.writeUInt32LE(data.length, 8);
@@ -101,25 +105,22 @@ function toIco(images) {
   return Buffer.concat([header, ...entries, ...images.map((image) => image.data)]);
 }
 
-const root = process.cwd();
-const icons = path.join(root, "public", "icons");
-fs.mkdirSync(icons, { recursive: true });
-fs.writeFileSync(path.join(icons, "icon.svg"), `${iconSvg({ size: 512 })}\n`);
-
 const browser = await chromium.launch();
 const page = await browser.newPage({ deviceScaleFactor: 1 });
 
-async function render(size, options) {
+async function render(svg, size) {
   await page.setViewportSize({ width: size, height: size });
   await page.setContent(
-    `<!doctype html><html><body style="margin:0">${iconSvg({ size, ...options, title: false })}</body></html>`,
+    `<!doctype html><html><body style="margin:0;background:transparent">${sized(svg, size)}</body></html>`,
   );
-  return page.screenshot({ clip: { x: 0, y: 0, width: size, height: size } });
+  return page.screenshot({
+    clip: { x: 0, y: 0, width: size, height: size },
+    omitBackground: true,
+  });
 }
 
-/** Raw RGBA pixels of the mark at `size`, drawn through a canvas. */
-async function renderPixels(size, options) {
-  const svg = iconSvg({ size, ...options, title: false });
+/** Raw RGBA pixels at `size`, drawn through a canvas. */
+async function renderPixels(svg, size) {
   const data = await page.evaluate(
     async ({ svg, size }) => {
       const image = new Image();
@@ -132,30 +133,37 @@ async function renderPixels(size, options) {
       context.drawImage(image, 0, 0, size, size);
       return Array.from(context.getImageData(0, 0, size, size).data);
     },
-    { svg, size },
+    { svg: sized(svg, size), size },
   );
   return Buffer.from(data);
 }
 
-const outputs = [
-  ["icon-16.png", 16, { scale: 12.5, small: true }],
-  ["icon-32.png", 32, { scale: 12.5, small: true }],
-  ["icon-192.png", 192, {}],
-  ["icon-512.png", 512, {}],
-  ["apple-touch-icon.png", 180, { scale: 9.5 }],
-  ["icon-maskable-512.png", 512, { scale: 8 }],
-];
-for (const [name, size, options] of outputs) {
-  fs.writeFileSync(path.join(icons, name), await render(size, options));
+const app = path.join(root, "src", "app");
+const icons = path.join(root, "public", "icons");
+fs.mkdirSync(icons, { recursive: true });
+
+fs.writeFileSync(path.join(app, "icon.svg"), `${iconSource}\n`);
+console.log("src/app/icon.svg");
+
+fs.writeFileSync(path.join(app, "apple-icon.png"), await render(squareIcon, 180));
+console.log("src/app/apple-icon.png");
+
+const maskable = maskableSvg();
+for (const [name, svg, size] of [
+  ["icon-192.png", iconSource, 192],
+  ["icon-512.png", iconSource, 512],
+  ["icon-maskable-192.png", maskable, 192],
+  ["icon-maskable-512.png", maskable, 512],
+]) {
+  fs.writeFileSync(path.join(icons, name), await render(svg, size));
   console.log(`public/icons/${name}`);
 }
 
 const ico = [];
-for (const size of [16, 32, 48]) {
-  const pixels = await renderPixels(size, { scale: 12.5, small: true });
-  ico.push({ size, data: toDib(size, pixels) });
+for (const size of [16, 32]) {
+  ico.push({ size, data: toDib(size, await renderPixels(iconSource, size)) });
 }
-fs.writeFileSync(path.join(root, "src", "app", "favicon.ico"), toIco(ico));
+fs.writeFileSync(path.join(app, "favicon.ico"), toIco(ico));
 console.log("src/app/favicon.ico");
 
 await browser.close();

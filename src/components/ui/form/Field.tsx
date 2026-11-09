@@ -2,13 +2,13 @@ import { CircleAlert } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /**
- * Shared look for text-like controls: a hairline box with a 4px radius, 48px tall, label above.
- * Focus draws a lamp-coloured ring; aria-invalid turns the border red. Colours follow the tone.
+ * Shared look for text-like controls: a 1px box with a 10px radius on --surface, 48px tall, label
+ * always above. The border is --ink-muted rather than --border: a control's edge has to reach 3:1.
+ * Focus uses the site-wide ring; aria-invalid turns the border red.
  */
 export const controlClasses = cn(
-  "block min-h-12 w-full rounded-card border border-rule bg-field px-4 py-3 text-body text-fg",
-  "transition-[border-color,box-shadow] duration-200 placeholder:text-fg-muted/75 hover:border-fg-muted/60",
-  "focus-visible:border-accent focus-visible:shadow-[0_0_0_3px_color-mix(in_srgb,var(--lamp-500)_28%,transparent)] focus-visible:outline-none",
+  "block min-h-12 w-full rounded-button border border-ink-muted bg-surface px-4 py-3 text-body text-ink",
+  "transition-colors duration-200 placeholder:text-ink-muted hover:border-ink focus-visible:border-link",
   "aria-invalid:border-danger aria-invalid:hover:border-danger",
   "disabled:cursor-not-allowed disabled:opacity-60",
 );
@@ -17,11 +17,11 @@ type LabelProps = React.ComponentProps<"label"> & { required?: boolean };
 
 export function Label({ required = false, className, children, ...props }: LabelProps) {
   return (
-    <label className={cn("mb-2 block text-small font-semibold text-fg", className)} {...props}>
+    <label className={cn("mb-2 block text-small font-semibold text-ink", className)} {...props}>
       {children}
       {required ? (
         <>
-          <span aria-hidden="true" className="ml-0.5 text-danger-fg">
+          <span aria-hidden="true" className="ml-0.5 text-danger">
             *
           </span>
           <span className="sr-only"> (required)</span>
@@ -43,10 +43,7 @@ export function FieldError({
 }) {
   if (!children) return null;
   return (
-    <p
-      id={id}
-      className={cn("mt-2 flex items-center gap-1.5 text-small text-danger-fg", className)}
-    >
+    <p id={id} className={cn("mt-2 flex items-center gap-1.5 text-small text-danger", className)}>
       <CircleAlert aria-hidden="true" strokeWidth={1.5} className="size-4 shrink-0" />
       {children}
     </p>
@@ -63,7 +60,7 @@ export function HelperText({
   className?: string;
 }) {
   return (
-    <p id={id} className={cn("mt-2 text-small text-fg-muted", className)}>
+    <p id={id} className={cn("mt-2 text-small text-ink-muted", className)}>
       {children}
     </p>
   );

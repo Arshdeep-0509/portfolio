@@ -1,23 +1,17 @@
-import { getCaseStudies, getCaseStudy, EMPTY_COLLECTION_SLUG } from "@/lib/mdx";
-import { ogContentType, ogSize, renderOgImage } from "@/lib/og";
-
-// Case study share image. Used when the case study has no real (raster) cover image.
-export const size = ogSize;
-export const contentType = ogContentType;
-export const alt = "A case study by Arshdeep Singh";
+import { EMPTY_COLLECTION_SLUG, getCaseStudies, getCaseStudy } from "@/lib/mdx";
+import { ogAlt, ogContentType, ogSize, renderOgImage } from "@/lib/og";
 
 export function generateStaticParams() {
   const slugs = getCaseStudies().map((study) => ({ slug: study.slug }));
   return slugs.length ? slugs : [{ slug: EMPTY_COLLECTION_SLUG }];
 }
 
+export function generateImageMetadata({ params }: { params: { slug: string } }) {
+  const title = getCaseStudy(params.slug)?.title ?? "Work";
+  return [{ id: "card", alt: ogAlt(title), size: ogSize, contentType: ogContentType }];
+}
+
 export default async function Image({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const study = getCaseStudy(slug);
-  return renderOgImage({
-    eyebrow: "Selected work",
-    title: study?.title ?? "Work",
-    subtitle: study?.summary,
-    path: `/work/${slug}`,
-  });
+  return renderOgImage({ title: getCaseStudy(slug)?.title ?? "Work" });
 }

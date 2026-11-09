@@ -36,7 +36,7 @@ Without the optional services the site still works: forms fall back to local fil
 1. **Import the repository** at vercel.com → _Add New → Project_. Framework preset: Next.js. The defaults (install `pnpm install`, build `pnpm build`) are right — `pnpm build` also generates the Prisma client.
 2. **Environment variables:** add the production values from the table above under _Settings → Environment Variables_ (Production, and Preview where useful — e.g. Turnstile test keys and a separate database for previews).
 3. **Database:** create a PostgreSQL database (Vercel Postgres/Neon, Supabase, RDS…), set `DATABASE_URL`, then apply the schema once from your machine: `DATABASE_URL=… pnpm db:migrate`. Repeat after any new migration (or add `pnpm db:migrate &&` in front of the build command).
-4. **Domain:** _Settings → Domains_ → add `[DOMAIN]` and `www.[DOMAIN]`. Make the apex the primary domain so `www` 301-redirects to it. Point DNS as Vercel shows (A record `76.76.21.21` for the apex, CNAME `cname.vercel-dns.com` for `www`). HTTPS certificates are issued automatically.
+4. **Domain:** follow sections 1 and 2 of [LAUNCH_CHECKLIST.md](LAUNCH_CHECKLIST.md). The order matters.
 5. **Preview deployments** are created for every pull request automatically; production deploys on merges to `main`. Keep the GitHub Actions CI as a required check (see [CI](#ci-and-branch-protection)) so nothing broken reaches `main`.
 6. Leave the repository variable `DEPLOY_TARGET` unset so the self-hosted workflow stays off.
 
@@ -77,7 +77,7 @@ Disable password SSH logins (`PasswordAuthentication no` in `/etc/ssh/sshd_confi
 
 ### 2. DNS and TLS
 
-Create `A` (and `AAAA` if you have IPv6) records for `[DOMAIN]` and `www.[DOMAIN]` pointing at the server. Once they resolve:
+Create `A` (and `AAAA` if you have IPv6) records for `polestride.com` and `www.polestride.com` pointing at the server. Once they resolve:
 
 ```bash
 ./deploy/init-letsencrypt.sh        # CERTBOT_STAGING=1 ./deploy/init-letsencrypt.sh to test first
@@ -91,7 +91,7 @@ Nginx starts with a temporary self-signed certificate, Certbot completes the HTT
 
 In the GitHub repository settings:
 
-- **Variables:** `DEPLOY_TARGET=vps`, `NEXT_PUBLIC_SITE_URL=https://[DOMAIN]`, plus any other `NEXT_PUBLIC_*` values (GA, Clarity, Turnstile site key, Sentry DSN, Search Console token).
+- **Variables:** `DEPLOY_TARGET=vps`, `NEXT_PUBLIC_SITE_URL=https://polestride.com`, plus any other `NEXT_PUBLIC_*` values (GA, Clarity, Turnstile site key, Sentry DSN, Search Console token).
 - **Secrets:** `VPS_HOST`, `VPS_USER` (`deploy`), `VPS_SSH_KEY` (a private key whose public half is in `~deploy/.ssh/authorized_keys`), `VPS_KNOWN_HOSTS` (`ssh-keyscan <host>` output), `VPS_PATH` (`/opt/arshdeep-site`).
 - On the server, let Docker pull from GHCR: `echo <token> | docker login ghcr.io -u <github-user> --password-stdin` with a token that has `read:packages` (or make the package public).
 
@@ -129,13 +129,13 @@ Uploaded resumes, the local outbox and other fallbacks live in the `app-data` vo
 
 ## Email deliverability
 
-Contact and careers emails are sent from `EMAIL_FROM` on `[DOMAIN]`. To keep them out of spam, the domain needs three DNS records. Your provider's dashboard shows the exact values — with **Resend**: _Domains → Add domain_.
+Contact and careers emails are sent from `EMAIL_FROM` on `polestride.com`. To keep them out of spam, the domain needs three DNS records. Your provider's dashboard shows the exact values — with **Resend**: _Domains → Add domain_.
 
-| Record | Name                                   | Typical value                                                                                                                                        |
-| ------ | -------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
-| SPF    | `send.[DOMAIN]` (Resend) or `[DOMAIN]` | `v=spf1 include:amazonses.com ~all` (Resend) — merge into one SPF record if you already have one (e.g. Google Workspace's `include:_spf.google.com`) |
-| DKIM   | `resend._domainkey.[DOMAIN]`           | The `p=…` public key Resend gives you                                                                                                                |
-| DMARC  | `_dmarc.[DOMAIN]`                      | Start with `v=DMARC1; p=none; rua=mailto:dmarc@[DOMAIN]; adkim=s; aspf=s`, move to `p=quarantine` after two clean weeks of reports                   |
+| Record | Name                                               | Typical value                                                                                                                                        |
+| ------ | -------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| SPF    | `send.polestride.com` (Resend) or `polestride.com` | `v=spf1 include:amazonses.com ~all` (Resend) — merge into one SPF record if you already have one (e.g. Google Workspace's `include:_spf.google.com`) |
+| DKIM   | `resend._domainkey.polestride.com`                 | The `p=…` public key Resend gives you                                                                                                                |
+| DMARC  | `_dmarc.polestride.com`                            | Start with `v=DMARC1; p=none; rua=mailto:dmarc@polestride.com; adkim=s; aspf=s`, move to `p=quarantine` after two clean weeks of reports             |
 
 Resend also asks for an MX record on the `send` subdomain (bounce handling). With SMTP providers (Google Workspace, Zoho, Brevo, SES), use their SPF include and DKIM selector instead.
 
@@ -145,10 +145,10 @@ Resend also asks for an MX record on the `send` subdomain (bounce handling). Wit
 
 ## Monitoring
 
-- **Uptime:** in [UptimeRobot](https://uptimerobot.com) or [Better Stack](https://betterstack.com), add two HTTPS monitors at a 5-minute interval: `https://[DOMAIN]/` (expect 200) and `https://[DOMAIN]/api/health` (keyword `"status":"ok"` — it also checks the database). Send alerts to your email and phone.
+- **Uptime:** in [UptimeRobot](https://uptimerobot.com) or [Better Stack](https://betterstack.com), add two HTTPS monitors at a 5-minute interval: `https://polestride.com/` (expect 200) and `https://polestride.com/api/health` (keyword `"status":"ok"` — it also checks the database). Send alerts to your email and phone.
 - **Errors:** create a Sentry project (platform: Next.js / JavaScript), copy its DSN into `NEXT_PUBLIC_SENTRY_DSN` and `SENTRY_DSN`. Browser errors, React error boundaries, Server Component/route errors (`src/instrumentation.ts`) and API failures are reported — no SDK is bundled, and IP addresses aren't stored. In Sentry, enable _Security & Privacy → Prevent storing of IP addresses_ too.
 - **Analytics:** create a GA4 property and set `NEXT_PUBLIC_GA_MEASUREMENT_ID`. It loads only after a visitor accepts analytics cookies, with Consent Mode v2. Mark `generate_lead` (and optionally `career_apply`, `calendly_open`, `whatsapp_click`) as **key events** in GA4 → Admin → Events. Optional: Microsoft Clarity (`NEXT_PUBLIC_CLARITY_PROJECT_ID`, also consent-gated) or Plausible (cookieless).
-- **Search Console:** add the property for `https://[DOMAIN]`, choose _HTML tag_, put the token in `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION`, redeploy, verify — then submit `https://[DOMAIN]/sitemap.xml`. Do the same in Bing Webmaster Tools (it can import from Search Console).
+- **Search Console:** add the property for `https://polestride.com`, choose _HTML tag_, put the token in `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION`, redeploy, verify — then submit `https://polestride.com/sitemap.xml`. Do the same in Bing Webmaster Tools (it can import from Search Console).
 
 ---
 

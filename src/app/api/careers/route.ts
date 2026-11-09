@@ -144,7 +144,7 @@ export async function POST(request: Request) {
   }
 
   // The application is safely stored; an email failure is logged but doesn't fail the request.
-  const inbox = process.env.CAREERS_INBOX_EMAIL || siteConfig.email;
+  const inbox = process.env.CAREERS_INBOX_EMAIL || siteConfig.contact.email;
   const results = await Promise.allSettled([
     sendEmail({
       to: inbox,

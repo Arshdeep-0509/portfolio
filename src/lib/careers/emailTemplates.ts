@@ -1,6 +1,7 @@
 import "server-only";
 import { siteConfig } from "@/content/site";
 import type { ApplicationRecord } from "@/lib/careers/applications";
+import { LOCALE } from "@/lib/constants";
 import {
   emailColors as colors,
   emailLayout as layout,
@@ -16,8 +17,8 @@ import {
  */
 
 function receivedAt(application: ApplicationRecord) {
-  const time = new Date(application.created_at).toLocaleString("en-IN", {
-    timeZone: "Asia/Kolkata",
+  const time = new Date(application.created_at).toLocaleString(LOCALE, {
+    timeZone: siteConfig.location.timezone,
     dateStyle: "medium",
     timeStyle: "short",
   });
@@ -51,8 +52,8 @@ ${row("Received", receivedAt(application))}
 ${row("Reference", application.id)}
 </table>
 <h2 style="margin:0 0 8px;font-size:16px;">In their words</h2>
-<p style="margin:0 0 24px;padding:12px 16px;background:${colors.bg};border-left:3px solid ${colors.lamp};white-space:pre-wrap;">${escapeHtml(application.message)}</p>
-<p style="margin:0 0 6px;"><a href="${escapeHtml(resume.link)}" style="display:inline-block;background:${colors.lamp};color:${colors.text};text-decoration:none;font-weight:700;padding:10px 18px;border-radius:8px;">Open the resume (PDF)</a></p>
+<p style="margin:0 0 24px;padding:12px 16px;background:${colors.bg};border-left:3px solid ${colors.star};white-space:pre-wrap;">${escapeHtml(application.message)}</p>
+<p style="margin:0 0 6px;"><a href="${escapeHtml(resume.link)}" style="display:inline-block;background:${colors.star};color:${colors.text};text-decoration:none;font-weight:700;padding:10px 18px;border-radius:8px;">Open the resume (PDF)</a></p>
 <p style="margin:0;color:${colors.muted};font-size:13px;">${escapeHtml(expiry)} Remove this application by ${deleteBy}.</p>`,
   );
 
@@ -97,7 +98,7 @@ export function applicantConfirmationEmail(application: ApplicationRecord): Rend
 <p style="margin:0 0 16px;">Your application for <strong>${escapeHtml(application.role_title)}</strong> is with me. From here:</p>
 <ol style="margin:0 0 20px;padding-left:20px;">${nextSteps.map((step) => `<li style="margin-bottom:6px;">${escapeHtml(step)}</li>`).join("")}</ol>
 <p style="margin:0 0 16px;">Thought of something else? Reply to this email and it reaches me.</p>
-<p style="margin:0 0 24px;">— ${escapeHtml(siteConfig.name)}</p>
+<p style="margin:0 0 24px;">— ${escapeHtml(`${siteConfig.founder.name}, ${siteConfig.name}`)}</p>
 <p style="margin:0;color:${colors.muted};font-size:13px;">This email went to you because you applied through ${escapeHtml(siteConfig.url)}/collaborate. Your details are kept for hiring purposes for up to 12 months; reply if you would like them removed sooner. Reference: ${escapeHtml(application.id)}</p>`,
   );
 
@@ -109,7 +110,7 @@ export function applicantConfirmationEmail(application: ApplicationRecord): Rend
     "",
     "Thought of something else? Reply to this email and it reaches me.",
     "",
-    `— ${siteConfig.name}`,
+    `— ${siteConfig.founder.name}, ${siteConfig.name}`,
     "",
     `This email went to you because you applied through ${siteConfig.url}/collaborate. Your details are kept for hiring purposes for up to 12 months; reply if you would like them removed sooner. Reference: ${application.id}`,
   ].join("\n");

@@ -1,3 +1,4 @@
+import { ChevronDown } from "lucide-react";
 import { Fragment } from "react";
 import Link from "next/link";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
@@ -80,7 +81,7 @@ function Block({ block }: { block: LegalBlock }) {
       );
     case "note":
       return (
-        <p className="not-prose border-l-2 border-lamp-500 bg-sand-100 py-4 pr-4 pl-5 text-fg">
+        <p className="not-prose rounded-r-button border-l-2 border-link bg-surface-raised py-4 pr-4 pl-5 text-ink">
           <Rich text={block.text} />
         </p>
       );
@@ -88,23 +89,23 @@ function Block({ block }: { block: LegalBlock }) {
       return (
         // Scrolls sideways on narrow screens instead of overflowing the page.
         <div
-          className="not-prose my-6 overflow-x-auto rounded-card border border-line"
+          className="not-prose my-6 overflow-x-auto rounded-card border border-border"
           tabIndex={0}
           role="region"
           aria-label={block.caption}
         >
           <table className="w-full min-w-[36rem] text-left text-small">
             <caption className="sr-only">{block.caption}</caption>
-            <thead className="bg-sand-100">
+            <thead className="bg-surface-raised">
               <tr>
                 {block.head.map((cell) => (
-                  <th key={cell} scope="col" className="px-4 py-3 font-semibold text-fg">
+                  <th key={cell} scope="col" className="px-4 py-3 font-semibold text-ink">
                     {cell}
                   </th>
                 ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-line">
+            <tbody className="divide-y divide-border">
               {block.rows.map((row) => (
                 <tr key={row.join("|")}>
                   {row.map((cell, index) => (
@@ -112,8 +113,8 @@ function Block({ block }: { block: LegalBlock }) {
                       key={index}
                       className={
                         index === 0
-                          ? "px-4 py-3 font-mono text-xs text-fg"
-                          : "px-4 py-3 text-fg-muted"
+                          ? "px-4 py-3 text-xs text-ink tabular-nums"
+                          : "px-4 py-3 text-ink-muted"
                       }
                     >
                       <Rich text={cell} />
@@ -144,19 +145,19 @@ export function LegalLayout({
 }) {
   const chapters = doc.sections.map((section) => ({ id: section.id, text: section.title }));
   const updated = formatDate(doc.lastUpdated);
-  const email = siteConfig.email;
+  const email = siteConfig.contact.email;
 
   return (
-    <div className="tone-ivory grain bg-ivory-50 text-fg">
+    <div className="bg-bg text-ink">
       <div className="container-site pt-16 pb-24 lg:pt-24 lg:pb-32 print:p-0">
         <div className="print:hidden">
           <Breadcrumb items={[{ label: "Home", href: "/" }, { label: doc.title }]} />
         </div>
         <div className="mt-8 lg:grid lg:grid-cols-12 lg:gap-8">
           <div className="lg:col-span-8 lg:col-start-4">
-            <h1 className="text-h1 text-fg">{doc.title}</h1>
-            <p className="mt-5 max-w-2xl text-lg text-fg-muted print:hidden">{doc.description}</p>
-            <p className="mt-6 label-mono text-accent">
+            <h1 className="text-h1 text-ink">{doc.title}</h1>
+            <p className="mt-5 max-w-2xl text-lg text-ink-muted print:hidden">{doc.description}</p>
+            <p className="mt-6 label-text text-ink-muted">
               Last updated · <time dateTime={doc.lastUpdated}>{updated}</time>
             </p>
           </div>
@@ -170,22 +171,23 @@ export function LegalLayout({
           </aside>
 
           <article className="min-w-0 lg:col-span-8 lg:col-start-4">
-            <details className="group mb-10 rounded-card border border-line lg:hidden print:hidden">
+            <details className="group mb-10 rounded-card border border-border lg:hidden print:hidden">
               <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between px-4 font-semibold [&::-webkit-details-marker]:hidden">
                 Contents
-                <span aria-hidden="true" className="font-mono text-accent">
-                  <span className="group-open:hidden">+</span>
-                  <span className="hidden group-open:inline">−</span>
-                </span>
+                <ChevronDown
+                  aria-hidden="true"
+                  strokeWidth={1.5}
+                  className="size-4 text-ink-muted transition-transform duration-200 group-open:rotate-180"
+                />
               </summary>
-              <ol className="border-t border-line px-4 py-2">
+              <ol className="border-t border-border px-4 py-2">
                 {chapters.map((chapter, index) => (
                   <li key={chapter.id}>
                     <a
                       href={`#${chapter.id}`}
-                      className="flex min-h-11 items-center gap-3 text-small text-fg-muted hover:text-fg"
+                      className="flex min-h-11 items-center gap-3 text-small text-ink-muted hover:text-ink"
                     >
-                      <span className="font-mono text-xs text-accent">
+                      <span className="text-xs text-ink-muted tabular-nums">
                         {String(index + 1).padStart(2, "0")}
                       </span>
                       {chapter.text}
@@ -199,7 +201,7 @@ export function LegalLayout({
               {doc.sections.map((section, index) => (
                 <Fragment key={section.id}>
                   <h2 id={section.id}>
-                    <span className="mr-3 font-mono text-base font-normal text-lamp-700">
+                    <span className="mr-3 text-base font-normal text-ink-muted tabular-nums">
                       {String(index + 1).padStart(2, "0")}
                     </span>
                     {section.title}
@@ -214,15 +216,15 @@ export function LegalLayout({
               ))}
             </div>
 
-            <aside className="mt-14 border-t border-line pt-6">
-              <p className="text-fg">
+            <aside className="mt-14 border-t border-border pt-6">
+              <p className="text-ink">
                 <strong>Questions about this page?</strong> Write to{" "}
                 {isPlaceholder(email) ? (
                   <PlaceholderText text={email} />
                 ) : (
                   <a
                     href={`mailto:${email}`}
-                    className="font-semibold text-accent underline underline-offset-4"
+                    className="font-semibold text-link underline underline-offset-4"
                   >
                     {email}
                   </a>

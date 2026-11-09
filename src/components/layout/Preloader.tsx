@@ -1,4 +1,5 @@
 import { Fragment, type CSSProperties } from "react";
+import { MARK_BODY, MARK_STAR, MARK_TRANSFORM, MARK_VIEW_BOX } from "@/components/brand/mark";
 import { siteConfig } from "@/content/site";
 
 /**
@@ -10,9 +11,9 @@ import { siteConfig } from "@/content/site";
 export const preloaderScript = `try{if(sessionStorage.getItem("preloader-off")){document.documentElement.setAttribute("data-preloader","off")}}catch(e){}`;
 
 /**
- * The opening sequence, about 3.4 seconds on night sky: the "A" of the mark draws itself, the
- * lamp ignites and lights the sky around it, the name rises letter by letter, an amber rule
- * sweeps out, the tagline arrives word by word, and the whole sky rolls up like a curtain.
+ * The opening sequence, about 3.4 seconds on night sky: the "P" rises, the star ignites and
+ * lights the sky around it, the name rises letter by letter, a gold rule sweeps out, the tagline
+ * arrives word by word, and the whole sky rolls up like a curtain.
  *
  * It's decorative (aria-hidden) and never takes clicks (pointer-events: none), so the page
  * underneath is usable — and readable by screen readers — from the first moment.
@@ -22,32 +23,25 @@ export function Preloader() {
   const words = siteConfig.tagline.split(" ");
 
   return (
-    <div className="preloader bg-night-950 bg-stars" aria-hidden="true">
+    <div data-theme="dark" className="preloader bg-bg bg-stars" aria-hidden="true">
       <div className="preloader-sky" />
       <div className="preloader-stage">
-        <svg viewBox="0 0 40 40" className="preloader-mark" focusable="false">
+        <svg viewBox={MARK_VIEW_BOX} className="preloader-mark" focusable="false">
           <defs>
             <radialGradient id="preloader-glow">
-              <stop offset="0%" stopColor="var(--lamp-400)" stopOpacity="0.95" />
-              <stop offset="45%" stopColor="var(--lamp-500)" stopOpacity="0.35" />
-              <stop offset="100%" stopColor="var(--lamp-500)" stopOpacity="0" />
+              <stop offset="0%" stopColor="var(--accent)" stopOpacity="0.95" />
+              <stop offset="45%" stopColor="var(--accent)" stopOpacity="0.35" />
+              <stop offset="100%" stopColor="var(--accent)" stopOpacity="0" />
             </radialGradient>
           </defs>
-          <circle className="preloader-glow" cx="20" cy="6.5" r="7.5" fill="url(#preloader-glow)" />
-          <circle className="preloader-flame" cx="20" cy="6.5" r="2.6" fill="var(--lamp-500)" />
-          <path
-            className="preloader-stroke"
-            d="M7.5 35 20 13.5 32.5 35"
-            pathLength={1}
-            fill="none"
-            stroke="var(--ivory-50)"
-            strokeWidth="3"
-            strokeLinejoin="miter"
-            strokeMiterlimit="10"
-          />
+          <g transform={MARK_TRANSFORM}>
+            <circle className="preloader-glow" cx="44" cy="34" r="26" fill="url(#preloader-glow)" />
+            <path className="preloader-body" d={MARK_BODY} fill="var(--ink)" fillRule="evenodd" />
+            <path className="preloader-flame" d={MARK_STAR} fill="var(--accent)" />
+          </g>
         </svg>
 
-        <p className="preloader-name font-display-soft">
+        <p className="preloader-name font-display font-semibold">
           {[...name].map((char, index) => (
             <span key={index} style={{ "--i": index } as CSSProperties}>
               {char === " " ? " " : char}

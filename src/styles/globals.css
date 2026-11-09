@@ -1,66 +1,40 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
+/* Themes are switched with data-theme on <html> (see src/lib/theme.ts). */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
 /* =============================================================================
-   SKYLAMP DESIGN TOKENS
-   A lamp in the night sky: deep night surfaces, warm paper surfaces, one saffron light.
-   Raw values live here as CSS variables; the @theme blocks below map them into Tailwind
-   (v4 is configured in CSS — there is no tailwind.config.ts). Components use the utilities,
-   never raw hex values. Token table and contrast notes: REBRAND.md.
+   POLESTRIDE DESIGN TOKENS
+   The night sky and one gold star. Raw colour values live only in this block and its dark twin;
+   the @theme block below maps them into Tailwind (v4 is configured in CSS, so there is no
+   tailwind.config.ts). Components use the utilities, never raw values. src/lib/brandColors.ts
+   repeats the values for code that can't read CSS, and `pnpm contrast` measures every pairing.
+
+   Gold (--accent) is for the logo star, the primary CTA, the active nav state and one highlight
+   per section. It is never a text colour.
+
+   Any element can carry data-theme="dark" to stay on the night palette in both themes, as the
+   build log, file tree and preloader do.
    ========================================================================== */
 
 :root {
-  /* Night — dark surfaces */
-  --night-950: #0a0a12; /* deepest sky: hero, footer */
-  --night-900: #12121f; /* dark sections */
-  --night-800: #1c1b2e; /* cards on dark */
-  --dusk-700: #2e2a4f; /* indigo dusk, gradients on dark */
-
-  /* Lamp — the one accent */
-  --lamp-500: #f5a524; /* fills: buttons, highlights. Never body text on paper (1.9:1). */
-  --lamp-400: #ffc15e; /* glow, hover, accent text on night (12:1) */
-  --lamp-700: #a65e00; /* accent text on ivory (4.7:1) */
-  --lamp-800: #9a5600; /* AA tint: accent text on sand, where --lamp-700 is 4.3:1 (4.9:1) */
-  --ember-500: #f2683c; /* flame orange, gradient end */
-  --starlight: #c9d2ff; /* tiny accents on dark: labels, star dots */
-
-  /* Paper — light surfaces */
-  --ivory-50: #fbf8f2; /* main light background */
-  --sand-100: #f3ede2; /* alternate light section */
-
-  /* Text */
-  --ink-900: #16141f; /* text on light (17:1 on ivory) */
-  --ink-600: #4a4658; /* muted text on light (8.6:1) */
-  --mist-300: #b8b4c6; /* muted text on dark (9.8:1 on night-950) */
-
-  /* Lines */
-  --line: #e6dfd3; /* hairlines on light */
-  --line-dark: rgb(255 255 255 / 0.1); /* hairlines on dark */
-
-  /* Status. The base values are for dots, icons and borders; the -700/-300 tints carry text. */
-  --success: #2f9e6e;
-  --success-700: #1f7a50; /* AA tint: success text on paper (5.0:1 ivory, 4.6:1 sand) */
-  --danger: #d64545;
-  --danger-700: #b83a3a; /* AA tint: error text on paper (5.4:1 ivory, 4.9:1 sand) */
-  --danger-300: #ff8a7a; /* AA tint: error text on night (8.6:1) */
-
-  /* Gradients and textures */
-  --grad-flame: linear-gradient(135deg, #ffc15e 0%, #f5a524 45%, #f2683c 100%);
-  --grad-horizon: radial-gradient(
-    120% 80% at 50% 115%,
-    rgb(245 165 36 / 0.3) 0%,
-    rgb(46 42 79 / 0.55) 38%,
-    #0a0a12 72%
-  );
-  /* Two offset layers of 1px star dots at 6% and 4%. Sizes/positions: the bg-stars utility. */
-  --stars:
-    radial-gradient(circle, rgb(201 210 255 / 0.06) 1px, transparent 1.5px),
-    radial-gradient(circle, rgb(201 210 255 / 0.04) 1px, transparent 1.5px);
-  /* Fractal noise tile; laid over ivory at 2.5% by the grain utility. */
-  --paper-grain: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
-
-  /* Depth: cards are flat; only hover adds a lamp glow. */
-  --glow-card: 0 0 0 1px var(--lamp-500), 0 18px 40px -24px rgb(245 165 36 / 0.55);
+  color-scheme: light;
+  --bg: #eaf1fb;
+  --surface: #ffffff;
+  --surface-raised: #f4f7fc;
+  --ink: #0b1630;
+  --ink-muted: #4a5b7a;
+  --border: #cbd7e8;
+  --accent: #b88018; /* the brief's #c4881a is 2.68:1 on --bg; this is the first value over 3:1 */
+  --polaris: #c4881a; /* decorative, so the brief's value stands */
+  --star-min: 0.1;
+  --star-span: 0.15;
+  --accent-ink: #0b1630;
+  --link: #0e7b6d; /* the brief's #0e7c6e is 4.48:1 on --bg */
+  --focus: #0e7b6d;
+  --success: #0e7b6d;
+  --danger: #b3261e;
 
   /* Layout */
   --container-max: 1240px;
@@ -78,49 +52,65 @@
   --ease-calm: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
+[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0b1630;
+  --surface: #13254a;
+  --surface-raised: #1a3160;
+  --ink: #eaf1fb;
+  --ink-muted: #8a9bb8;
+  --border: #24406f;
+  --accent: #e8b84a;
+  --polaris: #e8b84a;
+  --star-min: 0.2;
+  --star-span: 0.4;
+  --accent-ink: #0b1630;
+  --link: #5fd4c2;
+  --focus: #5fd4c2;
+  --success: #5fd4c2;
+  --danger: #ff8a7a;
+  color: var(--ink);
+}
+
+/* Without JavaScript the head script can't run, so the system preference decides. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #0b1630;
+    --surface: #13254a;
+    --surface-raised: #1a3160;
+    --ink: #eaf1fb;
+    --ink-muted: #8a9bb8;
+    --border: #24406f;
+    --accent: #e8b84a;
+    --polaris: #e8b84a;
+    --star-min: 0.2;
+    --star-span: 0.4;
+    --accent-ink: #0b1630;
+    --link: #5fd4c2;
+    --focus: #5fd4c2;
+    --success: #5fd4c2;
+    --danger: #ff8a7a;
+  }
+}
+
+/* Derived from the tokens. Declared on every themed element so they recompute inside
+   data-theme="dark" islands rather than inheriting the page's values. */
+:root,
+[data-theme] {
+  --scrim: color-mix(in srgb, #0b1630 72%, transparent);
+  --glow: color-mix(in srgb, var(--link) 12%, transparent);
+  --grad-horizon: radial-gradient(120% 80% at 50% 115%, var(--surface) 0%, var(--bg) 72%);
+  /* Two offset layers of 1px star dots. Sizes and positions: the bg-stars utility. */
+  --stars:
+    radial-gradient(circle, color-mix(in srgb, var(--ink) 7%, transparent) 1px, transparent 1.5px),
+    radial-gradient(circle, color-mix(in srgb, var(--ink) 5%, transparent) 1px, transparent 1.5px);
+}
+
 @media (width >= 64rem) {
   :root {
     --strip-h: 32px;
   }
-}
-
-/* -----------------------------------------------------------------------------
-   TONES — contextual colours. <Section tone="…"> adds one of these classes so text, hairlines,
-   accents and focus rings inside pick readable values automatically. Every pairing below is
-   measured (scripts/contrast-check.mjs prints the table).
-   -------------------------------------------------------------------------- */
-:root,
-.tone-ivory {
-  --fg: var(--ink-900);
-  --fg-muted: var(--ink-600);
-  --accent: var(--lamp-700);
-  --rule: var(--line);
-  --focus: var(--lamp-700);
-  --danger-fg: var(--danger-700);
-  --success-fg: var(--success-700);
-  --field-bg: #fffdf9;
-}
-
-.tone-sand {
-  --fg: var(--ink-900);
-  --fg-muted: var(--ink-600);
-  --accent: var(--lamp-800);
-  --rule: var(--line);
-  --focus: var(--lamp-800);
-  --danger-fg: var(--danger-700);
-  --success-fg: var(--success-700);
-  --field-bg: var(--ivory-50);
-}
-
-.tone-night {
-  --fg: var(--ivory-50);
-  --fg-muted: var(--mist-300);
-  --accent: var(--lamp-400);
-  --rule: var(--line-dark);
-  --focus: var(--lamp-400);
-  --danger-fg: var(--danger-300);
-  --success-fg: var(--success);
-  --field-bg: rgb(255 255 255 / 0.04);
 }
 
 /* Reset Tailwind's default scales so only these tokens exist. */
@@ -132,71 +122,51 @@
 }
 
 @theme inline {
-  --color-night-950: var(--night-950);
-  --color-night-900: var(--night-900);
-  --color-night-800: var(--night-800);
-  --color-dusk-700: var(--dusk-700);
-  --color-lamp-400: var(--lamp-400);
-  --color-lamp-500: var(--lamp-500);
-  --color-lamp-700: var(--lamp-700);
-  --color-lamp-800: var(--lamp-800);
-  --color-ember-500: var(--ember-500);
-  --color-starlight: var(--starlight);
-  --color-ivory-50: var(--ivory-50);
-  --color-sand-100: var(--sand-100);
-  --color-ink-900: var(--ink-900);
-  --color-ink-600: var(--ink-600);
-  --color-mist-300: var(--mist-300);
-  --color-line: var(--line);
-  --color-line-dark: var(--line-dark);
-  --color-success: var(--success);
-  --color-success-700: var(--success-700);
-  --color-danger: var(--danger);
-  --color-danger-700: var(--danger-700);
-  --color-danger-300: var(--danger-300);
-
-  /* Contextual (see TONES) */
-  --color-fg: var(--fg);
-  --color-fg-muted: var(--fg-muted);
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-border: var(--border);
   --color-accent: var(--accent);
-  --color-rule: var(--rule);
-  --color-danger-fg: var(--danger-fg);
-  --color-success-fg: var(--success-fg);
-  --color-field: var(--field-bg);
+  --color-accent-ink: var(--accent-ink);
+  --color-link: var(--link);
+  --color-focus: var(--focus);
+  --color-success: var(--success);
+  --color-danger: var(--danger);
+  --color-scrim: var(--scrim);
 
-  --font-display: var(--font-fraunces), ui-serif, Georgia, serif;
-  --font-sans: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-plex-mono), ui-monospace, monospace;
+  --font-display: var(--font-display), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-mono), ui-monospace, monospace;
 
-  /* 4px cards and inputs, 8px buttons; full rounding is reserved for status dots. */
-  --radius-card: 4px;
-  --radius-button: 8px;
+  /* 16px large containers, 10px buttons and inputs, full rounding for chips and dots, and 4px
+     for tick boxes, which are too small to take anything larger. */
+  --radius-card: 16px;
+  --radius-button: 10px;
   --radius-dot: 999px;
+  --radius-tick: 4px;
 
-  --shadow-glow: var(--glow-card);
-
-  --text-h1: clamp(2.75rem, 1.8rem + 4.5vw, 5rem);
-  --text-h1--line-height: 1.02;
-  --text-h1--letter-spacing: -0.02em;
-  --text-h2: clamp(2rem, 1.4rem + 2.6vw, 3.25rem);
-  --text-h2--line-height: 1.06;
-  --text-h2--letter-spacing: -0.015em;
+  --text-h1: clamp(2.5rem, 5vw + 1rem, 4.5rem);
+  --text-h1--line-height: 1.05;
+  --text-h1--letter-spacing: -0.03em;
+  --text-h2: clamp(1.875rem, 3vw + 1rem, 3rem);
+  --text-h2--line-height: 1.1;
+  --text-h2--letter-spacing: -0.02em;
   --text-h3: 1.375rem;
-  --text-h3--line-height: 1.3;
+  --text-h3--line-height: 1.25;
   --text-body: 1.0625rem;
-  --text-body--line-height: 1.7;
-  --text-small: 0.9375rem;
-  --text-small--line-height: 1.6;
-  --text-label: 0.75rem;
+  --text-body--line-height: 1.65;
+  --text-small: 0.875rem;
+  --text-small--line-height: 1.5;
+  --text-label: 0.875rem;
   --text-label--line-height: 1.4;
-  --text-label--letter-spacing: 0.08em;
 
   --animate-rise: rise var(--motion-reveal) var(--ease-calm) both;
   --animate-fade-in: fade-in 400ms var(--ease-calm) both;
   --animate-overlay-in: overlay-in 320ms var(--ease-calm) both;
   --animate-panel-in: panel-in var(--motion-fast) var(--ease-calm) both;
   --animate-corner-in: corner-in 600ms var(--ease-calm) both;
-  --animate-lamp-breathe: lamp-breathe 6s ease-in-out infinite;
   --animate-caret: caret 1s steps(1) infinite;
 
   /* The hero H1 is the LCP element: it rises but never fades or clips, so it paints on frame one. */
@@ -246,15 +216,6 @@
       transform: translate(0, 0);
     }
   }
-  @keyframes lamp-breathe {
-    0%,
-    100% {
-      opacity: 0.55;
-    }
-    50% {
-      opacity: 1;
-    }
-  }
   @keyframes caret {
     50% {
       opacity: 0;
@@ -262,25 +223,7 @@
   }
 }
 
-/* BuildLog keyframes, referenced from inline styles (so they live outside @theme, which only
-   emits keyframes that a utility uses). Each line is uncovered one character per step by a
-   clip-path — repaint only, never layout (animating width cost ~1.5s of layout in Lighthouse). */
-@keyframes log-type {
-  from {
-    clip-path: inset(0 100% 0 0);
-  }
-  to {
-    clip-path: inset(0 0 0 0);
-  }
-}
-@keyframes log-fade {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
+/* The build log's cursor. */
 @keyframes log-caret {
   50% {
     opacity: 0;
@@ -308,14 +251,11 @@
   }
 }
 
-@utility bg-grad-flame {
-  background-image: var(--grad-flame);
-}
 @utility bg-grad-horizon {
   background-image: var(--grad-horizon);
 }
 
-/* Star field for night sections: two offset dot layers. */
+/* Star field: two offset dot layers. */
 @utility bg-stars {
   background-image: var(--stars);
   background-size:
@@ -326,36 +266,29 @@
     23px 35px;
 }
 
-/* Paper grain over ivory: a pseudo-element, so it never affects layout or text colour. */
-@utility grain {
-  position: relative;
-  isolation: isolate;
-  &::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    pointer-events: none;
-    background-image: var(--paper-grain);
-    opacity: 0.025;
-  }
-}
-
-/* Mono label: 12px uppercase IBM Plex Mono. */
-@utility label-mono {
-  font-family: var(--font-mono);
+/* Section labels and small captions: sentence case, in the body face. Exempt from the paragraph
+   measure because labels often run a hairline out to the edge of their row. */
+@utility label-text {
   font-size: var(--text-label);
   line-height: var(--text-label--line-height);
-  letter-spacing: var(--text-label--letter-spacing);
-  text-transform: uppercase;
   font-weight: 500;
+  max-width: none;
 }
 
-/* Fraunces with the SOFT axis at 50 and automatic optical sizing. */
-@utility font-display-soft {
-  font-family: var(--font-display);
-  font-variation-settings: "SOFT" 50;
-  font-optical-sizing: auto;
+/* The dotted line of a star path: a column of 2px dots, 8px apart. */
+@utility star-path {
+  width: 2px;
+  background-image: radial-gradient(circle, var(--ink-muted) 1px, transparent 1.2px);
+  background-size: 2px 8px;
+  background-repeat: repeat-y;
+}
+
+/* The same line running across, for steps laid out in a row. */
+@utility star-path-x {
+  height: 2px;
+  background-image: radial-gradient(circle, var(--ink-muted) 1px, transparent 1.2px);
+  background-size: 8px 2px;
+  background-repeat: repeat-x;
 }
 
 /* Animated underline for text links: grows from the left on hover and focus. */
@@ -392,10 +325,10 @@
   }
 
   body {
-    background-color: var(--ivory-50);
-    color: var(--ink-900);
+    background-color: var(--bg);
+    color: var(--ink);
     font-size: var(--text-body);
-    line-height: 1.7;
+    line-height: var(--text-body--line-height);
   }
 
   h1,
@@ -403,44 +336,47 @@
   h3,
   h4 {
     font-family: var(--font-display);
-    font-variation-settings: "SOFT" 50;
-    font-weight: 560;
-    color: var(--fg);
+    font-weight: 600;
+    color: var(--ink);
     text-wrap: balance;
   }
 
-  /* Emphasised words in headlines: Fraunces italic over a thin flame underline. */
+  /* Readable measure for running text. A max-w-* utility on the element overrides it. */
+  p {
+    max-width: 68ch;
+  }
+
+  /* Emphasised words in headlines: heavier Sora over a thin gold underline, the section's one
+     gold highlight. */
   :where(h1, h2, .headline) em {
-    font-family: var(--font-fraunces-italic), var(--font-display);
-    font-style: italic;
-    font-weight: 500;
-    padding-bottom: 6px;
-    background: var(--grad-flame) no-repeat left bottom / 100% 2px;
-    -webkit-box-decoration-break: clone;
-    box-decoration-break: clone;
+    font-family: var(--font-display);
+    font-style: normal;
+    font-weight: 700;
+    color: var(--ink);
+    text-decoration-line: underline;
+    text-decoration-color: var(--accent);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.18em;
   }
 
   ::selection {
-    background-color: var(--lamp-400);
-    color: var(--ink-900);
+    background-color: var(--link);
+    color: var(--bg);
   }
 
-  /* One visible focus style everywhere; its colour follows the section tone. */
+  /* One visible focus style everywhere. */
   :focus-visible {
     outline: 2px solid var(--focus);
-    outline-offset: 3px;
+    outline-offset: 2px;
   }
 }
 
 /* -----------------------------------------------------------------------------
    HEADER STATES
-   Solid by default: ivory bar, ink text, bottom hairline. On routes that open with a night hero
+   Solid by default: the page colour with a bottom hairline. On routes that open with a hero
    (data-over-hero, set from the pathname — see isOverHeroRoute in navTypes.ts) it is transparent
-   with ivory text until the page has scrolled 40px or a menu is open (data-solid). Both
-   attributes are in the server HTML, so the first paint is already right.
-
-   Deliberately no :has() here: a body-level :has() is re-checked on DOM changes across the page
-   and showed up as ~0.8s of extra style work in Lighthouse.
+   until the page has scrolled 40px or a menu is open (data-solid). Both attributes are in the
+   server HTML, so the first paint is already right.
    -------------------------------------------------------------------------- */
 #main {
   padding-top: var(--header-h);
@@ -451,53 +387,52 @@
 }
 
 .site-bar {
-  background-color: rgb(251 248 242 / 0.94);
-  border-bottom: 1px solid var(--line);
+  background-color: color-mix(in srgb, var(--surface) 85%, transparent);
+  border-bottom: 1px solid var(--border);
   backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
   transition:
     background-color 300ms var(--ease-calm),
     border-color 300ms var(--ease-calm);
 }
 
 .site-header[data-over-hero]:not([data-solid]) .site-bar {
-  --fg: var(--ivory-50);
-  --fg-muted: var(--mist-300);
-  --accent: var(--lamp-400);
-  --rule: var(--line-dark);
-  --focus: var(--lamp-400);
   background-color: transparent;
   border-bottom-color: transparent;
   backdrop-filter: none;
-  -webkit-backdrop-filter: none;
+}
+
+/* Switching theme restyles the whole page. Without this, every element with a colour transition
+   would animate at once: slow, and the page would fade in patches. Set for one frame by ThemeToggle. */
+.theme-switching,
+.theme-switching * {
+  transition: none !important;
 }
 
 /* Long-form prose (case studies, journal posts). The default palette is reset, so the
    typography plugin's colours are mapped onto the tokens here. */
 .prose {
-  --tw-prose-body: var(--ink-600);
-  --tw-prose-headings: var(--ink-900);
-  --tw-prose-lead: var(--ink-600);
-  --tw-prose-links: var(--lamp-700);
-  --tw-prose-bold: var(--ink-900);
-  --tw-prose-counters: var(--ink-600);
-  --tw-prose-bullets: var(--lamp-700);
-  --tw-prose-hr: var(--line);
-  --tw-prose-quotes: var(--ink-900);
-  --tw-prose-quote-borders: var(--lamp-500);
-  --tw-prose-captions: var(--ink-600);
-  --tw-prose-code: var(--ink-900);
+  --tw-prose-body: var(--ink-muted);
+  --tw-prose-headings: var(--ink);
+  --tw-prose-lead: var(--ink-muted);
+  --tw-prose-links: var(--link);
+  --tw-prose-bold: var(--ink);
+  --tw-prose-counters: var(--ink-muted);
+  --tw-prose-bullets: var(--ink-muted);
+  --tw-prose-hr: var(--border);
+  --tw-prose-quotes: var(--ink);
+  --tw-prose-quote-borders: var(--border);
+  --tw-prose-captions: var(--ink-muted);
+  --tw-prose-code: var(--ink);
   --tw-prose-pre-code: inherit;
-  --tw-prose-pre-bg: var(--night-950);
-  --tw-prose-th-borders: var(--line);
-  --tw-prose-td-borders: var(--line);
-  font-size: 1.0625rem;
-  line-height: 1.75;
+  --tw-prose-pre-bg: var(--surface-raised);
+  --tw-prose-th-borders: var(--border);
+  --tw-prose-td-borders: var(--border);
+  font-size: var(--text-body);
+  line-height: var(--text-body--line-height);
 }
 .prose :where(h2, h3) {
   font-family: var(--font-display);
-  font-variation-settings: "SOFT" 50;
-  font-weight: 560;
+  font-weight: 600;
   letter-spacing: -0.01em;
 }
 .prose :where(h2) {
@@ -505,7 +440,7 @@
   line-height: 1.15;
 }
 .prose :where(a) {
-  text-decoration-color: var(--lamp-500);
+  text-decoration-color: var(--link);
   text-decoration-thickness: 1px;
   text-underline-offset: 4px;
 }
@@ -513,7 +448,7 @@
   text-decoration-thickness: 2px;
 }
 .prose :where(:not(pre) > code) {
-  background: var(--sand-100);
+  background: var(--surface-raised);
   border-radius: 4px;
   padding: 0.15em 0.4em;
   font-weight: 500;
@@ -523,7 +458,7 @@
   content: none;
 }
 .prose :where(pre) {
-  border-radius: 4px;
+  border-radius: 10px;
   padding: 1.1rem 1.25rem;
   font-size: 0.875rem;
 }
@@ -536,8 +471,83 @@ mark[data-placeholder] {
   background: transparent;
   color: inherit;
   font-weight: 600;
-  text-decoration: underline dashed var(--lamp-500) 2px;
+  text-decoration: underline dashed var(--link) 2px;
   text-underline-offset: 4px;
+}
+
+/* The header logo's star turns a quarter of a point on hover and keyboard focus. */
+.logo-star {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .site-header .logo-star {
+    transition: rotate 400ms ease-out;
+  }
+  .site-header a:hover .logo-star,
+  .site-header a:focus-visible .logo-star {
+    rotate: 45deg;
+  }
+}
+
+/* -----------------------------------------------------------------------------
+   THE HERO'S MOMENT (components/sections/home/HeroSky.tsx)
+   Everything here is the final state; the animation below only plays when the head script sets
+   data-sky="play". So with no JavaScript, on a later visit, or under reduced motion, the sky is
+   simply there. 0ms the stars fade in · 450ms Polaris brightens · 650ms the bearing line draws ·
+   1550ms done. It waits for the preloader's curtain when that is running.
+   -------------------------------------------------------------------------- */
+:root {
+  --sky-delay: 3.3s;
+}
+[data-preloader="off"] {
+  --sky-delay: 0s;
+}
+.hero-star {
+  opacity: calc(var(--star-min) + var(--brightness) * var(--star-span));
+}
+.hero-polaris {
+  color: var(--polaris);
+  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--polaris) 40%, transparent));
+}
+.hero-bearing-draw {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+.log-caret {
+  animation: log-caret 1s steps(1) calc(var(--sky-delay) + 1.6s) 6;
+}
+@media (prefers-reduced-motion: reduce) {
+  .log-caret {
+    animation: none;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  [data-sky="play"] .hero-sky {
+    animation: sky-fade 600ms ease-out var(--sky-delay) backwards;
+  }
+  [data-sky="play"] .hero-polaris {
+    animation: polaris-brighten 300ms ease-out calc(var(--sky-delay) + 450ms) backwards;
+  }
+  [data-sky="play"] .hero-bearing-draw {
+    animation: bearing-draw 900ms ease-in-out calc(var(--sky-delay) + 650ms) backwards;
+  }
+}
+@keyframes sky-fade {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes polaris-brighten {
+  from {
+    opacity: 0.25;
+    filter: drop-shadow(0 0 0 transparent);
+  }
+}
+@keyframes bearing-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
 }
 
 /* -----------------------------------------------------------------------------
@@ -575,7 +585,7 @@ mark[data-placeholder] {
 
 /* ==========================================================================
    PRELOADER — the opening sequence (components/layout/Preloader.tsx), ~3.6s, on every full load.
-   0.15s the "A" draws · 0.6s the lamp ignites and lights the sky · 0.95s the name rises ·
+   0.15s the "P" rises · 0.6s the star ignites and lights the sky · 0.95s the name rises ·
    1.45s the rule sweeps · 1.6s the tagline arrives · 3.0s the sky rolls up like a curtain.
    ========================================================================== */
 .preloader {
@@ -600,16 +610,18 @@ mark[data-placeholder] {
   translate: -50% -62%;
   background: radial-gradient(
     closest-side,
-    rgb(245 165 36 / 0.22),
-    rgb(242 104 60 / 0.08) 45%,
+    color-mix(in srgb, var(--ink) 9%, transparent),
+    color-mix(in srgb, var(--ink) 3%, transparent) 45%,
     transparent 72%
   );
   opacity: 0;
   scale: 0.3;
   animation: preloader-dawn 1400ms cubic-bezier(0.22, 1, 0.36, 1) 650ms forwards;
 }
+/* Full width, so its box doesn't re-centre when web fonts change the width of the text. */
 .preloader-stage {
   position: relative;
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -621,10 +633,10 @@ mark[data-placeholder] {
   width: clamp(5rem, 3.75rem + 5vw, 8rem);
   overflow: visible;
 }
-.preloader-stroke {
-  stroke-dasharray: 1;
-  stroke-dashoffset: 1;
-  animation: preloader-draw 800ms cubic-bezier(0.65, 0, 0.35, 1) 150ms forwards;
+.preloader-body {
+  opacity: 0;
+  translate: 0 6px;
+  animation: preloader-rise 800ms cubic-bezier(0.22, 1, 0.36, 1) 150ms forwards;
 }
 .preloader-flame {
   transform-box: fill-box;
@@ -643,11 +655,11 @@ mark[data-placeholder] {
 }
 .preloader-name {
   margin-top: 1.75rem;
-  font-size: clamp(2.5rem, 1.6rem + 4.5vw, 5rem);
+  font-size: var(--text-h1);
   font-weight: 600;
   line-height: 1.05;
   letter-spacing: -0.02em;
-  color: var(--ivory-50);
+  color: var(--ink);
   perspective: 600px;
 }
 .preloader-name span {
@@ -664,7 +676,7 @@ mark[data-placeholder] {
   height: 2px;
   margin-top: 1.25rem;
   border-radius: 999px;
-  background: linear-gradient(90deg, transparent, var(--lamp-500), var(--ember-500), transparent);
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
   scale: 0 1;
   animation: preloader-sweep 700ms cubic-bezier(0.65, 0, 0.35, 1) 1.45s forwards;
 }
@@ -676,7 +688,7 @@ mark[data-placeholder] {
   max-width: 42rem;
   margin-top: 1.25rem;
   font-size: clamp(1rem, 0.9rem + 0.6vw, 1.375rem);
-  color: var(--lamp-400);
+  color: var(--ink);
 }
 .preloader-tagline span {
   opacity: 0;
@@ -685,9 +697,10 @@ mark[data-placeholder] {
     forwards;
 }
 
-@keyframes preloader-draw {
+@keyframes preloader-rise {
   to {
-    stroke-dashoffset: 0;
+    opacity: 1;
+    translate: 0 0;
   }
 }
 @keyframes preloader-ignite {
@@ -754,7 +767,13 @@ mark[data-placeholder] {
     translate: 0 -2.5rem;
   }
 }
+/* visibility is stated in every keyframe: Safari ignores it when it appears only in the last one,
+   which would leave the invisible overlay and its looping animations running. */
 @keyframes preloader-fade {
+  from {
+    opacity: 1;
+    visibility: visible;
+  }
   to {
     opacity: 0;
     visibility: hidden;
@@ -763,9 +782,11 @@ mark[data-placeholder] {
 @keyframes preloader-curtain {
   0% {
     clip-path: inset(0 0 0 0);
+    visibility: visible;
   }
   99% {
     clip-path: inset(0 0 100% 0);
+    visibility: visible;
   }
   100% {
     clip-path: inset(0 0 100% 0);
@@ -783,8 +804,9 @@ mark[data-placeholder] {
   .preloader {
     animation: preloader-fade 500ms ease 2s forwards !important;
   }
-  .preloader-stroke {
-    stroke-dashoffset: 0;
+  .preloader-body {
+    opacity: 1;
+    translate: none;
   }
   .preloader-flame,
   .preloader-sky {
@@ -835,8 +857,19 @@ mark[data-placeholder] {
     margin: 18mm 16mm;
   }
 
+  :root,
+  [data-theme] {
+    --bg: #ffffff;
+    --surface: #ffffff;
+    --surface-raised: #ffffff;
+    --ink: #0b1630;
+    --ink-muted: #4a5b7a;
+    --border: #cbd7e8;
+    --link: #0e7b6d;
+  }
+
   body {
-    background: #fff !important;
+    background: var(--bg) !important;
   }
 
   /* On paper a link is only useful if you can read where it goes. */

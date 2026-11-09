@@ -15,10 +15,10 @@ export const statusLabels: Record<StatusKind, string> = {
 const dotClass: Record<StatusKind, string> = {
   available: "bg-success",
   live: "bg-success",
-  limited: "bg-lamp-500",
-  "in-development": "bg-lamp-500",
-  booked: "bg-fg-muted",
-  concept: "bg-starlight ring-1 ring-fg-muted/50",
+  limited: "bg-ink-muted",
+  "in-development": "bg-ink-muted",
+  booked: "bg-ink-muted",
+  concept: "bg-ink-muted ring-1 ring-ink-muted",
 };
 
 /**
@@ -33,15 +33,15 @@ export function StatusDot({
 }: {
   status: StatusKind;
   label?: React.ReactNode;
-  /** Mono uppercase label (default) or body text. */
+  /** Label style (default) or body text. */
   mono?: boolean;
   className?: string;
 }) {
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-2 text-fg",
-        mono ? "label-mono" : "text-small font-medium",
+        "inline-flex items-center gap-2 text-ink",
+        mono ? "label-text" : "text-small font-medium",
         className,
       )}
     >

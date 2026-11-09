@@ -39,7 +39,7 @@ export function ReadingProgress({ targetId }: { targetId: string }) {
     <div aria-hidden="true" className="fixed inset-x-0 top-0 z-60 h-0.5">
       <div
         ref={barRef}
-        className="h-full origin-left bg-grad-flame"
+        className="h-full origin-left bg-link"
         style={{ transform: "scaleX(var(--progress, 0))" }}
       />
     </div>
@@ -81,11 +81,11 @@ export function ShareButtons({
     },
   ];
   const action =
-    "inline-flex min-h-11 items-center gap-2 text-small font-semibold text-fg transition-colors hover:text-accent";
+    "inline-flex min-h-11 items-center gap-2 text-small font-semibold text-ink transition-colors hover:text-link";
 
   return (
     <div>
-      <p className="label-mono text-fg-muted">{label}</p>
+      <p className="label-text text-ink-muted">{label}</p>
       <ul className="mt-2 flex flex-wrap gap-x-6">
         {targets.map((target) => (
           <li key={target.name}>

@@ -1,8 +1,9 @@
-import { ApplicationForm } from "@/components/sections/collaborate/ApplicationForm";
+import { LazyApplicationForm } from "@/components/sections/LazyPageForms";
 import { ApplyButton } from "@/components/sections/collaborate/ApplyButton";
 import { FaqSection } from "@/components/sections/shared/FaqSection";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
+import { Star } from "@/components/brand/Star";
 import { Button } from "@/components/ui/Button";
 import { ChipList } from "@/components/ui/Chip";
 import { EditorialList } from "@/components/ui/EditorialList";
@@ -39,23 +40,26 @@ export default function CollaboratePage() {
   return (
     <>
       <Section
-        tone="night"
+        tone="sky"
         underHeader
         padding="none"
         className="overflow-hidden pt-[calc(var(--header-h)+4rem)] pb-20 lg:pt-[calc(var(--header-h)+6rem)] lg:pb-24"
         aria-labelledby="collaborate-title"
       >
         <Breadcrumb items={[{ label: "Home", href: "/" }, { label: "Collaborate" }]} />
-        <p className="mt-8 label-mono text-lamp-400">{hero.label}</p>
-        <h1 id="collaborate-title" className="mt-5 max-w-[20ch] animate-rise text-h1 text-fg">
+        <p className="mt-8 label-text text-ink-muted">{hero.label}</p>
+        <h1 id="collaborate-title" className="mt-5 max-w-[20ch] animate-rise text-h1 text-ink">
           <Emphasis text={hero.title} emphasis={hero.emphasis} />
         </h1>
-        <dl className="mt-12 flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-line-dark pt-6 label-mono text-mist-300">
+        <dl className="mt-12 flex label-text flex-wrap items-center gap-x-4 gap-y-2 border-t border-border pt-6 text-ink-muted max-sm:flex-col max-sm:items-start">
           <dt className="sr-only">{hero.factsLabel}</dt>
           {hero.facts.map((fact, index) => (
             <dd key={fact} className="flex items-center gap-4">
               {index > 0 ? (
-                <span aria-hidden="true" className="size-1 rounded-dot bg-lamp-500/70" />
+                <span
+                  aria-hidden="true"
+                  className="size-1 rounded-dot bg-ink-muted max-sm:hidden"
+                />
               ) : null}
               {fact}
             </dd>
@@ -66,7 +70,7 @@ export default function CollaboratePage() {
         </Button>
       </Section>
 
-      <Section id={audiences.id} tone="ivory" aria-labelledby="audiences-title">
+      <Section id={audiences.id} tone="base" aria-labelledby="audiences-title">
         <SectionHeader
           id="audiences-title"
           index={1}
@@ -85,31 +89,31 @@ export default function CollaboratePage() {
               content: (
                 <div className="grid gap-10 lg:grid-cols-12 lg:gap-8">
                   <div className="lg:col-span-5">
-                    <p className="text-lg text-fg">{group.intro}</p>
-                    <ul className="mt-6 border-t border-rule">
+                    <p className="text-lg text-ink">{group.intro}</p>
+                    <ul className="mt-6 border-t border-border">
                       {group.points.map((point) => (
                         <li
                           key={point}
-                          className="flex min-h-12 items-center gap-3 border-b border-rule text-fg"
+                          className="flex min-h-12 items-center gap-3 border-b border-border text-ink"
                         >
-                          <span aria-hidden="true" className="size-1.5 rounded-dot bg-lamp-500" />
+                          <span aria-hidden="true" className="size-1.5 rounded-dot bg-ink-muted" />
                           {point}
                         </li>
                       ))}
                     </ul>
-                    <p className="mt-6 label-mono text-fg-muted">{group.typicalLabel}</p>
+                    <p className="mt-6 label-text text-ink-muted">{group.typicalLabel}</p>
                     <ChipList items={group.typical} className="mt-2" />
                   </div>
                   <div className="lg:col-span-6 lg:col-start-7">
-                    <p className="label-mono text-accent">{audiences.rolesLabel}</p>
+                    <p className="label-text text-ink-muted">{audiences.rolesLabel}</p>
                     {groupRoles.length > 0 ? (
-                      <ul className="mt-3 border-t border-rule">
+                      <ul className="mt-3 border-t border-border">
                         {groupRoles.map((role) => (
                           <RoleRow key={role.id} role={role} applyLabel={audiences.apply} />
                         ))}
                       </ul>
                     ) : (
-                      <p className="mt-3 border-y border-rule py-6 text-fg-muted">
+                      <p className="mt-3 border-y border-border py-6 text-ink-muted">
                         {audiences.noRoles}
                       </p>
                     )}
@@ -121,7 +125,7 @@ export default function CollaboratePage() {
         />
       </Section>
 
-      <Section id={hiring.id} tone="sand" aria-labelledby="hiring-title">
+      <Section id={hiring.id} tone="surface" aria-labelledby="hiring-title">
         <SectionHeader
           id="hiring-title"
           index={2}
@@ -132,24 +136,33 @@ export default function CollaboratePage() {
         <ol className="relative mt-14 grid gap-8 md:grid-cols-5 md:gap-6">
           <span
             aria-hidden="true"
-            className="absolute top-[5px] right-0 left-0 hidden h-px bg-lamp-500/60 md:block"
+            className="absolute top-1.5 right-0 left-0 hidden star-path-x md:block"
           />
           {hiring.steps.map((item, index) => (
-            <li key={item.title} className="relative">
+            <li key={item.title} className="group relative max-md:pl-8">
+              {/* Below 768px the steps stack, so the path runs down the side instead of across. */}
+              {index < hiring.steps.length - 1 ? (
+                <span
+                  aria-hidden="true"
+                  className="absolute top-6 -bottom-7 left-1.5 star-path md:hidden"
+                />
+              ) : null}
               <span
                 aria-hidden="true"
-                className="relative block size-[11px] rounded-dot bg-lamp-500"
-              />
-              <p className="mt-5 font-mono text-xs text-accent">{pad2(index + 1)}</p>
-              <h3 className="mt-1 font-sans text-body font-semibold text-fg">{item.title}</h3>
-              <p className="mt-1 text-small text-fg-muted">{item.text}</p>
+                className="relative block w-fit bg-surface pr-1 max-md:absolute max-md:top-0.5 max-md:left-0"
+              >
+                <Star className="block size-3.5 text-ink-muted transition-colors duration-300 group-hover:text-accent" />
+              </span>
+              <p className="text-xs text-ink-muted tabular-nums md:mt-5">{pad2(index + 1)}</p>
+              <h3 className="mt-1 font-sans text-body font-semibold text-ink">{item.title}</h3>
+              <p className="mt-1 text-small text-ink-muted">{item.text}</p>
             </li>
           ))}
         </ol>
-        <p className="mt-10 label-mono text-fg-muted">{hiring.note}</p>
+        <p className="mt-10 label-text text-ink-muted">{hiring.note}</p>
       </Section>
 
-      <Section id={benefitsCopy.id} tone="ivory" aria-labelledby="benefits-title">
+      <Section id={benefitsCopy.id} tone="base" aria-labelledby="benefits-title">
         <SectionHeader
           id="benefits-title"
           index={3}
@@ -161,19 +174,19 @@ export default function CollaboratePage() {
         <EditorialList className="mt-14" layout="wide" items={benefits} />
       </Section>
 
-      <Section id={form.id} tone="night-900" aria-labelledby="apply-title">
+      <Section id={form.id} tone="sky-ruled" aria-labelledby="apply-title">
         <div className="grid gap-12 lg:grid-cols-12 lg:gap-8">
           <div className="lg:col-span-4">
-            <p className="label-mono text-accent">
+            <p className="label-text text-ink-muted">
               ({pad2(4)}) {form.label}
             </p>
-            <h2 id="apply-title" data-reveal="mask" className="mt-6 text-h2 text-fg">
+            <h2 id="apply-title" data-reveal="mask" className="mt-6 text-h2 text-ink">
               <Emphasis text={form.title} emphasis={form.emphasis} />
             </h2>
-            <p className="mt-6 text-fg-muted">{form.intro}</p>
+            <p className="mt-6 text-ink-muted">{form.intro}</p>
           </div>
           <div className="lg:col-span-7 lg:col-start-6">
-            <ApplicationForm copy={form} roles={roleOptions} />
+            <LazyApplicationForm copy={form} roles={roleOptions} />
           </div>
         </div>
       </Section>
@@ -192,13 +205,13 @@ export default function CollaboratePage() {
 
 function RoleRow({ role, applyLabel }: { role: Role; applyLabel: string }) {
   return (
-    <li className="grid gap-2 border-b border-rule py-5 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center sm:gap-6">
+    <li className="grid gap-2 border-b border-border py-5 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center sm:gap-6">
       <div>
-        <h3 className="font-sans text-body font-semibold text-fg">{role.title}</h3>
-        <p className="mt-1 label-mono text-fg-muted">
+        <h3 className="font-sans text-body font-semibold text-ink">{role.title}</h3>
+        <p className="mt-1 label-text text-ink-muted">
           {role.type.join(" / ")} · {role.location}
         </p>
-        <p className="mt-2 text-small text-fg-muted">{role.summary}</p>
+        <p className="mt-2 text-small text-ink-muted">{role.summary}</p>
       </div>
       {role.applyUrl ? (
         <Button href={role.applyUrl} variant="text-link" target="_blank" rel="noopener noreferrer">

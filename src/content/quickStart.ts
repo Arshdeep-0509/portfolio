@@ -17,8 +17,8 @@ export const quickStartCopy = {
   sending: "Sending…",
   fullForm: { label: "Prefer the full form?", href: "/contact" },
   success: {
-    title: "Thank you, {firstName}. It's with me now.",
-    text: "A copy is on its way to your inbox, and I'll write back within one business day. If nothing arrives, peek in your spam folder.",
+    title: "Sent. You'll hear back within one business day.",
+    text: "A copy is on its way to your inbox. If nothing arrives, peek in your spam folder.",
   },
   error: {
     title: "Your note didn't go through",

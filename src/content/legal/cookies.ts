@@ -1,4 +1,5 @@
 import type { LegalDocument } from "@/content/legal/types";
+import { siteConfig } from "@/content/site";
 
 /**
  * Cookie Policy, built from the inventory below. Keep the inventory in sync with what the site
@@ -213,7 +214,7 @@ export const cookiePolicy: LegalDocument = {
     {
       id: "contact",
       title: "Contact",
-      blocks: [{ type: "p", text: "Questions about cookies? Email arshdeepsinghdev96@gmail.com." }],
+      blocks: [{ type: "p", text: `Questions about cookies? Email ${siteConfig.contact.email}.` }],
     },
   ],
 };

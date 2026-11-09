@@ -56,8 +56,8 @@ export function ScrollProgressRing() {
       tabIndex={visible ? 0 : -1}
       aria-hidden={!visible}
       className={cn(
-        "tone-night group fixed right-4 bottom-20 z-40 inline-flex size-12 items-center justify-center rounded-button border border-line-dark bg-night-950/90 text-ivory-50 backdrop-blur-md sm:right-6 sm:bottom-24",
-        "transition-[opacity,transform,border-color] duration-300 hover:border-lamp-500/60 print:hidden",
+        "group fixed right-4 bottom-20 z-40 inline-flex size-12 items-center justify-center rounded-button border border-border bg-bg/90 text-ink backdrop-blur-md sm:right-6 sm:bottom-24",
+        "transition-[opacity,transform,border-color] duration-300 hover:border-link print:hidden",
         visible ? "opacity-100" : "pointer-events-none translate-y-2 opacity-0",
       )}
     >
@@ -66,14 +66,14 @@ export function ScrollProgressRing() {
         viewBox="0 0 40 40"
         className="absolute inset-0 m-auto size-10 -rotate-90"
       >
-        <circle cx="20" cy="20" r={RADIUS} fill="none" stroke="var(--line-dark)" strokeWidth="2" />
+        <circle cx="20" cy="20" r={RADIUS} fill="none" stroke="var(--border)" strokeWidth="2" />
         <circle
           ref={ringRef}
           cx="20"
           cy="20"
           r={RADIUS}
           fill="none"
-          stroke="var(--lamp-500)"
+          stroke="var(--link)"
           strokeWidth="2"
           strokeDasharray={CIRCUMFERENCE}
           strokeDashoffset={CIRCUMFERENCE}

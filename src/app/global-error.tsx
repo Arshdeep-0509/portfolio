@@ -2,10 +2,13 @@
 
 import { useEffect } from "react";
 import { reportClientError } from "@/components/layout/ErrorReporter";
+import { brandColors } from "@/lib/brandColors";
+import { LOCALE } from "@/lib/constants";
+import { fontVariables } from "@/lib/fonts";
 
 /**
  * Last-resort error UI when the root layout itself fails. It replaces the whole document, so it
- * can't rely on the site's fonts or stylesheet: plain inline styles only.
+ * can't rely on the site's stylesheet: inline styles on the shared tokens and font variables.
  */
 export default function GlobalError({
   error,
@@ -19,21 +22,25 @@ export default function GlobalError({
   }, [error]);
 
   return (
-    <html lang="en-IN">
+    <html lang={LOCALE} className={fontVariables}>
       <body
         style={{
           margin: 0,
           minHeight: "100vh",
           display: "grid",
           placeItems: "center",
-          fontFamily: "Georgia, serif",
-          background: "#0A0A12",
-          color: "#FBF8F2",
+          fontFamily: "var(--font-body)",
+          background: brandColors.dark.bg,
+          color: brandColors.dark.ink,
         }}
       >
         <main style={{ textAlign: "center", padding: 24 }}>
-          <h1 style={{ fontSize: 28, margin: 0 }}>The site hit a problem</h1>
-          <p style={{ color: "#B8B4C6" }}>I&apos;ve been notified and will look into it.</p>
+          <h1 style={{ fontFamily: "var(--font-display)", fontSize: 28, margin: 0 }}>
+            The site hit a problem
+          </h1>
+          <p style={{ color: brandColors.dark.inkMuted }}>
+            I&apos;ve been notified and will look into it.
+          </p>
           <button
             type="button"
             onClick={() => retry()}
@@ -41,10 +48,11 @@ export default function GlobalError({
               marginTop: 12,
               minHeight: 44,
               padding: "0 24px",
-              borderRadius: 8,
+              borderRadius: 10,
               border: 0,
-              background: "linear-gradient(135deg, #FFC15E 0%, #F5A524 45%, #F2683C 100%)",
-              color: "#16141F",
+              background: brandColors.dark.accent,
+              color: brandColors.dark.accentInk,
+              fontFamily: "var(--font-display)",
               fontWeight: 600,
               cursor: "pointer",
             }}

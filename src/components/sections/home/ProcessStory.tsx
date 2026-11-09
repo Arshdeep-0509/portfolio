@@ -13,7 +13,7 @@ import { processSteps } from "@/content/process";
 export function ProcessStory({ index }: { index: number }) {
   const { process } = homeContent;
   return (
-    <Section id={process.id} tone="night-900" aria-labelledby="process-title">
+    <Section id={process.id} tone="sky-ruled" aria-labelledby="process-title">
       <StickyScrollStory
         outlineLabel={process.outlineLabel}
         intro={
@@ -25,7 +25,7 @@ export function ProcessStory({ index }: { index: number }) {
               title={process.title}
               emphasis={process.emphasis}
             />
-            <p className="mt-6 max-w-md text-fg-muted">{process.intro}</p>
+            <p className="mt-6 max-w-md text-ink-muted">{process.intro}</p>
           </div>
         }
         steps={processSteps.map((step) => ({
@@ -33,16 +33,16 @@ export function ProcessStory({ index }: { index: number }) {
           title: step.title,
           content: (
             <>
-              <p className="font-display-soft text-xl text-ivory-50 italic">{step.outcome}</p>
-              <p className="mt-4 text-fg-muted">{step.text}</p>
-              <div className="mt-6 grid gap-5 border-t border-line-dark pt-5 sm:grid-cols-[1fr_auto]">
+              <p className="text-xl font-medium text-ink">{step.outcome}</p>
+              <p className="mt-4 text-ink-muted">{step.text}</p>
+              <div className="mt-6 grid gap-5 border-t border-border pt-5 sm:grid-cols-[1fr_auto]">
                 <div>
-                  <p className="label-mono text-mist-300">{process.receiveLabel}</p>
+                  <p className="label-text text-ink-muted">{process.receiveLabel}</p>
                   <ChipList items={step.receive} className="mt-2.5" />
                 </div>
                 <div className="sm:text-right">
-                  <p className="label-mono text-mist-300">{process.durationLabel}</p>
-                  <p className="mt-2.5 font-mono text-sm text-lamp-400">
+                  <p className="label-text text-ink-muted">{process.durationLabel}</p>
+                  <p className="mt-2.5 text-sm text-ink-muted tabular-nums">
                     <PlaceholderText text={step.duration} />
                   </p>
                 </div>

@@ -16,7 +16,7 @@ export function PullQuote({ items, label }: { items: Testimonial[]; label: strin
   if (!item) return null;
 
   const arrow =
-    "inline-flex size-11 items-center justify-center rounded-button border border-rule text-fg transition-colors duration-200 hover:border-accent hover:text-accent";
+    "inline-flex size-11 items-center justify-center rounded-button border border-border text-ink transition-colors duration-200 hover:border-link hover:text-link";
 
   return (
     <div
@@ -33,16 +33,16 @@ export function PullQuote({ items, label }: { items: Testimonial[]; label: strin
       <figure aria-live="polite" key={index} className="animate-fade-in">
         <span
           aria-hidden="true"
-          className="block font-display-soft text-7xl leading-none text-accent"
+          className="block font-display text-7xl leading-none font-semibold text-ink-muted"
         >
           “
         </span>
-        <blockquote className="mt-2 max-w-[30ch] font-display-soft text-[clamp(1.75rem,1.2rem+2.2vw,2.75rem)] leading-[1.18] text-fg">
+        <blockquote className="mt-2 max-w-[30ch] text-[clamp(1.75rem,1.2rem+2.2vw,2.75rem)] leading-[1.18] font-semibold text-ink">
           <p>{item.quote}</p>
         </blockquote>
         <figcaption className="mt-8 flex flex-wrap items-baseline gap-x-3 gap-y-1">
-          <span className="font-semibold text-fg">{item.name}</span>
-          <span className="label-mono text-fg-muted">
+          <span className="font-semibold text-ink">{item.name}</span>
+          <span className="label-text text-ink-muted">
             {item.role}, {item.company}
           </span>
           {item.linkedinUrl ? (
@@ -50,7 +50,7 @@ export function PullQuote({ items, label }: { items: Testimonial[]; label: strin
               href={item.linkedinUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="link-underline text-small text-accent"
+              className="link-underline text-small text-link"
             >
               Verify on LinkedIn<span className="sr-only"> (opens in a new tab)</span>
             </a>
@@ -75,7 +75,7 @@ export function PullQuote({ items, label }: { items: Testimonial[]; label: strin
           >
             <ArrowRight aria-hidden="true" strokeWidth={1.5} className="size-5" />
           </button>
-          <span className="label-mono text-fg-muted">
+          <span className="label-text text-ink-muted">
             {index + 1} / {count}
           </span>
         </div>

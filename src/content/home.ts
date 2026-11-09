@@ -1,4 +1,5 @@
 import type { ServiceGroupId } from "@/content/services";
+import { siteConfig } from "@/content/site";
 import { bookingHref } from "@/lib/booking";
 
 /**
@@ -23,12 +24,11 @@ export type PickerQuestion = {
 
 export const homeContent = {
   seo: {
-    description:
-      "One engineer for the whole build: MVP development and full product builds in India, web and mobile apps and AI integration for startups, from Arshdeep Singh — full-stack, AI and DevOps.",
+    description: siteConfig.description,
   },
 
   hero: {
-    label: "Arshdeep Singh — engineer for founders & growing teams",
+    label: `${siteConfig.name} — founder-led engineering for founders & growing teams`,
     title: "I turn early ideas into fast, sturdy software that's ready to grow.",
     emphasis: "fast, sturdy software",
     text: "From the first MVP to the full, finished product — web and mobile apps and AI features, designed and shipped by me: tidy code, steady delivery, real users from the first release.",

@@ -1,3 +1,4 @@
+import { siteConfig } from "@/content/site";
 /**
  * Copy for /pay (noindex, not linked from navigation). The Razorpay button id and payment link
  * live in siteConfig.payments.
@@ -5,8 +6,7 @@
 export const payContent = {
   seo: {
     title: "Invoice Payments",
-    description:
-      "Settle an invoice or an advance with Arshdeep Singh via Razorpay's secure checkout.",
+    description: `Settle an invoice or an advance with ${siteConfig.name} via Razorpay's secure checkout.`,
   },
   hero: {
     label: "Payments",

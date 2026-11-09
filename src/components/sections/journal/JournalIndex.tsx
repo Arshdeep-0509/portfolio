@@ -4,6 +4,7 @@ import { useId } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
+import { controlClasses } from "@/components/ui/form/Field";
 import type { PostCardData, PostCategory } from "@/lib/contentTypes";
 import { isUnoptimized } from "@/lib/images";
 import { setUrlSearch, useUrlSearch } from "@/lib/useUrlSearch";
@@ -64,7 +65,7 @@ export function JournalIndex({ posts, copy }: JournalIndexProps) {
   }
 
   if (posts.length === 0) {
-    return <p className="max-w-xl text-lg text-fg-muted">{copy.none}</p>;
+    return <p className="max-w-xl text-lg text-ink-muted">{copy.none}</p>;
   }
 
   const words = state.query.trim().toLowerCase().split(/\s+/).filter(Boolean);
@@ -89,7 +90,7 @@ export function JournalIndex({ posts, copy }: JournalIndexProps) {
 
   return (
     <div>
-      <div className="flex flex-col gap-6 border-b border-rule pb-6 lg:flex-row lg:items-end lg:justify-between">
+      <div className="flex flex-col gap-6 border-b border-border pb-6 lg:flex-row lg:items-end lg:justify-between">
         <div
           role="group"
           aria-label={copy.categoriesLabel}
@@ -105,14 +106,14 @@ export function JournalIndex({ posts, copy }: JournalIndexProps) {
                 onClick={() => update({ category: filter.id })}
                 className={cn(
                   "relative inline-flex min-h-11 items-center text-small font-semibold transition-colors",
-                  on ? "text-fg" : "text-fg-muted hover:text-fg",
+                  on ? "text-ink" : "text-ink-muted hover:text-ink",
                 )}
               >
                 {filter.label}
                 {on ? (
                   <span
                     aria-hidden="true"
-                    className="absolute bottom-1 left-1/2 size-1.5 -translate-x-1/2 rounded-dot bg-lamp-500"
+                    className="absolute bottom-1 left-1/2 size-1.5 -translate-x-1/2 rounded-dot bg-accent"
                   />
                 ) : null}
               </button>
@@ -120,7 +121,7 @@ export function JournalIndex({ posts, copy }: JournalIndexProps) {
           })}
         </div>
         <div className="w-full lg:max-w-xs">
-          <label htmlFor={searchId} className="label-mono text-fg-muted">
+          <label htmlFor={searchId} className="label-text text-ink-muted">
             {copy.searchLabel}
           </label>
           <input
@@ -129,7 +130,7 @@ export function JournalIndex({ posts, copy }: JournalIndexProps) {
             value={state.query}
             onChange={(event) => update({ query: event.target.value })}
             placeholder={copy.searchPlaceholder}
-            className="mt-1 block min-h-11 w-full border-b border-fg-muted/50 bg-transparent text-body text-fg placeholder:text-fg-muted/70 focus-visible:border-accent focus-visible:outline-none"
+            className={cn(controlClasses, "mt-1")}
           />
         </div>
       </div>
@@ -139,16 +140,16 @@ export function JournalIndex({ posts, copy }: JournalIndexProps) {
       </p>
 
       {showFeatured ? (
-        <article className="grid items-center gap-8 border-b border-rule py-12 lg:grid-cols-12 lg:gap-12">
+        <article className="grid items-center gap-8 border-b border-border py-12 lg:grid-cols-12 lg:gap-12">
           <Link
             href={`/journal/${featured.slug}`}
             tabIndex={-1}
             aria-hidden="true"
-            className="relative block aspect-[16/10] overflow-hidden rounded-card border border-rule bg-night-900 lg:col-span-7"
+            className="relative block aspect-[16/10] overflow-hidden rounded-card border border-border bg-surface-raised lg:col-span-7"
           >
             <Image
               src={featured.cover}
-              alt=""
+              alt={featured.coverAlt ?? featured.title}
               fill
               sizes="(min-width: 1024px) 700px, 100vw"
               unoptimized={isUnoptimized(featured.cover)}
@@ -156,16 +157,16 @@ export function JournalIndex({ posts, copy }: JournalIndexProps) {
             />
           </Link>
           <div className="lg:col-span-5">
-            <p className="label-mono text-accent">
+            <p className="label-text text-ink-muted">
               {copy.featuredLabel} · {featured.category}
             </p>
-            <h2 className="mt-4 text-h2 text-fg">
-              <Link href={`/journal/${featured.slug}`} className="hover:text-accent">
+            <h2 className="mt-4 text-h2 text-ink">
+              <Link href={`/journal/${featured.slug}`} className="hover:text-link">
                 {featured.title}
               </Link>
             </h2>
-            <p className="mt-4 text-fg-muted">{featured.description}</p>
-            <p className="mt-5 label-mono text-fg-muted">
+            <p className="mt-4 text-ink-muted">{featured.description}</p>
+            <p className="mt-5 label-text text-ink-muted">
               <time dateTime={featured.date}>{formatDate(featured.date)}</time> ·{" "}
               {featured.readingMinutes} {copy.readingTime}
             </p>
@@ -176,27 +177,27 @@ export function JournalIndex({ posts, copy }: JournalIndexProps) {
       {pagePosts.length > 0 ? (
         <ul>
           {pagePosts.map((post) => (
-            <li key={post.slug} className="border-b border-rule">
+            <li key={post.slug} className="border-b border-border">
               <Link
                 href={`/journal/${post.slug}`}
                 className="group grid gap-2 py-6 md:grid-cols-12 md:items-baseline md:gap-6"
               >
                 <time
                   dateTime={post.date}
-                  className="font-mono text-xs text-fg-muted md:col-span-2"
+                  className="text-xs text-ink-muted tabular-nums md:col-span-2"
                 >
                   {formatDate(post.date, { day: "2-digit", month: "short", year: "numeric" })}
                 </time>
-                <span className="font-display-soft text-2xl leading-snug text-fg group-hover:text-accent md:col-span-6">
+                <span className="text-2xl leading-snug font-semibold text-ink group-hover:text-link md:col-span-6">
                   {post.title}
                 </span>
-                <span className="label-mono text-accent md:col-span-2">{post.category}</span>
-                <span className="flex items-center justify-between gap-3 font-mono text-xs text-fg-muted md:col-span-2">
+                <span className="label-text text-ink-muted md:col-span-2">{post.category}</span>
+                <span className="flex items-center justify-between gap-3 text-xs text-ink-muted tabular-nums md:col-span-2">
                   {post.readingMinutes} {copy.readingTime}
                   <ArrowRight
                     aria-hidden="true"
                     strokeWidth={1.5}
-                    className="size-4 text-accent transition-transform group-hover:translate-x-1"
+                    className="size-4 text-link transition-transform group-hover:translate-x-1"
                   />
                 </span>
               </Link>
@@ -205,11 +206,11 @@ export function JournalIndex({ posts, copy }: JournalIndexProps) {
         </ul>
       ) : matches.length === 0 ? (
         <div className="py-12">
-          <p className="text-lg text-fg-muted">{copy.empty}</p>
+          <p className="text-lg text-ink-muted">{copy.empty}</p>
           <button
             type="button"
             onClick={() => update({ category: null, query: "" })}
-            className="mt-4 min-h-11 link-underline font-semibold text-accent"
+            className="mt-4 min-h-11 link-underline font-semibold text-link"
           >
             {copy.clear}
           </button>
@@ -219,7 +220,7 @@ export function JournalIndex({ posts, copy }: JournalIndexProps) {
       {pageCount > 1 ? (
         <nav
           aria-label={copy.paginationLabel}
-          className="mt-10 flex items-center gap-4 font-mono text-sm"
+          className="mt-10 flex items-center gap-4 text-sm tabular-nums"
         >
           {Array.from({ length: pageCount }, (_, i) => i + 1).map((number) => (
             <button
@@ -231,8 +232,8 @@ export function JournalIndex({ posts, copy }: JournalIndexProps) {
               className={cn(
                 "inline-flex size-11 items-center justify-center rounded-button border",
                 number === page
-                  ? "border-lamp-500 text-fg"
-                  : "border-transparent text-fg-muted hover:text-fg",
+                  ? "border-link text-ink"
+                  : "border-transparent text-ink-muted hover:text-ink",
               )}
             >
               {number}

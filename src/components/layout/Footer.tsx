@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { cacheLife } from "next/cache";
+import { Logo } from "@/components/brand/Logo";
 import { CookieSettingsButton } from "@/components/layout/CookieSettingsButton";
-import { NewsletterForm } from "@/components/layout/NewsletterForm";
+import { LazyNewsletterForm } from "@/components/layout/LazyForms";
 import { LiveClock } from "@/components/ui/LiveClock";
 import { PlaceholderText } from "@/components/ui/PlaceholderText";
 import { SocialIcon } from "@/components/ui/SocialIcon";
@@ -10,7 +11,7 @@ import { siteConfig } from "@/content/site";
 import { isPlaceholder } from "@/lib/constants";
 
 const linkClass =
-  "inline-flex min-h-10 items-center text-small text-mist-300 transition-colors duration-200 hover:text-ivory-50 link-underline";
+  "inline-flex min-h-11 items-center text-small text-ink transition-colors duration-200 hover:text-link link-underline";
 
 /**
  * Cache Components forbids reading the clock while prerendering, so the year is computed in a
@@ -23,23 +24,28 @@ async function CurrentYear() {
 }
 
 /**
- * Night footer with the star texture. Top: three compact link columns, the newsletter field and
- * a contact block with the local clock. Bottom: the name and tagline, then the legal line.
+ * Polar Night in both themes (a data-theme="dark" island), with Glacier text. The logo and tagline
+ * lead, then three link columns, the newsletter field and a contact block with the local clock,
+ * then the legal line.
  */
 export function Footer() {
   const gstin = siteConfig.gstin && !isPlaceholder(siteConfig.gstin) ? siteConfig.gstin : null;
   const { contact } = footerCopy;
 
   return (
-    <footer className="tone-night relative overflow-hidden border-t border-line-dark bg-night-950 bg-stars text-fg">
-      <div className="container-site pt-20 lg:pt-24">
-        <div className="grid gap-12 lg:grid-cols-12 lg:gap-8">
+    <footer data-theme="dark" className="border-t border-border bg-bg text-ink">
+      <div className="container-site pt-16 pb-10 lg:pt-20">
+        <Logo variant="full" size={44} showTagline />
+      </div>
+
+      <div className="container-site">
+        <div className="grid gap-12 border-t border-border pt-12 lg:grid-cols-12 lg:gap-8">
           <div className="grid grid-cols-2 gap-10 sm:grid-cols-3 lg:col-span-6">
             {footerNav.map((column) => (
               <nav key={column.title} aria-labelledby={`footer-${column.title.toLowerCase()}`}>
                 <h2
                   id={`footer-${column.title.toLowerCase()}`}
-                  className="label-mono text-lamp-400"
+                  className="label-text text-ink-muted"
                 >
                   {column.title}
                 </h2>
@@ -61,15 +67,15 @@ export function Footer() {
           </div>
 
           <div className="lg:col-span-3">
-            <NewsletterForm copy={footerCopy.newsletter} location="footer" />
+            <LazyNewsletterForm copy={footerCopy.newsletter} location="footer" />
           </div>
 
           <div className="lg:col-span-3">
-            <h2 className="label-mono text-lamp-400">{contact.title}</h2>
-            <ul className="mt-4 space-y-3 text-small text-mist-300">
+            <h2 className="label-text text-ink-muted">{contact.title}</h2>
+            <ul className="mt-4 text-small text-ink">
               <li>
                 {contactDetails.email.href ? (
-                  <a href={contactDetails.email.href} className="link-underline text-ivory-50">
+                  <a href={contactDetails.email.href} className={linkClass}>
                     {contactDetails.email.label}
                   </a>
                 ) : (
@@ -83,7 +89,7 @@ export function Footer() {
                     target="_blank"
                     rel="noopener noreferrer"
                     data-cta="footer"
-                    className="link-underline text-ivory-50"
+                    className={linkClass}
                   >
                     WhatsApp {contactDetails.whatsapp.label}
                     <span className="sr-only"> (opens in a new tab)</span>
@@ -94,9 +100,11 @@ export function Footer() {
                   </>
                 )}
               </li>
-              <li>
-                {contact.localTime} <PlaceholderText text={contactDetails.city} />:{" "}
-                <LiveClock className="font-mono text-ivory-50" /> IST
+              <li className="flex min-h-11 items-center">
+                <span>
+                  {contact.localTime} <PlaceholderText text={contactDetails.city} />:{" "}
+                  <LiveClock className="tabular-nums" /> IST
+                </span>
               </li>
             </ul>
             {socialLinks.length > 0 ? (
@@ -108,7 +116,7 @@ export function Footer() {
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label={`${social.label} (opens in a new tab)`}
-                      className="inline-flex size-11 items-center justify-center rounded-button border border-line-dark text-ivory-50 transition-colors duration-200 hover:border-lamp-500"
+                      className="inline-flex size-11 items-center justify-center rounded-button border border-border text-ink transition-colors duration-200 hover:border-link"
                     >
                       <SocialIcon name={social.key} className="size-[18px]" />
                     </a>
@@ -120,18 +128,13 @@ export function Footer() {
         </div>
       </div>
 
-      <div className="container-site mt-14 flex flex-col gap-2 border-t border-line-dark pt-10 pb-8 md:flex-row md:items-baseline md:justify-between md:gap-8">
-        <p className="font-display text-[clamp(2rem,1.4rem+2.6vw,3.5rem)] leading-tight text-ivory-50">
-          {siteConfig.brand.wordmark}
-        </p>
-        <p className="text-lg text-lamp-400 md:text-right">{siteConfig.tagline}</p>
-      </div>
-
-      <div className="container-site flex flex-col gap-2 border-t border-line-dark py-6 text-small text-mist-300">
-        <p>
-          © <CurrentYear /> <PlaceholderText text={siteConfig.legalName} />. {footerCopy.rights}
-          {gstin ? <span className="ml-3 font-mono text-xs">GSTIN {gstin}</span> : null}
-        </p>
+      <div className="container-site mt-14">
+        <div className="border-t border-border py-6 text-small text-ink-muted">
+          <p>
+            © <CurrentYear /> {siteConfig.legalName}. {footerCopy.rights}
+            {gstin ? <span className="ml-3 text-xs tabular-nums">GSTIN {gstin}</span> : null}
+          </p>
+        </div>
       </div>
     </footer>
   );

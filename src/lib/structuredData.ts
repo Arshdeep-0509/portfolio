@@ -1,7 +1,7 @@
 import { socialLinks } from "@/content/navigation";
 import { serviceGroups } from "@/content/services";
 import { siteConfig } from "@/content/site";
-import { isPlaceholder, SITE_URL } from "@/lib/constants";
+import { isPlaceholder, LOCALE, SITE_URL } from "@/lib/constants";
 import { absoluteUrl } from "@/lib/utils";
 
 /**
@@ -38,7 +38,7 @@ export function personSchema() {
     sameAs: socialLinks.length > 0 ? socialLinks.map((social) => social.href) : undefined,
     worksFor: { "@id": schemaIds.business },
     address: city
-      ? { "@type": "PostalAddress", addressLocality: city, addressCountry: "IN" }
+      ? { "@type": "PostalAddress", addressLocality: city, addressCountry: location.country }
       : undefined,
     alumniOf: education ? { "@type": "EducationalOrganization", name: education } : undefined,
     knowsAbout: [
@@ -55,7 +55,7 @@ export function personSchema() {
 export function businessSchema() {
   const { location } = siteConfig;
   const city = real(location.city);
-  const state = real(location.state);
+  const state = real(location.region);
   return compact({
     "@type": "ProfessionalService",
     "@id": schemaIds.business,
@@ -65,14 +65,14 @@ export function businessSchema() {
     url: absoluteUrl("/"),
     logo: absoluteUrl("/icons/icon-512.png"),
     image: absoluteUrl("/opengraph-image"),
-    email: real(siteConfig.email),
-    telephone: real(siteConfig.phone),
+    email: real(siteConfig.contact.email),
+    telephone: real(siteConfig.contact.phone),
     founder: { "@id": schemaIds.person },
     address: compact({
       "@type": "PostalAddress",
       addressLocality: city,
       addressRegion: state,
-      addressCountry: "IN",
+      addressCountry: location.country,
     }),
     areaServed: [
       { "@type": "Country", name: "India" },
@@ -98,7 +98,7 @@ export function websiteSchema() {
     url: absoluteUrl("/"),
     name: siteConfig.name,
     description: siteConfig.description,
-    inLanguage: "en-IN",
+    inLanguage: LOCALE,
     publisher: { "@id": schemaIds.business },
   };
 }

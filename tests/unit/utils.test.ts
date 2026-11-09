@@ -12,15 +12,15 @@ describe("cn", () => {
 
   it("keeps custom font-size tokens alongside text colours", () => {
     // Regression: without the extendTailwindMerge config, text-small was read as a colour.
-    expect(cn("text-small text-fg", "text-fg-muted")).toBe("text-small text-fg-muted");
-    expect(cn("text-label text-ivory-50", "text-lamp-700")).toBe("text-label text-lamp-700");
+    expect(cn("text-small text-ink", "text-ink-muted")).toBe("text-small text-ink-muted");
+    expect(cn("text-label text-ink", "text-link")).toBe("text-label text-link");
   });
 
   it("keeps a background colour next to a texture utility", () => {
-    expect(cn("bg-night-950 bg-stars", "text-fg")).toBe("bg-night-950 bg-stars text-fg");
+    expect(cn("bg-bg bg-stars", "text-ink")).toBe("bg-bg bg-stars text-ink");
   });
 
-  it("knows the Skylamp radius tokens", () => {
+  it("knows the radius tokens", () => {
     expect(cn("rounded-card", "rounded-button")).toBe("rounded-button");
   });
 
@@ -45,6 +45,7 @@ describe("absoluteUrl", () => {
   it("prefixes site-relative paths and leaves absolute URLs alone", () => {
     expect(absoluteUrl("/about")).toMatch(/^https?:\/\/[^/]+\/about$/);
     expect(absoluteUrl("about")).toMatch(/\/about$/);
+    expect(absoluteUrl("/")).toMatch(/^https?:\/\/[^/]+$/);
     expect(absoluteUrl("https://example.com/x")).toBe("https://example.com/x");
   });
 });

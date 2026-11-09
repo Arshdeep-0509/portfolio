@@ -47,8 +47,8 @@ export function Textarea({
         <p
           id={counterId}
           className={cn(
-            "mt-2 text-right font-mono text-xs",
-            nearLimit ? "text-danger-fg" : "text-fg-muted",
+            "mt-2 text-right text-xs tabular-nums",
+            nearLimit ? "text-danger" : "text-ink-muted",
           )}
         >
           {count} / {maxLength}

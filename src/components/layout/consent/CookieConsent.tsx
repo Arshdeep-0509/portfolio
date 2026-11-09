@@ -20,7 +20,7 @@ const ConsentSettingsDialog = dynamic(
 );
 
 /**
- * Cookie consent: a bottom banner on the first visit (not a wall — the page stays usable) with
+ * Cookie consent: a compact bottom-left card on the first visit (not a wall: the page stays usable) with
  * Allow all / Essential only / Choose for myself, and a settings panel that the footer's
  * "Cookie settings" button reopens at any time.
  */
@@ -44,48 +44,38 @@ export function CookieConsent() {
       {showBanner ? (
         <section
           aria-labelledby="cookie-banner-title"
-          className="tone-ivory fixed inset-x-3 bottom-3 z-50 mx-auto max-w-4xl animate-corner-in rounded-card border border-line bg-ivory-50 p-4 text-fg shadow-[0_24px_60px_-28px_rgb(10_10_18/0.5)] sm:inset-x-6 sm:bottom-6 sm:p-6 print:hidden"
+          className="fixed bottom-4 left-4 z-50 w-[min(24rem,calc(100%-2rem))] animate-corner-in rounded-card border border-border bg-surface p-4 text-ink sm:bottom-6 sm:left-6 print:hidden"
         >
-          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:gap-5">
-            <div className="flex gap-3.5">
-              <Cookie
-                aria-hidden="true"
-                strokeWidth={1.5}
-                className="mt-0.5 size-6 shrink-0 text-accent"
-              />
-              <div>
-                <h2 id="cookie-banner-title" className="font-sans text-body font-bold text-fg">
-                  Cookies, if you agree
-                </h2>
-                <p className="mt-1 text-small text-fg-muted">
-                  A few essential cookies keep this site working. Analytics, which show me which
-                  pages help, run only if you say yes.{" "}
-                  <Link
-                    href={POLICY_HREF}
-                    className="font-semibold text-accent underline underline-offset-4"
-                  >
-                    Cookie Policy
-                  </Link>
-                </p>
-              </div>
-            </div>
-            {/* Phones: Accept and Reject side by side (equal weight), Customise underneath. */}
-            <div className="grid shrink-0 grid-cols-2 gap-2 sm:flex sm:gap-2.5">
-              <Button size="md" onClick={acceptAll} className="px-3 sm:px-6">
-                Allow all
-              </Button>
-              <Button size="md" variant="outline" onClick={rejectAll} className="px-3 sm:px-6">
-                Essential only
-              </Button>
-              <Button
-                size="md"
-                variant="text-link"
-                onClick={openSettings}
-                className="col-span-2 justify-center sm:px-2"
-              >
-                Choose for myself
-              </Button>
-            </div>
+          <h2 id="cookie-banner-title" className="flex items-center gap-2 text-body text-ink">
+            <Cookie aria-hidden="true" strokeWidth={1.5} className="size-5 text-ink-muted" />
+            Cookies, if you agree
+          </h2>
+          <p className="mt-1.5 text-small text-ink-muted">
+            A few essential cookies keep this site working. Analytics, which show me which pages
+            help, run only if you say yes.{" "}
+            <Link
+              href={POLICY_HREF}
+              className="font-semibold text-link underline underline-offset-4"
+            >
+              Cookie Policy
+            </Link>
+          </p>
+          {/* Accept and Reject side by side at equal weight, Customise underneath. */}
+          <div className="mt-3 grid grid-cols-2 gap-2">
+            <Button size="sm" onClick={acceptAll} className="px-2">
+              Allow all
+            </Button>
+            <Button size="sm" variant="outline" onClick={rejectAll} className="px-2">
+              Essential only
+            </Button>
+            <Button
+              size="sm"
+              variant="text-link"
+              onClick={openSettings}
+              className="col-span-2 justify-center"
+            >
+              Choose for myself
+            </Button>
           </div>
         </section>
       ) : null}

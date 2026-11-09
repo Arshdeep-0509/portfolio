@@ -40,7 +40,7 @@ export function WorkIndex({ studies, copy }: WorkIndexProps) {
   }
 
   if (studies.length === 0) {
-    return <p className="max-w-xl text-lg text-fg-muted">{copy.empty.none}</p>;
+    return <p className="max-w-xl text-lg text-ink-muted">{copy.empty.none}</p>;
   }
 
   const filters: { id: CaseStudyCategory | null; label: string }[] = [
@@ -60,15 +60,15 @@ export function WorkIndex({ studies, copy }: WorkIndexProps) {
               aria-pressed={on}
               onClick={() => select(filter.id)}
               className={cn(
-                "relative inline-flex min-h-11 items-center text-small font-semibold transition-colors",
-                on ? "text-fg" : "text-fg-muted hover:text-fg",
+                "relative inline-flex min-h-11 min-w-11 items-center justify-center text-small font-semibold transition-colors",
+                on ? "text-ink" : "text-ink-muted hover:text-ink",
               )}
             >
               {filter.label}
               {on ? (
                 <span
                   aria-hidden="true"
-                  className="absolute bottom-1 left-1/2 size-1.5 -translate-x-1/2 rounded-dot bg-lamp-500"
+                  className="absolute bottom-1 left-1/2 size-1.5 -translate-x-1/2 rounded-dot bg-accent"
                 />
               ) : null}
             </button>
@@ -81,33 +81,33 @@ export function WorkIndex({ studies, copy }: WorkIndexProps) {
       </p>
 
       {shown.length === 0 ? (
-        <div className="mt-12 border-y border-rule py-12">
-          <p className="text-lg text-fg-muted">{copy.empty.filtered}</p>
+        <div className="mt-12 border-y border-border py-12">
+          <p className="text-lg text-ink-muted">{copy.empty.filtered}</p>
           <button
             type="button"
             onClick={() => select(null)}
-            className="mt-4 min-h-11 link-underline font-semibold text-accent"
+            className="mt-4 min-h-11 link-underline font-semibold text-link"
           >
             {copy.empty.clear}
           </button>
         </div>
       ) : (
-        <ul className="mt-12 border-t border-rule">
+        <ul className="mt-12 border-t border-border">
           {shown.map((study, index) => (
-            <li key={study.slug} className="border-b border-rule py-12 lg:py-16">
+            <li key={study.slug} className="border-b border-border py-12 lg:py-16">
               <article className="grid items-center gap-8 lg:grid-cols-12 lg:gap-12">
                 <Link
                   href={`/work/${study.slug}`}
                   tabIndex={-1}
                   aria-hidden="true"
                   className={cn(
-                    "group relative block aspect-[16/10] overflow-hidden rounded-card border border-rule bg-night-900 lg:col-span-7",
+                    "group relative block aspect-[16/10] overflow-hidden rounded-card border border-border bg-surface-raised lg:col-span-7",
                     index % 2 === 1 && "lg:order-2 lg:col-start-6",
                   )}
                 >
                   <Image
                     src={study.cover}
-                    alt=""
+                    alt={study.coverAlt ?? study.title}
                     fill
                     sizes="(min-width: 1024px) 700px, 100vw"
                     unoptimized={isUnoptimized(study.cover)}
@@ -124,25 +124,25 @@ export function WorkIndex({ studies, copy }: WorkIndexProps) {
                         <StatusDot status={study.status} label={copy.status[study.status]} />
                       </dd>
                     </div>
-                    <div className="flex gap-2 label-mono text-fg-muted">
+                    <div className="flex label-text gap-2 text-ink-muted">
                       <dt>{copy.row.year}</dt>
-                      <dd className="text-fg">{study.publishedAt.slice(0, 4)}</dd>
+                      <dd className="text-ink">{study.publishedAt.slice(0, 4)}</dd>
                     </div>
                   </dl>
-                  <h2 className="mt-5 text-h2 text-fg">
-                    <Link href={`/work/${study.slug}`} className="hover:text-accent">
+                  <h2 className="mt-5 text-h2 text-ink">
+                    <Link href={`/work/${study.slug}`} className="hover:text-link">
                       {study.title}
                     </Link>
                   </h2>
-                  <p className="mt-4 text-lg text-fg-muted">{study.summary}</p>
-                  <p className="mt-4 text-small text-fg">
-                    <span className="label-mono text-fg-muted">{copy.row.role} </span>
+                  <p className="mt-4 text-lg text-ink-muted">{study.summary}</p>
+                  <p className="mt-4 text-small text-ink">
+                    <span className="label-text text-ink-muted">{copy.row.role} </span>
                     <PlaceholderText text={study.role} />
                   </p>
                   <ChipList items={study.stack} label="Stack" className="mt-5" />
                   <Link
                     href={`/work/${study.slug}`}
-                    className="group/link mt-7 inline-flex min-h-11 items-center gap-2 link-underline font-semibold text-fg hover:text-accent"
+                    className="group/link mt-7 inline-flex min-h-11 items-center gap-2 link-underline font-semibold text-ink hover:text-link"
                   >
                     {copy.row.cta}
                     <span className="sr-only">: {study.title}</span>

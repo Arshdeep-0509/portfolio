@@ -29,7 +29,8 @@ export function CodeBlock(props: React.ComponentProps<"pre">) {
         type="button"
         onClick={copy}
         aria-label={copied ? "Copied" : "Copy code"}
-        className="absolute top-2.5 right-2.5 inline-flex size-9 items-center justify-center rounded-button border border-line-dark bg-night-800 text-ivory-50 transition-colors duration-200 hover:border-lamp-500"
+        data-theme="dark"
+        className="absolute top-2.5 right-2.5 inline-flex size-9 items-center justify-center rounded-button border border-border bg-surface-raised text-ink transition-colors duration-200 hover:border-link"
       >
         {copied ? (
           <Check aria-hidden="true" className="size-4" />

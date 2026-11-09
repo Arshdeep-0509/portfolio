@@ -57,8 +57,8 @@ export function ChapterNav({
 
   return (
     <nav aria-label={label} className={className}>
-      <p className="label-mono text-fg-muted">{label}</p>
-      <ol className="mt-3 border-l border-rule">
+      <p className="label-text text-ink-muted">{label}</p>
+      <ol className="mt-3 border-l border-border">
         {chapters.map((chapter, index) => {
           const current = chapter.id === active;
           const number = numbers[index];
@@ -68,15 +68,15 @@ export function ChapterNav({
                 href={`#${chapter.id}`}
                 aria-current={current ? "location" : undefined}
                 className={cn(
-                  "-ml-px flex min-h-10 items-center gap-2.5 border-l-2 py-1 text-small transition-colors duration-200",
+                  "-ml-px flex min-h-11 items-center gap-2.5 border-l-2 py-1 text-small transition-colors duration-200",
                   chapter.level === 3 ? "pl-7" : "pl-4",
                   current
-                    ? "border-lamp-500 font-semibold text-fg"
-                    : "border-transparent text-fg-muted hover:text-fg",
+                    ? "border-link font-semibold text-ink"
+                    : "border-transparent text-ink-muted hover:text-ink",
                 )}
               >
                 {numbered && number ? (
-                  <span className="font-mono text-xs text-accent">{pad2(number)}</span>
+                  <span className="text-xs text-ink-muted tabular-nums">{pad2(number)}</span>
                 ) : null}
                 {chapter.text}
               </a>

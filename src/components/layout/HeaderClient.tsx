@@ -1,17 +1,25 @@
 "use client";
 
-import { useState, useSyncExternalStore } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { MobileMenu } from "@/components/layout/MobileMenu";
-import { Logo } from "@/components/layout/Logo";
 import { isActivePath, isOverHeroRoute, type HeaderNav } from "@/components/layout/navTypes";
 import { ServicesMenu } from "@/components/layout/ServicesMenu";
+import { ThemeToggle } from "@/components/layout/ThemeToggle";
+import { Logo } from "@/components/brand/Logo";
+import { Star } from "@/components/brand/Star";
 import { Button } from "@/components/ui/Button";
 import { LiveClock } from "@/components/ui/LiveClock";
 import { PlaceholderText } from "@/components/ui/PlaceholderText";
 import { StatusDot } from "@/components/ui/StatusDot";
 import { cn } from "@/lib/utils";
+
+const loadMobileMenu = () => import("@/components/layout/MobileMenu").then((mod) => mod.MobileMenu);
+
+// Not part of the first load. Fetched on the visitor's first touch or scroll, so it's ready by the
+// time they reach for Menu rather than leaving a pause after the tap.
+const MobileMenu = dynamic(loadMobileMenu, { ssr: false });
 
 const SOLID_AFTER_PX = 40;
 
@@ -22,7 +30,7 @@ function subscribeToScroll(callback: () => void) {
 
 /**
  * Two rows: a 32px night utility strip (desktop only: availability, local time, email) and the
- * 68px main bar. Over a night hero the bar is transparent with ivory text until 40px of scroll
+ * 68px main bar. Over a hero the bar is transparent until 40px of scroll
  * (CSS in globals.css › HEADER STATES); this component reports the route, scroll and open menus.
  */
 export function HeaderClient({ nav }: { nav: HeaderNav }) {
@@ -39,6 +47,21 @@ export function HeaderClient({ nav }: { nav: HeaderNav }) {
   const menuOpen = menuPath === pathname;
   const mobileOpen = mobilePath === pathname;
   const { copy, contact } = nav;
+  // Stays mounted after the first open, so the native dialog can restore focus on close.
+  const [menuLoaded, setMenuLoaded] = useState(false);
+  if (mobileOpen && !menuLoaded) setMenuLoaded(true);
+
+  useEffect(() => {
+    if (window.matchMedia("(min-width: 64rem)").matches) return;
+    const events = ["pointerdown", "scroll", "keydown"] as const;
+    const warm = () => {
+      events.forEach((name) => window.removeEventListener(name, warm));
+      // After the interaction has painted, so the fetch never slows the tap that triggered it.
+      window.setTimeout(() => void loadMobileMenu(), 500);
+    };
+    events.forEach((name) => window.addEventListener(name, warm, { passive: true }));
+    return () => events.forEach((name) => window.removeEventListener(name, warm));
+  }, []);
 
   return (
     <header
@@ -47,20 +70,20 @@ export function HeaderClient({ nav }: { nav: HeaderNav }) {
       className="site-header fixed inset-x-0 top-0 z-50"
     >
       {/* Utility strip */}
-      <div className="tone-night hidden h-(--strip-h) bg-night-950 text-mist-300 lg:block">
-        <div className="container-site grid h-full grid-cols-3 items-center font-mono text-xs">
+      <div className="hidden h-(--strip-h) bg-surface text-ink-muted lg:block">
+        <div className="container-site grid h-full grid-cols-3 items-center text-xs tabular-nums">
           <StatusDot
             status={nav.availability}
             label={copy.availability[nav.availability]}
             mono={false}
-            className="text-xs text-mist-300"
+            className="text-xs text-ink-muted"
           />
           <p className="text-center">
             <PlaceholderText text={contact.city} /> · <LiveClock /> {copy.timezone}
           </p>
           <p className="text-right">
             {contact.email.href ? (
-              <a href={contact.email.href} className="link-underline hover:text-ivory-50">
+              <a href={contact.email.href} className="link-underline hover:text-ink">
                 {contact.email.label}
               </a>
             ) : (
@@ -71,9 +94,9 @@ export function HeaderClient({ nav }: { nav: HeaderNav }) {
       </div>
 
       {/* Main bar */}
-      <div className="site-bar tone-ivory h-(--bar-h) text-fg">
+      <div className="site-bar h-(--bar-h) text-ink">
         <div className="container-site flex h-full items-center justify-between gap-6">
-          <Logo tone="auto" />
+          <Logo variant="full" wordmarkClassName="max-[380px]:hidden" />
 
           <div className="hidden h-full items-center gap-8 lg:flex">
             <nav aria-label="Main" className="h-full">
@@ -82,12 +105,15 @@ export function HeaderClient({ nav }: { nav: HeaderNav }) {
                   const active = isActivePath(pathname, item.href);
                   return (
                     <li key={item.href} className="relative flex h-full items-center">
+                      {/* In the gap before the label, so the bar doesn't shift between pages. */}
+                      {active ? (
+                        <Star className="absolute top-1/2 -left-3.5 size-2.5 -translate-y-1/2 text-accent" />
+                      ) : null}
                       {item.hasMenu ? (
                         <ServicesMenu
                           label={item.label}
                           groups={nav.services}
                           copy={copy.menu}
-                          active={active}
                           open={menuOpen}
                           onOpenChange={(next) => setMenuPath(next ? pathname : null)}
                         />
@@ -95,46 +121,46 @@ export function HeaderClient({ nav }: { nav: HeaderNav }) {
                         <Link
                           href={item.href}
                           aria-current={active ? "page" : undefined}
-                          className="inline-flex min-h-11 items-center text-small font-semibold text-fg transition-colors duration-200 hover:text-accent"
+                          className="inline-flex min-h-11 items-center text-small font-semibold text-ink transition-colors duration-200 hover:text-link"
                         >
                           {item.label}
                         </Link>
                       )}
-                      {active ? (
-                        <span
-                          aria-hidden="true"
-                          className="absolute bottom-3.5 left-1/2 size-1.5 -translate-x-1/2 rounded-dot bg-lamp-500 shadow-[0_0_8px_1px_rgb(245_165_36/0.7)]"
-                        />
-                      ) : null}
                     </li>
                   );
                 })}
               </ul>
             </nav>
+            <ThemeToggle />
             <Button href={copy.cta.href} variant="outline" size="sm" data-cta="header">
               {copy.cta.label}
             </Button>
           </div>
 
-          <button
-            type="button"
-            onClick={() => setMobilePath(pathname)}
-            aria-expanded={mobileOpen}
-            aria-controls="mobile-menu"
-            className={cn(
-              "inline-flex min-h-11 items-center gap-2.5 rounded-button px-1 label-mono text-fg lg:hidden",
-            )}
-          >
-            <span aria-hidden="true" className="flex w-5 flex-col gap-[5px]">
-              <span className="h-px w-full bg-current" />
-              <span className="h-px w-3/4 bg-current" />
-            </span>
-            {copy.menu.open}
-          </button>
+          <div className="flex items-center gap-1 lg:hidden">
+            <ThemeToggle />
+            <button
+              type="button"
+              onClick={() => setMobilePath(pathname)}
+              aria-expanded={mobileOpen}
+              aria-controls="mobile-menu"
+              className={cn(
+                "inline-flex min-h-11 label-text items-center gap-2.5 rounded-button px-1 text-ink lg:hidden",
+              )}
+            >
+              <span aria-hidden="true" className="flex w-5 flex-col gap-[5px]">
+                <span className="h-px w-full bg-current" />
+                <span className="h-px w-3/4 bg-current" />
+              </span>
+              {copy.menu.open}
+            </button>
+          </div>
         </div>
       </div>
 
-      <MobileMenu open={mobileOpen} onClose={() => setMobilePath(null)} nav={nav} />
+      {menuLoaded ? (
+        <MobileMenu open={mobileOpen} onClose={() => setMobilePath(null)} nav={nav} />
+      ) : null}
     </header>
   );
 }

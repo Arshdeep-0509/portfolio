@@ -1,3 +1,4 @@
+import { ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export type FileNode = {
@@ -23,7 +24,7 @@ function flatten(nodes: FileNode[], prefix = "", depth = 0): Row[] {
 }
 
 /**
- * A dark, code-style card that draws a folder tree. Each node with a note is focusable and shows
+ * A dark instrument panel that draws a folder tree, with Aurora arrows on folders and notes. Each node with a note is focusable and shows
  * its explanation on hover and focus; the note is real text in the DOM, so screen readers read
  * it with the name. Pure CSS — no JavaScript.
  */
@@ -40,21 +41,22 @@ export function FileTree({
   const rows = flatten(tree);
   return (
     <figure
+      data-theme="dark"
       className={cn(
-        "tone-night overflow-hidden rounded-card border border-line-dark bg-night-950 text-fg",
+        "overflow-hidden rounded-card border border-border bg-surface-raised text-ink",
         className,
       )}
     >
-      <div className="flex items-center gap-2 border-b border-line-dark px-4 py-3">
+      <div className="flex items-center gap-2 border-b border-border px-4 py-3">
         <span aria-hidden="true" className="flex gap-1.5">
-          <span className="size-2 rounded-dot bg-mist-300/40" />
-          <span className="size-2 rounded-dot bg-mist-300/40" />
-          <span className="size-2 rounded-dot bg-lamp-500" />
+          <span className="size-2 rounded-dot bg-ink-muted/40" />
+          <span className="size-2 rounded-dot bg-ink-muted/40" />
+          <span className="size-2 rounded-dot bg-ink-muted" />
         </span>
-        <figcaption className="ml-2 label-mono text-mist-300">{label}</figcaption>
+        <figcaption className="ml-2 font-mono text-xs text-ink-muted">{label}</figcaption>
       </div>
       <ul className="px-2 py-3 font-mono text-[13px] leading-6 sm:text-sm">
-        {rows.map(({ node, prefix, depth }) => {
+        {rows.map(({ node, prefix }) => {
           const folder = Boolean(node.children) || node.name.endsWith("/");
           return (
             <li
@@ -62,30 +64,30 @@ export function FileTree({
               tabIndex={node.note ? 0 : undefined}
               className={cn(
                 "group/node flex flex-col rounded-[3px] px-2 py-1 outline-offset-0 md:flex-row md:items-baseline md:gap-4",
-                node.note && "hover:bg-ivory-50/[0.05] focus-visible:bg-ivory-50/[0.05]",
+                node.note && "hover:bg-ink/[0.05] focus-visible:bg-ink/[0.05]",
               )}
             >
               <span className="shrink-0 whitespace-pre">
-                <span aria-hidden="true" className="text-mist-300/60">
+                <span aria-hidden="true" className="text-ink-muted">
                   {prefix}
                 </span>
-                <span
-                  className={cn(
-                    folder ? "text-lamp-400" : "text-ivory-50",
-                    depth === 0 && "font-medium",
-                  )}
-                >
-                  {node.name}
-                </span>
+                {folder ? (
+                  <ChevronRight
+                    aria-hidden="true"
+                    strokeWidth={2}
+                    className="mr-1 inline size-3.5 align-[-2px] text-link"
+                  />
+                ) : null}
+                <span className="text-ink">{node.name}</span>
               </span>
               {node.note ? (
                 <span
                   className={cn(
-                    "text-mist-300 transition-opacity duration-200",
+                    "text-ink-muted transition-opacity duration-200",
                     "md:opacity-0 md:group-hover/node:opacity-100 md:group-focus-visible/node:opacity-100",
                   )}
                 >
-                  <span aria-hidden="true" className="text-lamp-500">
+                  <span aria-hidden="true" className="text-link">
                     →{" "}
                   </span>
                   {node.note}

@@ -127,7 +127,7 @@ const socialLabels: Record<SocialKey, string> = {
   github: "GitHub",
   x: "X",
   instagram: "Instagram",
-  youtube: "YouTube",
+  clutch: "Clutch",
 };
 
 /** Only profiles that have a real URL in site.ts. Placeholders are left out. */
@@ -138,15 +138,17 @@ export const socialLinks: SocialLink[] = (Object.keys(socialLabels) as SocialKey
 /** Email / WhatsApp / location for the header, footer and menus. Placeholders render as text. */
 export const contactDetails = {
   email: {
-    label: siteConfig.email,
-    href: isPlaceholder(siteConfig.email) ? undefined : `mailto:${siteConfig.email}`,
+    label: siteConfig.contact.email,
+    href: isPlaceholder(siteConfig.contact.email)
+      ? undefined
+      : `mailto:${siteConfig.contact.email}`,
   },
   whatsapp: {
-    label: siteConfig.phone,
-    href: isPlaceholder(siteConfig.whatsappUrl) ? undefined : siteConfig.whatsappUrl,
+    label: siteConfig.contact.phone,
+    href: isPlaceholder(siteConfig.contact.whatsapp) ? undefined : siteConfig.contact.whatsapp,
   },
   city: siteConfig.location.city,
-  location: `${siteConfig.location.city}, ${siteConfig.location.country}`,
+  location: `${siteConfig.location.city}, ${siteConfig.location.countryName}`,
 };
 
 /** Copy for the global footer and the closing QuickStart section. */
@@ -156,7 +158,7 @@ export const footerCopy = {
     text: "Short, practical write-ups on first versions, AI and infrastructure. No spam; leave any time.",
     emailLabel: "Your email",
     submit: "Subscribe",
-    success: "You're on the list. Thank you.",
+    success: "You're on the list. The next note will land in your inbox.",
     error: "That didn't go through. Please try again shortly.",
     privacy: { label: "Privacy Policy", href: "/privacy-policy" },
   },

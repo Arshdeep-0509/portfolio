@@ -2,9 +2,9 @@ import { CircleAlert, Info, Lightbulb } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const variants = {
-  info: { label: "Note", Icon: Info, className: "border-starlight bg-sand-100" },
-  tip: { label: "Tip", Icon: Lightbulb, className: "border-success bg-sand-100" },
-  warning: { label: "Watch out", Icon: CircleAlert, className: "border-lamp-500 bg-lamp-500/10" },
+  info: { label: "Note", Icon: Info, className: "border-ink-muted bg-surface-raised" },
+  tip: { label: "Tip", Icon: Lightbulb, className: "border-success bg-surface-raised" },
+  warning: { label: "Watch out", Icon: CircleAlert, className: "border-link bg-link/10" },
 } as const;
 
 type CalloutProps = {
@@ -20,7 +20,7 @@ export function Callout({ type = "info", title, children }: CalloutProps) {
   return (
     <aside
       className={cn(
-        "not-prose my-8 flex gap-4 rounded-card border-l-2 p-5 text-ink-900",
+        "not-prose my-8 flex gap-4 rounded-r-button border-l-2 p-5 text-ink",
         className,
       )}
     >

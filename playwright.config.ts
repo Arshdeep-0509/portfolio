@@ -20,6 +20,14 @@ export default defineConfig({
   projects: [
     { name: "desktop", use: { ...devices["Desktop Chrome"] } },
     { name: "mobile", use: { ...devices["Pixel 7"] } },
+    // Other engines, on demand: E2E_ALL_BROWSERS=1 pnpm test:e2e --project=firefox --project=ios
+    ...(process.env.E2E_ALL_BROWSERS
+      ? [
+          { name: "firefox", use: { ...devices["Desktop Firefox"] } },
+          { name: "webkit", use: { ...devices["Desktop Safari"] } },
+          { name: "ios", use: { ...devices["iPhone 15"] } },
+        ]
+      : []),
   ],
   webServer: {
     command: `pnpm start --port ${PORT}`,

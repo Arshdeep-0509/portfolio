@@ -8,7 +8,7 @@ import { stackBands } from "@/content/techStack";
 export function StackSection({ index }: { index: number }) {
   const { stack } = homeContent;
   return (
-    <Section id={stack.id} tone="sand" aria-labelledby="stack-title">
+    <Section id={stack.id} tone="surface" aria-labelledby="stack-title">
       <SectionHeader
         id="stack-title"
         index={index}

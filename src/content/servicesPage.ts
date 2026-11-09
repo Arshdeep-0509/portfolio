@@ -144,4 +144,5 @@ export const serviceDetailCopy = {
   discuss: "Discuss this service",
   whatsapp: "WhatsApp me",
   pairsWith: "Pairs well with",
+  relatedWork: "Related case study",
 };

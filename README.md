@@ -1,6 +1,6 @@
-# Arshdeep Singh — Marketing Website
+# Polestride — Marketing Website
 
-Marketing site for **Arshdeep Singh**, a full-stack, AI and DevOps engineer helping founders and growing businesses build web, mobile and AI products. The site's job is to turn visitors into enquiries through the contact form and discovery-call booking, with WhatsApp and email as secondary channels.
+Marketing site for **Polestride**, the founder-led studio of full-stack, AI and DevOps engineer Arshdeep Singh, helping founders and growing businesses build web, mobile and AI products. The site's job is to turn visitors into enquiries through the contact form and discovery-call booking, with WhatsApp and email as secondary channels.
 
 **Stack:** Next.js 16 (App Router, Server Components, Cache Components) · TypeScript (strict) · Tailwind CSS v4 · Framer Motion · lucide-react · react-hook-form + zod · MDX · pnpm.
 
@@ -29,7 +29,7 @@ pnpm dev               # http://localhost:3000
 | `pnpm placeholders`   | List every unfilled `[PLACEHOLDER]` (`--markdown` for a table)                                    |
 | `pnpm originality`    | Compare all site copy with `reference/*.txt`; fails on shared wording (see `reference/README.md`) |
 | `pnpm contrast`       | Print the WCAG contrast of every colour pairing the design uses; fails below AA                   |
-| `pnpm icons`          | Regenerate the favicon, PWA and Apple icons from the Skylamp mark (uses Playwright's Chromium)    |
+| `pnpm icons`          | Regenerate the favicon, PWA and Apple icons from public/brand (uses Playwright's Chromium)        |
 | `pnpm svg:optimize`   | Run SVGO over `/public` (keeps viewBox and dimensions)                                            |
 | `pnpm typecheck`      | `tsc --noEmit`                                                                                    |
 | `pnpm format`         | Prettier, including Tailwind class sorting                                                        |
@@ -157,7 +157,7 @@ Never invent clients, logos, testimonials, ratings, years of experience, team si
 
 ## Design system
 
-The site uses the **Skylamp** identity — see [REBRAND.md](REBRAND.md) for the concept, the full token table and the old → new map. Tokens live in `src/styles/globals.css`. Tailwind v4 is configured there with `@theme`; there is no `tailwind.config.ts`. Tailwind's default colour, radius, shadow and font scales are reset, so only the brand tokens exist and a stray `bg-red-500` generates no CSS. Browse every component at `/dev/ui` (dev only).
+The site uses the **Polestride** identity — see [REBRAND.md](REBRAND.md) for the concept, the full token table and the old → new map. Tokens live in `src/styles/globals.css`. Tailwind v4 is configured there with `@theme`; there is no `tailwind.config.ts`. Tailwind's default colour, radius, shadow and font scales are reset, so only the brand tokens exist and a stray `bg-red-500` generates no CSS. Browse every component at `/dev/ui` (dev only).
 
 **Tones.** `<Section tone="night" | "night-900" | "ivory" | "sand">` adds `.tone-night`, `.tone-ivory` or `.tone-sand`, which set the contextual colours `text-fg`, `text-fg-muted`, `text-accent`, `border-rule`, `text-danger-fg`, `text-success-fg`, `bg-field` and the focus-ring colour. Components only use these, so they adapt to whichever surface they sit on. Sections alternate night and paper down every page.
 
@@ -182,7 +182,7 @@ The site uses the **Skylamp** identity — see [REBRAND.md](REBRAND.md) for the 
 
 ## SEO, analytics and monitoring
 
-- **Metadata.** Every page calls `buildMetadata()` (`src/lib/seo.ts`) with a unique title (≤ 60 characters; the root layout appends " | Arshdeep Singh") and description (≤ 155), which also sets the canonical URL and Open Graph/Twitter cards. Share images are generated with `next/og` (`src/lib/og.tsx`): a default plus templates for the services overview, each service, case studies and posts.
+- **Metadata.** Every page calls `buildMetadata()` (`src/lib/seo.ts`) with a unique title (≤ 60 characters; the root layout appends " | Polestride") and description (≤ 155), which also sets the canonical URL and Open Graph/Twitter cards. Share images are generated with `next/og` (`src/lib/og.tsx`): a default plus templates for the services overview, each service, case studies and posts.
 - **Structured data.** The root layout outputs one `@graph` with WebSite, ProfessionalService and Person (`src/lib/structuredData.ts`). Placeholder values are left out until they're real. Pages add Service, FAQPage, BreadcrumbList, BlogPosting (posts) and JobPosting (open roles only).
 - **Crawling.** `sitemap.xml` (with `lastModified`; bump `CONTENT_UPDATED` in `src/lib/routes.ts` after copy changes), `robots.txt` (blocks `/dev`, `/api`, `/pay`), `manifest.webmanifest` and the icon set in `public/icons/`.
 - **Internal links.** Service pages link to three related services ("Pairs well with") and the pre-filled contact form. Posts list their `services:` as related services. Unknown slugs fail the build.

@@ -1,9 +1,12 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
+import { siteConfig } from "@/content/site";
+import { LOCALE } from "@/lib/constants";
+import { cn } from "@/lib/utils";
 
-const format = new Intl.DateTimeFormat("en-IN", {
-  timeZone: "Asia/Kolkata",
+const format = new Intl.DateTimeFormat(LOCALE, {
+  timeZone: siteConfig.location.timezone,
   hour: "2-digit",
   minute: "2-digit",
   hour12: false,
@@ -26,7 +29,11 @@ export function LiveClock({ className }: { className?: string }) {
     () => "--:--",
   );
   return (
-    <time className={className} suppressHydrationWarning>
+    <time
+      // A fixed box, so swapping "--:--" for the time can't move the text around it.
+      className={cn("inline-block w-[5ch] text-center tabular-nums", className)}
+      suppressHydrationWarning
+    >
       {time}
     </time>
   );

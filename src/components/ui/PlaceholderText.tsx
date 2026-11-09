@@ -20,7 +20,7 @@ export function PlaceholderText({ text }: { text: string }) {
           <mark
             key={index}
             title="Placeholder — replace before launch"
-            className="bg-transparent font-semibold text-inherit underline decoration-lamp-500 decoration-dashed decoration-2 underline-offset-4"
+            className="bg-transparent font-semibold text-inherit underline decoration-link decoration-dashed decoration-2 underline-offset-4"
           >
             {part}
           </mark>

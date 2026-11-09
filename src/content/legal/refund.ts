@@ -1,4 +1,5 @@
 import type { LegalDocument } from "@/content/legal/types";
+import { siteConfig } from "@/content/site";
 
 /**
  * Refund & Cancellation Policy (payment gateways such as Razorpay require one). A starting
@@ -9,7 +10,7 @@ export const refundPolicy: LegalDocument = {
   path: "/refund-policy",
   description:
     "When payments can be refunded, how to cancel a project and how to request a refund — clear and fair to both sides.",
-  lastUpdated: "2026-10-10",
+  lastUpdated: "2026-11-07",
   sections: [
     {
       id: "overview",
@@ -98,7 +99,7 @@ export const refundPolicy: LegalDocument = {
         {
           type: "ul",
           items: [
-            'Email arshdeepsinghdev96@gmail.com with the subject "Refund request", your invoice number and the reason.',
+            `Email ${siteConfig.contact.email} with the subject "Refund request", your invoice number and the reason.`,
             "I'll reply within [3] working days to confirm the amount, or to explain if part of it isn't refundable.",
             "Once agreed, the refund is sent within [10] working days to the original payment method (card, UPI or net banking via Razorpay) or by bank transfer. Your bank may take a few more days to show it.",
           ],
@@ -115,7 +116,7 @@ export const refundPolicy: LegalDocument = {
       blocks: [
         {
           type: "p",
-          text: "Questions about payments or refunds? Email arshdeepsinghdev96@gmail.com or write to [LEGAL_ENTITY], [ADDRESS], Bengaluru, [STATE], India.",
+          text: `Questions about payments or refunds? Email ${siteConfig.contact.email} or write to ${siteConfig.legalName}, [ADDRESS], Bengaluru, ${siteConfig.location.region}, India.`,
         },
       ],
     },

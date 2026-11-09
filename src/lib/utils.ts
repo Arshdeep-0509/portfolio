@@ -1,23 +1,24 @@
 import { clsx, type ClassValue } from "clsx";
 import { extendTailwindMerge } from "tailwind-merge";
+import { siteConfig } from "@/content/site";
 import { LOCALE, SITE_URL } from "@/lib/constants";
 
 /**
  * tailwind-merge must know the custom theme keys from globals.css. Otherwise it reads
- * `text-small` as a colour and silently drops `text-fg` from the same class list.
+ * `text-small` as a colour and silently drops `text-ink` from the same class list.
  */
 const twMerge = extendTailwindMerge({
   extend: {
     theme: {
       text: ["h1", "h2", "h3", "body", "small", "label"],
       radius: ["card", "button", "dot"],
-      shadow: ["glow"],
+      shadow: ["raised"],
       font: ["display", "sans", "mono"],
     },
     // Texture utilities from globals.css are background *images*; without this they would be
-    // read as colours and silently remove the bg-night-* colour beside them.
+    // read as colours and silently remove the background colour beside them.
     classGroups: {
-      "bg-image": ["bg-stars", "bg-grad-flame", "bg-grad-horizon"],
+      "bg-image": ["bg-stars", "bg-grad-horizon"],
     },
   },
 });
@@ -34,12 +35,17 @@ export function formatDate(
 ): string {
   const date = input instanceof Date ? input : new Date(input);
   if (Number.isNaN(date.getTime())) return "";
-  return new Intl.DateTimeFormat(LOCALE, { timeZone: "Asia/Kolkata", ...options }).format(date);
+  return new Intl.DateTimeFormat(LOCALE, {
+    timeZone: siteConfig.location.timezone,
+    ...options,
+  }).format(date);
 }
 
 /** Turn a site-relative path ("/about") into an absolute URL. Absolute URLs pass through. */
 export function absoluteUrl(path = "/"): string {
   if (/^https?:\/\//i.test(path)) return path;
+  // The home page has no trailing slash either, to match its canonical URL.
+  if (path === "/") return SITE_URL;
   return `${SITE_URL}${path.startsWith("/") ? path : `/${path}`}`;
 }
 

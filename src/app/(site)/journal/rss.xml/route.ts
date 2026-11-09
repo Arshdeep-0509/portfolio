@@ -1,5 +1,6 @@
 import { siteConfig } from "@/content/site";
 import { journalContent } from "@/content/journal";
+import { LOCALE } from "@/lib/constants";
 import { getPosts } from "@/lib/mdx";
 import { absoluteUrl } from "@/lib/utils";
 
@@ -38,7 +39,7 @@ export function GET() {
     <title>${escape(`${siteConfig.name} — ${journalContent.rss.title}`)}</title>
     <link>${absoluteUrl("/journal")}</link>
     <description>${escape(journalContent.seo.description)}</description>
-    <language>en-in</language>
+    <language>${LOCALE.toLowerCase()}</language>
     <atom:link href="${absoluteUrl("/journal/rss.xml")}" rel="self" type="application/rss+xml"/>
 ${items}
   </channel>
